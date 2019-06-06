@@ -1,14 +1,29 @@
 package com.shenke.serviceImpl;
 
-import com.shenke.service.RoleMenuService;
-import org.springframework.stereotype.Service;
+import javax.annotation.Resource;
 
-/**
- * @Auther: Administrator
- * @Date: 2019/6/1 11:57
- * @Description:
- */
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.shenke.entity.RoleMenu;
+import com.shenke.repository.RoleMenuRepository;
+import com.shenke.service.RoleMenuService;
+
 @Service("roleMenuService")
-public class RoleMenuServiceImpl implements RoleMenuService {
+@Transactional
+public class RoleMenuServiceImpl implements RoleMenuService{
+
+	@Resource
+	private RoleMenuRepository roleMenuServiceRepository;
+	
+	@Override
+	public void deleteByRoleId(Integer id) {
+		roleMenuServiceRepository.deleteByRoleId(id);
+	}
+
+	@Override
+	public void save(RoleMenu roleMenu) {
+		roleMenuServiceRepository.save(roleMenu);
+	}
 
 }

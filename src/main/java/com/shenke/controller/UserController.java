@@ -56,13 +56,18 @@ public class UserController {
 		Subject subject = SecurityUtils.getSubject();
 		// 认证用户名密码
 		UsernamePasswordToken token = new UsernamePasswordToken(user.getUserName(), user.getPassword());
+		System.out.println("************");
+		System.out.println(token);
+		System.out.println("************");
 		try {
 			
 			subject.login(token);
 			
 			// 查询当前登录的 用户
 			String userName = (String) SecurityUtils.getSubject().getPrincipal();
+
 			System.out.println(userName);
+			System.out.println("************");
 			User currentUser = userService.findByUserName(userName);
 			System.out.println(currentUser.getId());
 			session.setAttribute("currentUser", currentUser);

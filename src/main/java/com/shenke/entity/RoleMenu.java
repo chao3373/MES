@@ -1,6 +1,11 @@
 package com.shenke.entity;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * 角色菜单关联实体类
@@ -11,7 +16,7 @@ import javax.persistence.*;
 @Table(name="t_roleMenu")
 public class RoleMenu {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue
 	private Integer id;
 	
 	@ManyToOne

@@ -1,6 +1,10 @@
 package com.shenke.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * 菜单实体类
@@ -12,7 +16,7 @@ import javax.persistence.*;
 public class Menu {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue
 	private Integer id;//菜单id
 	
 	@Column(length=50)

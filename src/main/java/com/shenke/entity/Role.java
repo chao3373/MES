@@ -1,6 +1,10 @@
 package com.shenke.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * 角色实体类
@@ -12,7 +16,7 @@ import javax.persistence.*;
 public class Role {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue
 	private Integer id; //角色id
 	
 	@Column(length=50)

@@ -1,15 +1,41 @@
 package com.shenke.serviceImpl;
 
-import com.shenke.service.UserRoleService;
-import com.shenke.service.UserService;
+import javax.annotation.Resource;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.shenke.entity.UserRole;
+import com.shenke.repository.UserRoleRepository;
+import com.shenke.service.UserRoleService;
+
 
 /**
- * @Auther: Administrator
- * @Date: 2019/6/1 11:53
- * @Description:
+ * 用户关联角色的实现类
+ * @author Administrator
+ *
  */
 @Service("userRoleService")
-public class UserRoleServiceImpl implements UserRoleService {
+@Transactional
+public class UserRoleServiceImpl implements UserRoleService{
+	
+	@Resource
+	private UserRoleRepository userRoleRepository;
+
+	@Override
+	public void deleteByUserId(Integer userId) {
+		userRoleRepository.deleteById(userId);
+	}
+
+	@Override
+	public void save(UserRole userRole) {
+		userRoleRepository.save(userRole);
+	}
+
+	@Override
+	public void deleteByRoleId(Integer id) {
+		userRoleRepository.deleteById(id);
+
+	}
 
 }
