@@ -3,18 +3,24 @@ package com.shenke.controller.admin;
 
 import com.shenke.entity.Drawing;
 import com.shenke.service.DrawingService;
+import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 /**
  * 图纸Controller
  *
  * @author Administrator
- *
  */
 @RestController
 @RequestMapping("/admin/drawing")
@@ -22,6 +28,7 @@ public class DrawingAdminController {
 
     @Resource
     private DrawingService drawingService;
+
     /**
      * 分页查询商标信息
      *
@@ -34,7 +41,7 @@ public class DrawingAdminController {
         System.out.println(drawing);
         Map<String, Object> map = new HashMap<>();
         List<Drawing> list = drawingService.list(drawing);
-        map.put("rows",list);
+        map.put("rows", list);
         return map;
     }
 
@@ -42,19 +49,31 @@ public class DrawingAdminController {
      * 添加或修改仓库信息
      */
     @RequestMapping("/save")
-    public Map<String, Object> save(Drawing drawing) {
-        Map<String, Object> resultMap = new HashMap<>();
-        /*if (drawing.getId() == null) {
-            if (drawingService.findByBrandName(dao.getName()) != null) {
-                resultMap.put("success", false);
-                resultMap.put("errorInfo", "商标已经存在！");
-                return resultMap;
+    public Map<String, Object> save(HttpServletRequest request, Drawing drawing) {
+        System.out.println(drawing);
+        if (!drawing.getDrawingURL().isEmpty()) {
+            String fileName = drawing.getDrawingURL().getOriginalFilename();
+            String path = "D:/drawing/";
+            File filepath = new File(path, fileName);
+            //判断路径是否存在不存在则创建
+            if (!filepath.getParentFile().exists()){
+                filepath.getParentFile().mkdirs();
             }
-        }*/
+            //将文件上传到目标文件中
+            try {
+                drawing.getDrawingURL().transferTo(new File(path + File.separator + fileName));
+                drawing.setUrl(path + fileName);
+                System.out.println(drawing.getUrl());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Map<String, Object> resultMap = new HashMap<>();
         drawingService.save(drawing);
         resultMap.put("success", true);
         return resultMap;
     }
+
     /**
      * 删除商标信息
      *
@@ -62,15 +81,15 @@ public class DrawingAdminController {
      * @return
      */
     @RequestMapping("/delete")
-    public Map<String,Object> delete(Integer id){
-        Map<String,Object> map = new HashMap<>();
+    public Map<String, Object> delete(Integer id) {
+        Map<String, Object> map = new HashMap<>();
         drawingService.delete(id);
-        map.put("success",true);
+        map.put("success", true);
         return map;
     }
 
 
-/**
+    /**
      * 下拉框模糊查询
      *
      * @param q
@@ -78,10 +97,10 @@ public class DrawingAdminController {
      * @throws Exception
      */
     @RequestMapping("/conbox")
-    public List<Drawing> comboList(String q){
-        if(q == null){
-            q="";
+    public List<Drawing> comboList(String q) {
+        if (q == null) {
+            q = "";
         }
-        return drawingService.conboList("%"+ q + "%" );
+        return drawingService.conboList("%" + q + "%");
     }
 }

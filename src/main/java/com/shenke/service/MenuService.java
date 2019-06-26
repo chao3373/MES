@@ -28,14 +28,12 @@ public interface MenuService {
 	
 	/**
 	 * 根据父节点查找所有子节点
-	 * @param parentId
 	 * @return
 	 */
 	public List<Menu> findByParentId(int id);
 
 	/**
 	 * 根据id查询菜单
-	 * @param parseInt
 	 * @return
 	 */
 	public Menu findById(int id);

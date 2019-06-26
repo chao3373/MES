@@ -1,6 +1,8 @@
 package com.shenke.entity;
 
 
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.persistence.*;
 
 @Entity
@@ -17,12 +19,34 @@ public class Drawing {
     @Column(length = 100)
     private String name;//图纸名称
 
-    @Column(length = 500)
-    private String drawingURL;//图纸路径
+    @Column(length = 200)
+    private String url;//图纸路径
 
     @Column(length = 20)
     private Integer  pid;//所属图纸ID
 
+    @Transient
+    private MultipartFile drawingURL;//图纸
+
+    @Override
+    public String toString() {
+        return "Drawing{" +
+                "id=" + id +
+                ", drawingId='" + drawingId + '\'' +
+                ", name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                ", pid=" + pid +
+                ", drawingURL=" + drawingURL +
+                '}';
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public String getDrawingId() {
         return drawingId;
@@ -48,14 +72,6 @@ public class Drawing {
         this.id = id;
     }
 
-    public String getDrawingURL() {
-        return drawingURL;
-    }
-
-    public void setDrawingURL(String drawingURL) {
-        this.drawingURL = drawingURL;
-    }
-
     public Integer getPid() {
         return pid;
     }
@@ -64,14 +80,12 @@ public class Drawing {
         this.pid = pid;
     }
 
-    @Override
-    public String toString() {
-        return "Drawing{" +
-                "id=" + id +
-                ", drawingId='" + drawingId + '\'' +
-                ", name='" + name + '\'' +
-                ", drawingURL='" + drawingURL + '\'' +
-                ", pid=" + pid +
-                '}';
+    public MultipartFile getDrawingURL() {
+        return drawingURL;
     }
+
+    public void setDrawingURL(MultipartFile drawingURL) {
+        this.drawingURL = drawingURL;
+    }
+
 }

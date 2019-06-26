@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>销售订货单</title>
+	<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
+	<link rel="stylesheet" type="text/css"
+		  href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+	<script type="text/javascript"
+			src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+	<script type="text/javascript"
+			src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+	<script type="text/javascript"
+			src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="/static/js/date.js"></script>
+	<script type="text/javascript" src="print.js"></script>
+	<script type="text/javascript">
+		var url;
+		$(document).ready(function () {
+			$("#saleDate").datebox("setValue", genTodayStr());
+		});
+
+
+
+		function openSaleListGoodsModifyDialog() {
+			$("#saveAddAddNextButton").hide();
+			var selectedRows = $("#dg").datagrid("getSelections");
+			if (selectedRows.length != 1) {
+				$.messager.alert("系统提示", "请选择一条信息！");
+				return;
+			}
+			var row = selectedRows[0];
+			$("#dlg").dialog("open").dialog("setTitle", "修改销售订单信息");
+			$("#fm2").form("load", row);
+			$("#action").val("modify");
+			$("#rowIndex").val($("#dg").datagrid("getRowIndex", row));
+		}
+
+		function deleteSaleListGoods() {
+			var selectedRows = $("#dg").datagrid("getSelections");
+			if (selectedRows.length != 1) {
+				$.messager.alert("系统提示", "请选择一条要删除的商品！");
+				return;
+			}
+			$.messager.confirm("系统提示", "您确定要删除这商品吗?", function (r) {
+				if (r) {
+					$("#dg").datagrid("deleteRow",
+							$("#dg").datagrid("getRowIndex", selectedRows[0]));
+					setSaleListAmount();
+				}
+			});
+		}
+
+
+
+
+		function closeGoodsDialog() {
+			$('#s_codeOrName').val('');
+			$("#dlg").dialog("close");
+		}
+
+		function closeGoodsChooseDialog() {
+			resetValue();
+			$("#dlg2").dialog("close");
+		}
+
+		function saveGoodsType() {
+			if (!$("#fm3").form("validate")) {
+				return;
+			}
+			var goodsTypeName = $('#goodsTypeName').val();
+			var node = $("#tree").tree("getSelected"); // 获取选中节点
+			var parentId;
+			if (node == null) {
+				parentId = 1;
+			} else {
+				parentId = node.id;
+			}
+			$.post("/admin/goodsType/save", {
+				name: goodsTypeName,
+				parentId: parentId
+			}, function (result) {
+				if (result.success) {
+					$("#tree").tree("reload");
+					closeGoodsTypeDialog();
+				} else {
+					$.messager.alert("系统提示", "提交失败，请联系管理员！");
+				}
+			}, "json");
+		}
+
+		//打开上传文件面板
+		function toLead() {
+			$("#dlg3").dialog("open").dialog("setTitle", "选择上传文件");
+		}
+
+		//提交上传文件
+		function saveToLead() {
+			$("#fm3").form(
+					'submit',
+					{
+						url: "/admin/toLead/importFile",
+						onSubmit: function () { //onSubmit  事件会在表单中的确认按钮被点击时发生
+							var fileAccept = $("#fil").val().split(".")[1];
+							if (fileAccept != "xls" && fileAccept != "xlsx") {
+								alert("只能上传.xls和.xlsx的文件！");
+								return false;
+							}
+							return true;
+						},
+						success: function (result) {
+							var obj = eval('(' + result + ')');
+							if (obj.success) {
+
+							} else {
+								$.messager.alert("系统提示", "<span style='color:red'>"
+										+ obj.errorInfo + "</span>");
+
+							}
+							var resultt = $.parseJSON(result);
+							$("#dg").datagrid({
+								data: resultt.rows
+							});
+						}
+					});
+			closeToLead();
+		}
+
+		//关闭面导入面板
+		function closeToLead() {
+			$("#dlg3").dialog("close");
+		}
+
+
+		$(document).ready(function () {
+
+		});
+
+		function saveSaleGoods(){
+			$("#saleNumber").val("我是订单号");
+			var row = $("#dg").datagrid("getRows");
+			for(var i=1;i<=row.length;i++){
+				row[i-1].num=100;
+				row[i-1].saleDate=$("#saleDate").combobox("getText");
+				row[i-1].referDate=$("#referDate").combobox("getText");
+				row[i-1].saleNumber="12312dfsvdgnfghm";
+			}
+			$("#goodsJson").val(JSON.stringify(row));
+			$("#fm").form("submit",{
+				url:"/admin/saleList/save",
+				onSubmit:function () {
+				},
+				success:function (result) {
+					var result = eval('(' + result + ')');
+					if(row.length == 0){
+						$.messager.alert("系统提示", "请导入订单信息！！");
+						return;
+					}
+					else {
+						if(result.success){
+							alert("保存成功");
+							window.location.reload();
+						} else{
+							$.messager.alert("系统提示", "保存失败！");
+							return;
+						}
+					}
+
+				}
+			});
+
+		}
+
+
+
+	</script>
+</head>
+<body class="easyui-layout">
+<div data-options="region:'north'"
+	 style="height: 135px; padding: 10px; border: 0px; padding-top: 20px">
+	<fieldset style="border-color: #E7F0FF">
+		<legend>
+			单号：<span id="dh">1223123123</span>
+		</legend>
+		<form id="fm" method="post">
+			<table cellspacing="8px">
+				<tr>
+
+					<td>日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;期：<input
+							type="text" id="saleDate" name="saleDate" class="easyui-datebox"
+							demandd="true" data-options="editable:false" size="15"/>
+					</td>
+					<td>需交日期<input
+							type="text" id="referDate" name="referDate" class="easyui-datebox" required
+							demandd="true" data-options="editable:false" size="15"/>
+					</td>
+					<td><input type="hidden" id="saleNumber" name="saleNumber"/>
+						<input type="hidden" id="goodsJson" name="goodsJson"/> <a
+								href="javascript:saveSaleGoods()" class="easyui-linkbutton"
+								iconCls="icon-ok">保存</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+								href="javascript:toLead()" class="easyui-linkbutton"
+								iconCls="icon-add">导入</a></td>
+				</tr>
+			</table>
+		</form>
+	</fieldset>
+</div>
+<div data-options="region:'center'" style="padding: 10px; border: 1px">
+	<table id="dg" class="easyui-datagrid" style="" rownumbers="true"
+		   singleSelect="true" fit="true" toolbar="#tb">
+		<thead>
+		<th id="id" width="200" hidden="true" align="center">id</th>
+		<th id="kucunzuzhi" field="kucunzuzhi" width="200" align="center">库存组织</th>
+		<th id="hangHao" field="hangHao" width="100" align="center">行号</th>
+		<th id="wuliaoId" field="wuliaoId" width="100" align="center">物料编号</th>
+		<th id="tuzhiName" field="tuzhiName" width="100" align="center">图纸名称</th>
+		<th id="tuzhiId" field="tuzhiId" width="100" align="center">图纸编号</th>
+		<th id="num" field="num" width="100" align="center">数量</th>
+		<th id="xiangmuId" field="xiangmuId" width="100" align="center">项目号</th>
+		<th id="shenqingNumber" field="shenqingNumber" width="100" align="center">申请单号</th>
+		</thead>
+	</table>
+
+	<div id="tb">
+		<div style="padding: 2px">
+			<a href="javascript:openSaleListGoodsAddDialog()"
+			   class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a> <a
+				href="javascript:openSaleListGoodsModifyDialog()"
+				class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a> <a
+				href="javascript:deleteSaleListGoods()" class="easyui-linkbutton"
+				iconCls="icon-remove" plain="true">删除</a> <a
+				href="javascript:printdg()" ;
+				class="easyui-linkbutton"
+				iconCls="icon-print" plain="true">打印</a> <a
+				href="javascript:showAllRows()" class="easyui-linkbutton"
+				plain="true">显示所有列</a> <a href="javascript:showPrintRows()"
+										  class="easyui-linkbutton" plain="true">显示打印列</a> <a
+				href="javascript:selectPrintRows()" class="easyui-linkbutton"
+				plain="true">设置打印列</a>
+		</div>
+	</div>
+</div>
+
+
+
+<div id="dlg3" class="easyui-dialog"
+	 style="width: 400px; height: 180px; padding: 10px 20px" closed="true"
+	 buttons="#dlg-buttons2"
+	 data-options=""><!--onClose:function(){resetValue()}-->
+	<form id="fm3" method="post" enctype="multipart/form-data"
+		  action="/admin/toLead/importFile">
+		<input id="fil" name="fileName" type="file"/>
+	</form>
+</div>
+
+<div id="dlg-buttons2">
+	<a href="javascript:saveToLead()" class="easyui-linkbutton"
+	   iconCls="icon-ok">确定</a> <a href="javascript:closeToLead()"
+								   class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+</div>
+
+
+</body>
+</html>

@@ -32,4 +32,11 @@ public interface DrawingService {
      */
     public List<Drawing> conboList(String q);
 
+    /**
+     * 根据名称查询
+     * @param name
+     * @return
+     */
+    public Drawing findDrawingId(String DrawingId);
+
 }

@@ -12,4 +12,11 @@ public interface DrawingRepository extends JpaRepository<Drawing, Integer>, JpaS
     @Query( value = "select * from t_drawing where name like ?1" ,nativeQuery =true)
     public List<Drawing> conboList(String q);
 
+
+    /**
+     * 根据名称查询
+     * @return
+     */
+    @Query(value = "select * from t_drawing where drawing_id =?1 group by drawing_id" , nativeQuery = true)
+    public Drawing findDrawingId(String DrawingId);
 }
