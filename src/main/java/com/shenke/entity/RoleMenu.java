@@ -50,5 +50,13 @@ public class RoleMenu {
 	public void setMenu(Menu menu) {
 		this.menu = menu;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "RoleMenu{" +
+				"id=" + id +
+				", role=" + role +
+				", menu=" + menu +
+				'}';
+	}
 }

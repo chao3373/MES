@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>采购入库</title>
+    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
+    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+    <script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/static/js/date.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $("#purchaseDate").datebox("setValue", genTodayStr());
+        });
+
+        //添加商品
+        function addGood() {
+            topAdd();
+            updateEnd();
+            reSet();
+            closeDlg();
+        }
+
+        //在最订部添加一行
+        function topAdd() {
+            $("#dg").datagrid("appendRow", {
+                    name: $("#name").val(),
+                    weight: Number($("#weight").val()).toFixed(2),
+                    price: Number($("#price").val()).toFixed(2),
+                    sumPrice: $("#money").val()
+            });
+        }
+
+        //重置面板中的值
+        function reSet() {
+            $("#name").val("");
+            $("#weight").val("");
+            $("#price").val("");
+            $("#sumPrice").val("");
+        }
+
+        //修改最后一行的小计
+        function updateEnd() {
+            var row = $("#dg").datagrid("getRows");
+            var weight = 0;
+            var money = 0;
+
+            for (var i = 0; i < row.length; i++) {
+                weight += Number(row[i].weight);
+                money += Number(row[i].sumPrice);
+            }
+
+
+            $("#sumWeight").val(weight.toFixed(2));
+            $("#sumMoney").val(money.toFixed(2));
+        }
+        //点击添加按钮弹出对话框
+        function openPurchaseListGoodsAddDialog() {
+            $("#dlg").dialog("open");
+        }
+
+        //关闭添加商品对话框
+        function closeDlg() {
+            $("#dlg").dialog("close");
+        }
+
+        //删除选中行
+        function deletePurchaseListGoods() {
+            var rows = $("#dg").datagrid("getSelections");
+            if(rows.length>0){
+                $.messager.confirm("系统提示", "<span style='color: red;'>确定要删除这些数据吗!</span>", function (r) {
+                    if (r) {
+                        var rows = $("#dg").datagrid("getSelections");
+                        var rowNumbers = [];
+                        for (var i = 0; i < rows.length; i++) {
+                            rowNumbers.push($("#dg").datagrid("getRowIndex", rows[i]));
+                        }
+                        for (var i = rowNumbers.length - 1; i >= 0; i--) {
+                            $("#dg").datagrid("deleteRow", rowNumbers[i]);
+                        }
+                        updateEnd();
+                    }
+                });
+            }
+            else{
+                $.messager.alert("系统提示", "<span style='color: red;'>请选择一条要删除的数据！</span>")
+            }
+        }
+
+        //点击修改按钮
+        function openPurchaseListGoodsModifyDialog() {
+            var rows = $("#dg").datagrid("getSelections");
+            if(rows[0].name=="合计"){
+                $.messager.alert("系统提示", "<span style='color: red;'>滚！</span>")
+            }
+            else{
+                if (rows.length != 1) {
+                    $.messager.alert("系统提示", "<span style='color: red;'>请选择一行要修改的数据！</span>")
+                    return;
+                }
+
+                $("#name2").val(rows[0].name);
+                $("#weight2").val(rows[0].weight);
+                $("#price2").val(rows[0].price);
+                $("#money2").val(rows[0].sumPrice);
+
+                $("#dlg2").dialog("open");
+            }
+        }
+
+        //确认修改
+        function addGood2() {
+            var row = $("#dg").datagrid("getSelected");
+            var index = $("#dg").datagrid("getRowIndex", row);
+            $("#dg").datagrid("updateRow", {
+                index: index,
+                row: {
+                    name: $("#name2").val(),
+                    weight: Number($("#weight2").val()).toFixed(2),
+                    price: Number($("#price2").val()).toFixed(2),
+                    sumPrice: $("#money2").val()
+                }
+            });
+            updateEnd();
+            $("#dlg2").dialog("close");
+        }
+
+        //关闭修改
+        function closeDlg2() {
+            $("#dlg2").dialog("close");
+        }
+
+
+        //点击保存按钮
+        function savePurchaseGoods() {
+            $("#purchaseNumber").val($("#dh").text());
+            $("#sumMoneyCol").val($("#sumMoney").val());
+            $("#sumWeightCol").val($("#sumWeight").val())
+            var row = $("#dg").datagrid("getRows");
+            $("#goodsJson").val(JSON.stringify(row));
+            $("#fm").form("submit",{
+                url:"/admin/purchase/save",
+                onSubmit:function () {
+                    if(row.length==0){
+                        $.messager.alert("系统提示","请添加采购商品！");
+                        return false;
+                    }
+                    return true;
+                },
+                success:function (result) {
+                    var result = eval('(' + result + ')');
+                    if (result.success) {
+                        alert("保存成功！");
+                        window.location.reload();
+                    } else {
+                        $.messager.alert("系统提示", "保存失败！");
+                    }
+                }
+            });
+        }
+
+        //入口函数
+        $(function () {
+            //加载单号
+            $("#dh").load("/admin/purchase/genCode");
+            //加载列
+            $("#dg").datagrid({
+                columns: [[
+                    {field: 'cb', checkbox: "true", align: "center"},
+                    {field: 'name', title: '商品名称', width: '150', align: 'center'},
+                    {field: 'weight', title: '重量（kg）', width: '150', align: 'center'},
+                    {field: 'price', title: '单价（元）', width: '150', align: 'center'},
+                    {field: 'sumPrice', title: '金额（元）', width: '150', align: 'center'}
+                ]]
+            });
+
+            //当输入框金额和重量发生变化时触发
+            $("#price").change(function () {
+                if ($("#weight").val()) {
+                    var num = $("#weight").val() * $("#price").val();
+                    $("#money").val(num.toFixed(2));//将值存入 并且保留两位小数
+                }
+            });
+            $("#weight").change(function () {
+                if ($("#price").val()) {
+                    var num = $("#weight").val() * $("#price").val();
+                    $("#money").val(num.toFixed(2));
+                }
+            });
+
+            //当输入框金额和重量发生变化时触发
+                $("#price2").change(function () {
+                if ($("#weight2").val()) {
+                    var num = $("#weight2").val() * $("#price2").val();
+                    $("#money2").val(num.toFixed(2));
+                }
+            });
+            $("#weight2").change(function () {
+                if ($("#price2").val()) {
+                    var num = $("#weight2").val() * $("#price2").val();
+                    $("#money2").val(num.toFixed(2));
+                }
+            });
+        });
+    </script>
+
+
+    <style>
+        #dlgtb input, #dlg2tb input {
+            width: 100px;
+        }
+
+        #dlgtb, #dlg2tb {
+            margin: 10px auto;
+        }
+
+        #dlgtb td, #dlg2tb td {
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body class="easyui-layout">
+<div data-options="region:'north'" style="height: 135px;padding: 10px;border: 0px;padding-top: 20px">
+    <fieldset style="border-color: #E7F0FF">
+        <legend>单号：<span id="dh"></span></legend>
+        <form id="fm" method="post">
+            <table cellspacing="8px">
+                <tr>
+
+                    <td>
+                        采购日期：<input type="text" id="purchaseDate" name="purchaseDate"
+                                                            class="easyui-datebox" required="true"
+                                                            data-options="editable:false" size="15"/>
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;&nbsp;采&nbsp;&nbsp;购&nbsp;&nbsp;员：<input type="text" id="purchaseAgent" name="purchaseAgent"
+                                                                                   size="15"/>
+                    </td>
+                    <td>
+                        备&nbsp;&nbsp;&nbsp;注：<input type="text" id="remark" name="remark" size="20"/>
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:savePurchaseGoods()" class="easyui-linkbutton"
+                                                   iconCls="icon-ok">保存</a>
+                        <input type="hidden" id="goodsJson" name="goodsJson"/>
+                        <input type="hidden" id="sumWeightCol" name="sumWeightCol" size="10" />
+                        <input type="hidden" id="sumMoneyCol" name="sumMoneyCol" size="10" />
+                        <input type="hidden" id="purchaseNumber" name="purchaseNumber" size="10" />
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </fieldset>
+</div>
+<div data-options="region:'center'" style="padding: 10px;border: 1px">
+    <table id="dg" class="easyui-datagrid" style="height: 1200px" rownumbers="true" fit="true"
+           toolbar="#tb">
+    </table>
+
+    <div id="tb">
+        <div style="padding: 2px">
+            <a href="javascript:openPurchaseListGoodsAddDialog()" class="easyui-linkbutton" iconCls="icon-add"
+               plain="true">添加</a>
+            <a href="javascript:openPurchaseListGoodsModifyDialog()" class="easyui-linkbutton" iconCls="icon-edit"
+               plain="true">修改</a>
+            <a href="javascript:deletePurchaseListGoods()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <td>
+                合计重量：<input type="text" id="sumWeight" name="sumWeight" size="10" readonly/>
+            </td>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <td>
+                合计金额：<input type="text" id="sumMoney" name="sumMoney" size="10" readonly/>
+            </td>
+        </div>
+    </div>
+
+</div>
+
+
+<div id="dlg" class="easyui-dialog" title="添加采购商品" style="width: 400px;height: 160px;"
+     closed="true" buttons="#dlg-tb">
+    <table id="dlgtb">
+        <tr>
+            <td>名称：<input type="text" id="name" required="required"/></td>
+            <td>重量：<input type="number" id="weight" required="required"/></td>
+        </tr>
+        <tr>
+            <td>单价：<input type="number" id="price" required="true"/></td>
+            <td>金额：<input type="text" id="money" readonly style="background-color: #ccc;"/></td>
+        </tr>
+    </table>
+</div>
+
+<div id="dlg-tb">
+    <a href="javascript:addGood()" class="easyui-linkbutton" iconCls="icon-ok">确定</a>
+    <a href="javascript:closeDlg()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+</div>
+
+<div id="dlg2" class="easyui-dialog" title="修改采购商品" style="width: 400px;height: 160px;"
+     closed="true" buttons="#dlg2-tb">
+    <table id="dlg2tb">
+        <tr>
+            <td>名称：<input type="text" id="name2" required="true"/></td>
+            <td>重量：<input type="number" id="weight2" required="true"/></td>
+        </tr>
+        <tr>
+            <td>单价：<input type="number" id="price2" required="true"/></td>
+            <td>金额：<input type="text" id="money2" readonly style="background-color: #ccc;"/></td>
+        </tr>
+    </table>
+</div>
+
+<div id="dlg2-tb">
+    <a href="javascript:addGood2()" class="easyui-linkbutton" iconCls="icon-ok">确定</a>
+    <a href="javascript:closeDlg2()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+</div>
+</body>
+</html>

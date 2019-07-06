@@ -19,7 +19,10 @@ public interface SaleListService {
      */
     public List<SaleList> xiadan();
 
-
-
+    /**
+     * 添加大图之后 修改大图存在状态
+     * @param id
+     */
+    public void addCunZai(Integer id);
 
 }

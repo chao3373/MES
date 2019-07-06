@@ -34,9 +34,15 @@ public interface DrawingService {
 
     /**
      * 根据名称查询
-     * @param name
      * @return
      */
     public Drawing findDrawingId(String DrawingId);
+
+    /**
+     * 根据id查询
+     * @param id
+     * @return
+     */
+    public Drawing findById(Integer id);
 
 }

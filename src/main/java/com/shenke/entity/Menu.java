@@ -81,4 +81,15 @@ public class Menu {
 		this.pId = pId;
 	}
 
+	@Override
+	public String toString() {
+		return "Menu{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", url='" + url + '\'' +
+				", state=" + state +
+				", icon='" + icon + '\'' +
+				", pId=" + pId +
+				'}';
+	}
 }

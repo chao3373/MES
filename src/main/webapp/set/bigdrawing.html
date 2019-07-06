@@ -54,7 +54,7 @@
 	//添加图纸信息
 	function openRoleAddDialog() {
 		$("#dlg").dialog("open").dialog("setTitle", "添加图纸信息");
-		url = "/admin/drawing/save";
+		url = "/admin/bigdrawing/save";
 	}
 
 	//修改图纸信息
@@ -67,7 +67,7 @@
 		var row = selectedRows[0];
 		$("#dlg").dialog("open").dialog("setTitle", "修改图纸信息");
 		$("#fm").form("load", row);
-		url = "/admin/drawing/save?id=" + row.id;
+		url = "/admin/bigdrawing/save?id=" + row.id;
 	}
 
 	function deleteRole() {
@@ -79,7 +79,7 @@
 		var id = selectedRows[0].id;
 		$.messager.confirm("系统提示", "您确定要删除这条数据吗?", function(r) {
 			if (r) {
-				$.post("/admin/drawing/delete", {
+				$.post("/admin/bigdrawing/delete", {
 					id : id
 				}, function(result) {
 					if (result.success) {
@@ -98,7 +98,7 @@
 			onDblClickRow : function(index, row) {
 				$("#dlg").dialog("open").dialog("setTitle", "修改图纸标信息");
 				$("#fm").form("load", row);
-				url = "/admin/brand/save?id=" + row.id;
+				url = "/admin/bigdrawing/save?id=" + row.id;
 			}
 		});
 
@@ -106,15 +106,14 @@
 </script>
 </head>
 <body style="margin: 1px">
-	<table id="dg" title="图纸设置" class="easyui-datagrid" fitColumns="true"
+	<table id="dg" title="大图纸设置" class="easyui-datagrid" fitColumns="true"
 		pagination="true" rownumbers="true" singleSelect="true"
-		url="/admin/drawing/list" fit="true" toolbar="#tb">
+		url="/admin/bigdrawing/list" fit="true" toolbar="#tb">
 		<thead>
 			<th field="id" width="20" align="center">编号</th>
 			<th field="name" width="50" align="center">图纸名称</th>
 			<th field="drawingId" width="100" align="center">图纸编号</th>
 			<th field="url" width="100" align="center">图纸路径</th>
-			<th field="pid" width="100" align="center">所属图纸ID</th>
 		</thead>
 	</table>
 
@@ -155,12 +154,6 @@
 					<td>图纸：</td>
 					<td><input id="drawingURL"  type="file" name="drawingURL"/></td>
 				</tr>
-				<tr>
-					<td>所属图纸ID：</td>
-					<td><input type="text" id="pid" name="pid"
-						class="easyui-validatebox" required="true" /></td>
-				</tr>
-
 			</table>
 		</form>
 	</div>

@@ -9,6 +9,8 @@ import com.shenke.entity.RoleMenu;
 import com.shenke.repository.RoleMenuRepository;
 import com.shenke.service.RoleMenuService;
 
+import java.util.List;
+
 @Service("roleMenuService")
 @Transactional
 public class RoleMenuServiceImpl implements RoleMenuService{
@@ -24,6 +26,17 @@ public class RoleMenuServiceImpl implements RoleMenuService{
 	@Override
 	public void save(RoleMenu roleMenu) {
 		roleMenuServiceRepository.save(roleMenu);
+	}
+
+	@Override
+	public void teess() {
+		List<RoleMenu> all = roleMenuServiceRepository.findAll();
+
+		System.out.println(all);
+		System.out.println(all.get(0).getMenu().getId());
+		System.out.println(all.get(0).getRole().getId());
+		System.out.println(all.get(0).getMenu());
+		System.out.println(all.get(0).getRole());
 	}
 
 }

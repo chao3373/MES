@@ -4,11 +4,13 @@ import com.shenke.entity.SaleList;
 import com.shenke.repository.SaleListRepository;
 import com.shenke.service.SaleListService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 @Service("SaleListService")
+@Transactional
 public class SaleListServiceImpl implements SaleListService {
 
     @Resource
@@ -24,6 +26,11 @@ public class SaleListServiceImpl implements SaleListService {
     @Override
     public List<SaleList> xiadan() {
         return saleListRepository.xiadan();
+    }
+
+    @Override
+    public void addCunZai(Integer id) {
+        saleListRepository.addCunZai(id);
     }
 
 

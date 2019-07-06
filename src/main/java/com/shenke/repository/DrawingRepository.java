@@ -19,4 +19,12 @@ public interface DrawingRepository extends JpaRepository<Drawing, Integer>, JpaS
      */
     @Query(value = "select * from t_drawing where drawing_id =?1 group by drawing_id" , nativeQuery = true)
     public Drawing findDrawingId(String DrawingId);
+
+    /**
+     * 根据id查询
+     * @param id
+     * @return
+     */
+    @Query(value = "select * from t_drawing where drawing_id =?1",nativeQuery = true)
+    public Drawing findByaId(Integer id);
 }

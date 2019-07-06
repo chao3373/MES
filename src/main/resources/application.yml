@@ -4,11 +4,17 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/db_mes?characterEncoding=utf8&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/db_mes?characterEncoding=utf8&serverTimezone=GMT%2B8
     username: root
     password: root
   jpa:
     hibernate.ddl-auto: update
     show-sql: true
+    database: mysql
+    hibernate:
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
   thymeleaf:
     cache: false

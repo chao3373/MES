@@ -16,4 +16,5 @@ public interface RoleMenuService {
 	 */
 	public void save(RoleMenu roleMenu);
 
+	public void teess();
 }

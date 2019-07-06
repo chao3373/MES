@@ -34,9 +34,14 @@ public class DrawingServiceImpl implements DrawingService {
         return drawingRepository.conboList(q);
     }
 
-
     @Override
     public Drawing findDrawingId(String DrawingId) {
         return drawingRepository.findDrawingId(DrawingId);
+    }
+
+    @Override
+    public Drawing findById(Integer id) {
+        //return drawingRepository.findByaId(id);
+        return drawingRepository.getOne(id);
     }
 }
