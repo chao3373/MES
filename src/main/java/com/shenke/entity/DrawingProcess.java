@@ -19,15 +19,43 @@ public class DrawingProcess {
     @JoinColumn
     private Drawing drawing; //小图纸对象
 
+
     @ManyToOne
     @JoinColumn
-    private Process process;//图纸工序对象
-
-    private String neiRong;//工作内容
-
-    private Double manHour;//工时
+    private Process process;//工序对象
 
     private String state; //完成状态
+
+    private Integer num;//数量
+
+    private Integer accomplishNum;//完成数量
+
+    private String saleNumber;//销售单号
+
+
+    public String getSaleNumber() {
+        return saleNumber;
+    }
+
+    public void setSaleNumber(String saleNumber) {
+        this.saleNumber = saleNumber;
+    }
+
+    public Integer getNum() {
+        return num;
+    }
+
+    public void setNum(Integer num) {
+        this.num = num;
+    }
+
+    public Integer getAccomplishNum() {
+        return accomplishNum;
+    }
+
+    public void setAccomplishNum(Integer accomplishNum) {
+        this.accomplishNum = accomplishNum;
+    }
 
     public Integer getId() {
         return id;
@@ -53,21 +81,6 @@ public class DrawingProcess {
         this.process = process;
     }
 
-    public String getNeiRong() {
-        return neiRong;
-    }
-
-    public void setNeiRong(String neiRong) {
-        this.neiRong = neiRong;
-    }
-
-    public Double getManHour() {
-        return manHour;
-    }
-
-    public void setManHour(Double manHour) {
-        this.manHour = manHour;
-    }
 
     public String getState() {
         return state;
@@ -92,9 +105,10 @@ public class DrawingProcess {
                 ", bigDrawing=" + bigDrawing +
                 ", drawing=" + drawing +
                 ", process=" + process +
-                ", neiRong='" + neiRong + '\'' +
-                ", manHour=" + manHour +
                 ", state='" + state + '\'' +
+                ", num=" + num +
+                ", accomplishNum=" + accomplishNum +
+                ", saleNumber='" + saleNumber + '\'' +
                 '}';
     }
 }

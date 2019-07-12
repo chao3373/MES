@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>科室设置</title>
+<title>部门职员</title>
 <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
 <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
 <script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
@@ -64,7 +64,7 @@
 	
 	//添加部门信息
 	function openGoodsTypeAddDialog(){
-		$("#dlg").dialog("open").dialog("setTitle","添加科室信息");
+		$("#dlg").dialog("open").dialog("setTitle","添加部门信息");
 	}
 	
 	function saveGoodsType(){
@@ -112,7 +112,7 @@
 	
 	//查询所有部门信息 
 	function openChooseGoodsTypeDialog(){
-		$("#dlg3").dialog("open").dialog("setTitle","选择所属科室");
+		$("#dlg3").dialog("open").dialog("setTitle","选择所属部门");
 		$("#typeTree").tree({
 			url:'/admin/dep/loadTreeInfo',
 			onLoadSuccess:function(){
@@ -242,7 +242,7 @@
 </script>
 </head>
 <body class="easyui-layout" style="padding-top: 2px">
-	<div data-options="region:'west',collapsible:false" style="width: 200px" title="科室管理" split=true>
+	<div data-options="region:'west',collapsible:false" style="width: 200px" title="部门管理" split=true>
 		<ul id="tree" class="easyui-tree" style="padding: 10px"></ul>
 		<div style="position: absolute;bottom: 10px;left: 15px">
 			<a href="javascript:openGoodsTypeAddDialog()" class="easyui-linkbutton" iconCls="icon-add" >新增</a>
@@ -288,7 +288,7 @@
 	closed="true" buttons="#dlg-buttons" data-options="onClose:function(){$('#goodsTypeName').val('');}">
 		<form id="fm" method="post">
 			<div>
-				科室名称：&nbsp;<input type="text" id="goodsTypeName" name="goodsTypeName" class="easyui-validatebox" required="true"/>
+				部门名称：&nbsp;<input type="text" id="goodsTypeName" name="goodsTypeName" class="easyui-validatebox" required="true"/>
 			</div>
 		</form>
 	</div>
@@ -303,7 +303,7 @@
 		<form id="fm2" method="post">
 			<table>
 				<tr>
-					<td>科室名称：</td>
+					<td>部门名称：</td>
 					<td>
 						<input type="hidden" id="typeId" name="dep.id">
 						<input type="text" id="typeName" class="easyui-validatebox" style="width: 90px" readonly="readonly" onclick="openChooseGoodsTypeDialog()"/>

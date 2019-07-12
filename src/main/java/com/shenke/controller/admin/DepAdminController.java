@@ -144,7 +144,6 @@ public class DepAdminController {
 		parentGoodsType.setState(1);
 		depService.save(parentGoodsType);
 
-		logService.save(new Log(Log.ADD_ACTION, "添加商品类别信息"));
 		resultMap.put("success", true);
 		return resultMap;
 	}

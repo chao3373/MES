@@ -29,10 +29,6 @@ public class ProcessServiceImpl implements ProcessService {
         return processRepository.getOne(id);
     }
 
-    @Override
-    public void saveDrawingProcess(DrawingProcess drawingProcess) {
-        drawingProcessRepository.save(drawingProcess);
-    }
 
     @Override
     public List<Process> findProcessCombobox(String string) {

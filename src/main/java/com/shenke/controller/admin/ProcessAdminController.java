@@ -41,23 +41,7 @@ public class ProcessAdminController {
         return map;
     }
 
-    @RequestMapping("/saveProcess")
-    public Map<String,Object> saveProcess(Integer DrawingId,Integer ProcessId,Integer BigDrawingId,String neiRong,Double manHour){
-        Map<String,Object> map = new HashMap<>();
 
-        DrawingProcess drawingProcess = new DrawingProcess();
-        drawingProcess.setBigDrawing(bigDrawingService.findById(BigDrawingId));
-        drawingProcess.setDrawing(drawingService.findById(DrawingId)); //根据ID查询Drawing对象
-        drawingProcess.setManHour(manHour);
-        drawingProcess.setNeiRong(neiRong);
-        drawingProcess.setProcess(processService.findById(ProcessId));
-
-        processService.saveDrawingProcess(drawingProcess);
-
-        map.put("success",true);
-
-        return map;
-    }
 
     @RequestMapping("/processCombobox")
     public List<Process> processCombobox(String q) throws Exception {

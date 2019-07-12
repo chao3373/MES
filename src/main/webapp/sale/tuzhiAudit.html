@@ -16,31 +16,57 @@
     <script type="text/javascript" src="/static/js/date.js"></script>
     <script type="text/javascript">
 
+        $(document).ready(function() {
+            load();
+        });
+
+
         function load(){
             $("#dg").datagrid({
-                url:"",
+                url:"/admin/drawingProcess/findStateNull",
                 columns:[[
                     {
                         field: 'cb',
                         checkbox: "true",
                         align: "center"
                     },{
-                        field: "saleNumber",
+                        field: "drawingId",
                         width: "150",
                         align: "center",
-                        title: "小图纸编号"
+                        title: "小图纸编号",
+                        formatter:function (value, rows) {
+                            return rows.drawing.drawingId;
+                        }
                     },{
-                        field: "saleNumber",
+                        field: "bigDrawingId",
                         width: "150",
                         align: "center",
-                        title: "所属大图纸编号"
+                        title: "所属大图纸编号",
+                        formatter:function (value, rows) {
+                            if(rows.bigDrawing){
+                                return rows.bigDrawing.drawingId;
+                            }
+                            return '';
+                        }
                     },{
-                        field: "saleNumber",
+                        field: "processId",
+                        width: "150",
+                        align: "center",
+                        title: "工序",
+                        formatter: function (value, rows) {
+                            if(rows.process){
+                                return rows.process.name;
+                            }
+                            else
+                                return '';
+                        }
+                    },{
+                        field: "manHour",
                         width: "150",
                         align: "center",
                         title: "工时"
                     },{
-                        field: "saleNumber",
+                        field: "neiRong",
                         width: "150",
                         align: "center",
                         title: "工作内容"
@@ -49,30 +75,61 @@
             });
         }
 
+        /**
+         * 审核通过
+         */
+        function auditPass() {
+            var rows = $("#dg").datagrid("getSelections");
+            console.log(rows);
+            var Arr = [];
+            for (var i = 0; i < rows.length; i++) {
+                Arr.push(rows[i].id);
+            }
+            var Ids = Arr.join(",");
+
+            $.post("/admin/drawingProcess/setAuditState",
+                {
+                    Ids:Ids
+                },function (result) {
+                    if(result.success){
+                        $.messager.alert("系统提示","审核成功！")
+                    }
+                    else {
+                        $.messager.alert("系统提示","审核失败!")
+                    }
+                },"json");
+            $("#dg").datagrid("reload");
+
+        }
+
+
     </script>
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
-<div region="north" style="height: 300px">
     <table id="dg" title="小图纸审核" class="easyui-datagrid"
-           fitColumns="false" rownumbers="true" singleSelect="true" fit="true"
+           fitColumns="false" rownumbers="true" fit="true"
            toolbar="#tb1" split="true">
         <thead>
+        <th field="name" width="50" align="center">小图纸编号</th>
+        <th field="drawingId" width="100" align="center">所属大图纸编号</th>
+        <th field="url" width="100" align="center">工序</th>
+        <th field="url" width="100" align="center">工时</th>
+        <th field="url" width="100" align="center">工作内容</th>
+        </thead>
     </table>
 
     <!-- dg顶部工具栏 -->
     <div id="tb1">
         <fieldset style="border-color: #E7F0FF">
             <legend>查询设置</legend>
-            &nbsp;单据号&nbsp; <input type="text" id="s_saleNumber" size="15"
+            &nbsp;小图纸编号：&nbsp; <input type="text" id="s_saleNumber" size="15"
                                    onkeydown="if(event.keyCode==13) searchSale()"/>
             &nbsp;&nbsp;<a href="javascript:searchSale()"
                            class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
-            &nbsp;&nbsp;<a href="javascript:addBidDrawingInfo()"
-                           class="easyui-linkbutton" iconCls="icon-add" plain="true">添加大图信息</a>
-            <span style="background:orange">背景色为橙色的需要添加图纸信息及所包含子图</span>
+            &nbsp;&nbsp;<a href="javascript:auditPass()"
+                           class="easyui-linkbutton" iconCls="icon-ok" plain="true">审核通过</a>
         </fieldset>
     </div>
-</div>
 
 
 

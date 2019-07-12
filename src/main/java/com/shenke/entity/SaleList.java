@@ -29,6 +29,8 @@ public class SaleList {
 
     private Integer num ; //数量
 
+    private Integer accomplishNum;//完成数量
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date saleDate;//销售日期
 

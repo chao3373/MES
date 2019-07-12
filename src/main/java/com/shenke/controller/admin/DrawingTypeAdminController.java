@@ -29,15 +29,10 @@ public class DrawingTypeAdminController {
 
     @RequestMapping("/addSonDrawing")
     public Map<String,Object> addSonDrawing(String smallIds, String bigDrawingId){
-        System.out.println("*********************");
-        System.out.println(smallIds);
-        System.out.println(bigDrawingId);
-        System.out.println("*********************");
         Map<String,Object> map = new HashMap<>();
         String idsStr[] = smallIds.split(",");
         for(int i =0 ;i<idsStr.length;i++){
             DrawingType drawingType = new DrawingType();
-            //drawingType.setBigDrawing(bigDrawingService.findById(Integer.parseInt(bigId)));
             drawingType.setBigDrawing(bigDrawingService.findBigDrawingId(bigDrawingId));
             drawingType.setDrawing(drawingService.findById(Integer.parseInt(idsStr[i])));
             drawingTypeService.addSonDrawing(drawingType);

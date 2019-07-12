@@ -30,10 +30,6 @@ public class User {
 	@Column(length = 10)
 	private String sex;//性别
 
-	@ManyToOne
-	@JoinColumn(name="keShiId")
-	private KeShi keShiId;//所属科室
-	
 	@Column(length=1000)
 	private String remarks;//备注
 	
@@ -49,7 +45,6 @@ public class User {
 				", password='" + password + '\'' +
 				", trueName='" + trueName + '\'' +
 				", sex='" + sex + '\'' +
-				", keShiId=" + keShiId +
 				", remarks='" + remarks + '\'' +
 				", roles='" + roles + '\'' +
 				'}';
@@ -101,14 +96,6 @@ public class User {
 
 	public void setSex(String sex) {
 		this.sex = sex;
-	}
-
-	public KeShi getKeShiId() {
-		return keShiId;
-	}
-
-	public void setKeShiId(KeShi keShiId) {
-		this.keShiId = keShiId;
 	}
 
 	public String getRemarks() {

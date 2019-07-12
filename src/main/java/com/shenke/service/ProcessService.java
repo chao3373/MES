@@ -22,7 +22,6 @@ public interface ProcessService {
      */
     public Process findById(Integer id);
 
-    public void saveDrawingProcess(DrawingProcess drawingProcess);
 
     public List<Process> findProcessCombobox(String name);
 }

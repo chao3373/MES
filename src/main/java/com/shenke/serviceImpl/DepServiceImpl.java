@@ -25,7 +25,7 @@ public class DepServiceImpl implements DepService{
 	
 	@Override
 	public Dep findById(Integer id) {
-		return depRepository.getOne(id);
+		return depRepository.findById(id).get();
 	}
 
 	@Override

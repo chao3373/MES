@@ -85,7 +85,7 @@ public class ClerkServiceImpl implements ClerkService {
 
 	@Override
 	public Clerk findById(Integer id) {
-		return clerkRepository.getOne(id);
+		return clerkRepository.findById(id).get();
 	}
 
 	@Override

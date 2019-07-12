@@ -14,55 +14,13 @@
     <script type="text/javascript"
             src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="/static/js/date.js"></script>
+    <style type="text/css">
+        .spanClass{
+            font-size: 15px;
+        }
+    </style>
     <script type="text/javascript">
-        var url;
 
-        function formatUser(val, row) {
-            return val.trueName + "&nbsp;(" + val.userName + ")&nbsp;";
-        }
-
-        function searchSale() {
-            var clientId;
-            var clerkId;
-            if (isNaN($("#s_client").combobox("getValue"))) {
-                clientId = "";
-            } else {
-                clientId = $("#s_client").combobox("getValue");
-            }
-
-            if (isNaN($("#s_clerk").combobox("getValue"))) {
-                clerkId = "";
-            } else {
-                clerkId = $("#s_clerk").combobox("getValue");
-            }
-            $("#dg").datagrid({
-                url: '/admin/saleList/list',
-                queryParams: {
-                    saleNumber: $("#s_saleNumber").val(),
-                    clientId: clientId,
-                    clerkId: clerkId,
-                    bSaleDate: $("#s_bSaleDate").datebox("getValue"),
-                    eSaleDate: $("#s_eSaleDate").datebox("getValue")
-                }
-            });
-        }
-
-        function formatSupplier(val, row) {
-            return val.name;
-        }
-
-        //格式化日期
-        Date.prototype.format = function (formatStr) {
-            var str = formatStr;
-            var Week = ['日', '一', '二', '三', '四', '五', '六'];
-            str = str.replace(/yyyy|YYYY/, this.getFullYear());
-            str = str.replace(/MM/,
-                (this.getMonth() + 1) > 9 ? (this.getMonth() + 1).toString()
-                    : '0' + (this.getMonth() + 1));
-            str = str.replace(/dd|DD/, this.getDate() > 9 ? this.getDate()
-                .toString() : '0' + this.getDate());
-            return str;
-        }
 
         //显示时间数据时先进行格式化
         function formatDate(val, row) {
@@ -73,32 +31,9 @@
             return dateType;
         }
 
-        //字符串转日期
-        function strToDate(val) {
-            var dateType = "";
-            var date = new Date(val).getTime();
-            return date;
-        }
-
-        function strDate(val) {
-            var dateType = "";
-            var date = new Date(val).format("yyyy-MM-dd");
-            return date;
-        }
-
-
-        function formatUser(val, row) {
-            return val.trueName + "&nbsp;(" + val.userName + ")&nbsp;";
-        }
-
         $(document).ready(function () {
-            $('#dg').datagrid({
-                rowStyler: function (index, row) {
-                    if (row.cunzai == null) {
-                        return 'background-color:orange;color:blue;font-weight:bold;';
-                    }
-                }
-            });
+
+            loadProcess();
             load();
             $("#dg").datagrid({
                 url:'/admin/saleList/xiadanSuccess',
@@ -182,22 +117,37 @@
 
         });
 
-
-
-
-        //打开子图选择对话框
-        function add() {
-            var row = $("#dg").datagrid("getSelected");
-            if(row == null){
-                $.messager.alert("系统提示","请选择订单信息");
-                return;
-            }
-            if(row.cunzai == null){
-                $.messager.alert("系统提示","请先添加大图信息");
-                return;
-            }
-            $("#addSonDrawing").dialog("open").dialog("setTitle", "选择子图");
+        function loadProcess(){
+            $("#tb").datagrid({
+                columns:[[
+                    {
+                        field: 'cb',
+                        checkbox: "true",
+                        align: "center"
+                    },{
+                        field:'id',
+                        title:'id',
+                        width:100,
+                        hidden:'true',
+                        align:'center'
+                    },{
+                        field:'name',
+                        title:'工序名称',
+                        width:100,
+                        align:'center'
+                    },{
+                        field:'pNum',
+                        title:'理论工序序号',
+                        width:100,
+                        align:'center'
+                    }
+                ]]
+            });
         }
+
+
+
+
 
         //弹出的对话框中的值
         function load(){
@@ -252,100 +202,38 @@
 
         }
 
-        function addS() {
-            //console.log($("#son").datagrid("getSelections"));
-            var obj = $("#son").datagrid("getSelections");
-            for(var i=0; i<obj.length; i++){
-                $("#addSon").datagrid("appendRow",obj[i]);
-            }
-            $("#addSonDrawing").dialog("close");
-        }
-
-        function OK() {
-            var bigDrawingId = $("#dg").datagrid("getSelected").tuzhiId;
-            var smallDrawing = $("#addSon").datagrid("getRows");
-            console.log(smallDrawing);
-            var smallArr = [];
-            for(var i=0;i<smallDrawing.length;i++){
-                smallArr.push(smallDrawing[i].id);
-            }
-            var smallIds = smallArr.join(",");
-            $.post("/admin/drawingType/addSonDrawing",
-                {
-                    bigDrawingId:bigDrawingId,
-                    smallIds:smallIds
-                },function (result) {
-                if(result.success){
-                    $.messager.alert("系统提示","添加成功");
-                }
-                else {
-                    $.messager.alert("系统提示","添加失败");
-                }
-            },"json")
-
-            //console.log(smallDrawing);
-        }
-
-        //添加大图纸信息
-        var rowss;
-        function addBidDrawingInfo(){
-            rowss = $("#dg").datagrid("getSelected");
-            if(rowss.cunzai != null){
-                $.messager.alert("系统提示","大图信息已存在");
-                return;
-            }
-            $("#dlg").dialog("open").dialog("setTitle","添加图纸信息");
-            $("#add-name").val(rowss.tuzhiName);
-            $("#add-drawingId").val(rowss.tuzhiId);
-        }
-
-        //关闭添加大图对话框
-        function closeDialog() {
-            $("#dlg").dialog("close");
-        }
-
-
-        //保存大图信息
-        function saveRole() {
-            $("#fm").form("submit", {
-                url : "/admin/bigdrawing/save",
-                success : function(result) {
-                    var result = eval('(' + result + ')');
-                    if (result.success) {
-                        $.messager.alert("系统提示", "保存成功！");
-                        $.post("/admin/saleList/addCunZai",{
-                            id:rowss.id
-                        },function(){
-                        },"json")
-                        $("#dlg").dialog("close");
-                        $("#dg").datagrid("reload");
-                    } else {
-                        $.messager.alert("系统提示", result.errorInfo);
-                    }
-                }
-            });
-        }
 
         function addProcess() {
             var row= $("#addSon").datagrid("getSelected");
+            var rows = $("#dg").datagrid("getSelected");
             if(row==null){
                 $.messager.alert("系统提示","请选择要设置工序工时的图纸！");
                 return;
             }
-            $("#dlg2").dialog("open");
+            $("#dlg1").dialog("open");
+            $("#dh").text(rows.saleNumber);
+            $("#dtz").text(rows.tuzhiId);
+            $("#xtz").text(row.drawingId);
         }
+
+
 
         function saveProcess() {
             var row = $("#addSon").datagrid("getSelected");
             var rows = $("#dg").datagrid("getSelected");
-            console.log(row.id);
-            $.post("/admin/process/saveProcess",
+            var rowss = $("#tb").datagrid("getSelections");
+            var Arr = [];
+            for (var i = 0; i < rowss.length; i++){
+                Arr.push(rowss[i].id);
+            }
+            var Ids = Arr.join(",");
+            $.post("/admin/drawingProcess/saveProcess",
                 {
                     DrawingId:row.id,
                     BigDrawingId:rows.id,
-                    ProcessId:$("#name").combobox("getValue"),
-                    neiRong:$("#neiRong").val(),
-                    manHour:$("#manHour").val()
+                    ProcessIds:Ids,
+                    saleNumber:rows.saleNumber,
+                    num:rows.num
                 },function (result) {
                     if(result.success){
                         $.messager.alert("系统提示","添加成功！");
@@ -358,14 +246,14 @@
         }
         //关闭添加大图对话框
         function closedia() {
-            $("#dlg2").dialog("close");
+            $("#dlg1").dialog("close");
         }
 
     </script>
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
 <div region="north" style="height: 300px">
-    <table id="dg" title="图纸展开审核" class="easyui-datagrid"
+    <table id="dg" class="easyui-datagrid"
            fitColumns="false" rownumbers="true" singleSelect="true" fit="true"
            toolbar="#tb1" split="true">
         <thead>
@@ -390,14 +278,11 @@
     <!-- dg顶部工具栏 -->
     <div id="tb1">
         <fieldset style="border-color: #E7F0FF">
-            <legend>查询设置</legend>
+            <legend>生产任务单号：</legend>
             &nbsp;单据号&nbsp; <input type="text" id="s_saleNumber" size="15"
                                    onkeydown="if(event.keyCode==13) searchSale()"/>
             &nbsp;&nbsp;<a href="javascript:searchSale()"
                            class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
-            &nbsp;&nbsp;<a href="javascript:addBidDrawingInfo()"
-                           class="easyui-linkbutton" iconCls="icon-add" plain="true">添加大图信息</a>
-            <span style="background:orange">背景色为橙色的需要添加图纸信息及所包含子图</span>
         </fieldset>
     </div>
 </div>
@@ -418,91 +303,33 @@
 
 <div id="tb2">
     <div>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:add()"
-                                         class="easyui-linkbutton" iconCls="icon-add" plain="true">添加子图</a>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:OK()"
-                                         class="easyui-linkbutton" iconCls="icon-ok" plain="true">确定</a>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:addProcess()"
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:addProcess()"
                                          class="easyui-linkbutton" iconCls="icon-add" plain="true">添加工时工序</a>
     </div>
 </div>
 
-<!--弹出来添加子图的对话框-->
-<div class="easyui-dialog" id="addSonDrawing" fit="true" closed="true">
-    <table id="son" class="easyui-datagrid" fitColumns="false"
-           rownumbers="true" url="/admin/drawing/list" toolbar="#tb"
-           fit="true">
+
+<div class="easyui-dialog" title="添加工序" id="dlg1" fit="true" closed="true">
+    <table id="tb" class="easyui-datagrid" fitColumns="false" buttons="#buttons"  toolbar="#toolbar"
+           rownumbers="true" url="/admin/process/list">
+        <thead>
+        <th field="name" width="200" align="center">工序名称</th>
+        <th field="pNum" width="200" align="center">理论工序序号</th>
+        </thead>
     </table>
-    <div id="tb" >
-        <a href="javascript:addS()"
-           class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a>
+    <div id="toolbar" style="padding: 15px">
+        <span class="spanClass">请为销售单号为</span><span id="dh"></span>
+        <span class="spanClass">中大图纸号为</span><span id="dtz"></span>
+        <span class="spanClass">中小图纸号为</span><span id="xtz"></span>
+        <span class="spanClass">的设置工序</span>>
+    </div>
+    <div id="buttons">
+                <a href="javascript:saveProcess()" class="easyui-linkbutton"
+                   iconCls="icon-ok">保存</a>
+                <a href="javascript:closedia()"  class="easyui-linkbutton"
+                   iconCls="icon-cancel">关闭</a>
     </div>
 </div>
-
-<!--添加大图信息-->
-<div id="dlg" class="easyui-dialog"
-     style="width: 450px; height: 250px; padding: 10px 20px" closed="true"
-     buttons="#dlg-buttons">
-    <form id="fm" method="post" enctype="multipart/form-data">
-        <table cellspacing="8px">
-            <tr>
-                <td>图纸名称：</td>
-                <td><input type="text" id="add-name" name="name"
-                           class="easyui-validatebox" required="true" /></td>
-            </tr>
-            <tr>
-                <td>图纸编号：</td>
-                <td><input type="text" id="add-drawingId" name="drawingId"
-                           class="easyui-validatebox" required="true" /></td>
-            </tr>
-            <tr>
-                <td>图纸：</td>
-                <td><input id="add-drawingURL"  type="file" name="drawingURL"/></td>
-            </tr>
-        </table>
-    </form>
-</div>
-<div id="dlg-buttons">
-    <a href="javascript:saveRole()" class="easyui-linkbutton"
-       iconCls="icon-ok">保存</a> <a href="javascript:closeDialog()"
-                                   class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
-</div>
-
-
-<!--添加工时工序-->
-<div id="dlg2" class="easyui-dialog"
-     style="width: 450px; height: 250px; padding: 10px 20px" closed="true"
-     buttons="#dlg-buttons2">
-    <form id="fm2" method="post" enctype="multipart/form-data">
-        <table cellspacing="8px">
-            <tr>
-                <td>工序：</td>
-                <td>
-                    <input class="easyui-combobox" id="name" name="name"
-                style="width: 100px" data-options="panelHeight:'auto',
-                valueField:'id',textField:'name',url:'/admin/process/processCombobox'" />
-                </td>
-            </tr>
-            <tr>
-                <td>工序内容：</td>
-                <td><input type="text" id="neiRong" name="neiRong"
-                           class="easyui-validatebox" required="true" /></td>
-            </tr>
-            <tr>
-                <td>所需工时：</td>
-                <td><input type="text" id="manHour" name="manHour"
-                           class="easyui-validatebox" required="true" /></td>
-            </tr>
-        </table>
-    </form>
-</div>
-<div id="dlg-buttons2">
-<a href="javascript:saveProcess()" class="easyui-linkbutton"
-   iconCls="icon-ok">保存</a> <a href="javascript:closedia()"
-                               class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
-</div>
-
-
 
 </body>
 </html>
