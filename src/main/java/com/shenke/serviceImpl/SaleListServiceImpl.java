@@ -1,5 +1,6 @@
 package com.shenke.serviceImpl;
 
+import com.shenke.entity.DrawingProcess;
 import com.shenke.entity.SaleList;
 import com.shenke.repository.SaleListRepository;
 import com.shenke.service.SaleListService;
@@ -31,6 +32,25 @@ public class SaleListServiceImpl implements SaleListService {
     @Override
     public void addCunZai(Integer id) {
         saleListRepository.addCunZai(id);
+    }
+
+    @Override
+    public void setState(Integer id, String state ) {
+        System.out.println("****************************");
+        System.out.println(id + state);
+        System.out.println("****************************");
+        saleListRepository.setState(id,state);
+    }
+
+    @Override
+    public void setPrepareTime(Integer id,Double prepareTime) {
+        saleListRepository.setPrepareTime(id,prepareTime);
+    }
+
+
+    @Override
+    public List<SaleList> findByState(String state) {
+        return saleListRepository.findByState(state);
     }
 
 

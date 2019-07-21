@@ -19,10 +19,13 @@ public class DrawingProcess {
     @JoinColumn
     private Drawing drawing; //小图纸对象
 
-
     @ManyToOne
     @JoinColumn
     private Process process;//工序对象
+
+    @ManyToOne
+    @JoinColumn
+    private SaleList saleList;
 
     private String state; //完成状态
 
@@ -32,6 +35,23 @@ public class DrawingProcess {
 
     private String saleNumber;//销售单号
 
+    private String informNum;//生产通知单号
+
+    public String getInformNum() {
+        return informNum;
+    }
+
+    public void setInformNum(String informNum) {
+        this.informNum = informNum;
+    }
+
+    public SaleList getSaleList() {
+        return saleList;
+    }
+
+    public void setSaleList(SaleList saleList) {
+        this.saleList = saleList;
+    }
 
     public String getSaleNumber() {
         return saleNumber;
@@ -105,10 +125,12 @@ public class DrawingProcess {
                 ", bigDrawing=" + bigDrawing +
                 ", drawing=" + drawing +
                 ", process=" + process +
+                ", saleList=" + saleList +
                 ", state='" + state + '\'' +
                 ", num=" + num +
                 ", accomplishNum=" + accomplishNum +
                 ", saleNumber='" + saleNumber + '\'' +
+                ", informNum='" + informNum + '\'' +
                 '}';
     }
 }

@@ -262,6 +262,7 @@
         }
 
         function OK() {
+            var id = $("#dg").datagrid("getSelected").id;
             var bigDrawingId = $("#dg").datagrid("getSelected").tuzhiId;
             var smallDrawing = $("#addSon").datagrid("getRows");
             console.log(smallDrawing);
@@ -272,6 +273,7 @@
             var smallIds = smallArr.join(",");
             $.post("/admin/drawingType/addSonDrawing",
                 {
+                    id:id,
                     bigDrawingId:bigDrawingId,
                     smallIds:smallIds
                 },function (result) {
@@ -326,14 +328,7 @@
             });
         }
 
-        function addProcess() {
-            var row= $("#addSon").datagrid("getSelected");
-            if(row==null){
-                $.messager.alert("系统提示","请选择要设置工序工时的图纸！");
-                return;
-            }
-            $("#dlg2").dialog("open");
-        }
+
 
         function saveProcess() {
             var row = $("#addSon").datagrid("getSelected");
@@ -359,6 +354,30 @@
         //关闭添加大图对话框
         function closedia() {
             $("#dlg2").dialog("close");
+        }
+
+        function addProcess(id) {
+            if(id.length<8){
+                var j = "";
+                for (var i = 8 - json.id.length; i > 0; i--) {
+                    j += "0";
+                }
+            }
+            j += id;
+            var tm = "<img style='' src='/tm/" + j + ".png'/>";
+            if (window.showModalDialog) {
+                window.showModalDialog(
+                    "print.html",
+                    tm,
+                    "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                console.log(tm);
+            } else {
+                window.open(
+                    "print.html",
+                    tm,
+                    "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                console.log(tm);
+            }
         }
 
     </script>
@@ -422,7 +441,7 @@
                                          class="easyui-linkbutton" iconCls="icon-add" plain="true">添加子图</a>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:OK()"
                                          class="easyui-linkbutton" iconCls="icon-ok" plain="true">确定</a>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:addProcess()"
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:addProcess(1)"
                                          class="easyui-linkbutton" iconCls="icon-add" plain="true">添加工时工序</a>
     </div>
 </div>

@@ -26,7 +26,7 @@ public class ProcessServiceImpl implements ProcessService {
 
     @Override
     public Process findById(Integer id) {
-        return processRepository.getOne(id);
+        return processRepository.findById(id).get();
     }
 
 

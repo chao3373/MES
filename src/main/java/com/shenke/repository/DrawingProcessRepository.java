@@ -12,22 +12,6 @@ import java.util.List;
 public interface DrawingProcessRepository extends JpaRepository<DrawingProcess,Integer>, JpaSpecificationExecutor<DrawingProcess> {
 
     /**
-     * 查询状态为空的信息
-     * @return
-     */
-    @Query(value = "select * from t_drawing_process where state ='未审核'",nativeQuery = true)
-    public List<DrawingProcess> findStateNull();
-
-
-
-    /**
-     * 查找状态为审核通过的
-     * @return
-     */
-    @Query(value = "select * from t_drawing_process where state = '审核通过'",nativeQuery = true)
-    public List<DrawingProcess> findAuditPass();
-
-    /**
      * 查询状态为任务下发的信息
      * @return
      */
@@ -51,11 +35,33 @@ public interface DrawingProcessRepository extends JpaRepository<DrawingProcess,I
     @Query(value = "update t_drawing_process set accomplish_num =?1 where id =?2",nativeQuery = true)
     public void updateAccomplishNum(Integer accomplishNum,Integer id);
 
-    /**
-     * 生产完成
-     * @param id
-     */
+
     @Modifying
     @Query(value = "update t_drawing_process set state = '生产完成' where id =?1",nativeQuery = true)
     public void setState(Integer id);
+
+
+    /**
+     * 查找同一单号下未生产的最小工序
+     * @param informNum
+     * @return
+     */
+    @Query(value = "SELECT MIN(process_id) FROM t_drawing_process WHERE inform_num =?1 AND state = '任务下发'",nativeQuery = true)
+    public Integer findMinProcess(String informNum);
+
+    /**
+     * 获取当天最大的生产通知单号
+     * @return
+     */
+    @Query(value = "SELECT MAX(inform_Num) FROM t_drawing_process ", nativeQuery = true)
+    public String getTodayMaxPurchaseNumber();
+
+    /**
+     * 按照通知单号查找
+     * @param informNum
+     * @return
+     */
+    @Query(value = "select state from t_drawing_process where inform_num =?1",nativeQuery = true)
+    public Object[] findStateByInformNum(String informNum);
+
 }

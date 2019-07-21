@@ -6,12 +6,16 @@ import com.shenke.service.BigDrawingService;
 import com.shenke.service.DrawingProcessService;
 import com.shenke.service.DrawingService;
 import com.shenke.service.ProcessService;
+import com.shenke.util.DateUtil;
+import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.persistence.ManyToOne;
+import java.lang.reflect.Array;
 import java.security.PrivateKey;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,17 +35,6 @@ public class DrawingProcessAdminController {
 
     @Resource
     private ProcessService processService;
-    /**
-     * 查找状态为空的信息
-     * @return
-     */
-    @RequestMapping("/findStateNull")
-    public Map<String,Object> findStateNull(){
-        Map<String,Object> map = new HashMap<>();
-        List<DrawingProcess> list = drawingProcessService.findStateNull();
-        map.put("rows",list);
-        return map;
-    }
 
     /**
      * 生产完成
@@ -57,18 +50,6 @@ public class DrawingProcessAdminController {
     }
 
     /**
-     * 查找状态为审核通过的信息
-     * @return
-     */
-    @RequestMapping("/findAuditPass")
-    public Map<String,Object> findAuditPass(){
-        Map<String,Object> map = new HashMap<>();
-        List<DrawingProcess> list = drawingProcessService.findAuditPass();
-        map.put("rows",list);
-        return map;
-    }
-
-    /**
      * 保存工序
      * @param DrawingId
      * @param ProcessIds
@@ -78,19 +59,23 @@ public class DrawingProcessAdminController {
      * @return
      */
     @RequestMapping("/saveProcess")
-    public Map<String,Object> saveProcess(Integer DrawingId,String ProcessIds,Integer BigDrawingId,String saleNumber,Integer num){
+    public Map<String,Object> saveProcess(Integer DrawingId,String ProcessIds,String BigDrawingId,
+                                          String saleNumber,Integer num,String informNum) {
         Map<String,Object> map = new HashMap<>();
+        Integer id = bigDrawingService.findIdByDrawingId(BigDrawingId);
         String idsStr[] = ProcessIds.split(",");
         for(int i=0;i<idsStr.length;i++) {
             DrawingProcess drawingProcess = new DrawingProcess();
-            drawingProcess.setBigDrawing(bigDrawingService.findById(BigDrawingId));
+            drawingProcess.setBigDrawing(bigDrawingService.findById(id));
             drawingProcess.setDrawing(drawingService.findById(DrawingId)); //根据ID查询Drawing对象
             drawingProcess.setProcess(processService.findById(Integer.parseInt(idsStr[i])));
             drawingProcess.setState("任务下发");
             drawingProcess.setSaleNumber(saleNumber);
             drawingProcess.setNum(num);
             drawingProcess.setAccomplishNum(0);
+            drawingProcess.setInformNum(informNum);
 
+            System.out.println(drawingProcess);
             drawingProcessService.saveDrawingProcess(drawingProcess);
         }
         map.put("success",true);
@@ -130,10 +115,74 @@ public class DrawingProcessAdminController {
      * @return
      */
     @RequestMapping("/updateAccomplishNum")
-    public Map<String,Object> updateAccomplishNum(Integer accomplishNum,Integer id){
+    public Map<String,Object> updateAccomplishNum(Integer accomplishNum,Integer id,String informNum){
         Map<String,Object> map = new HashMap<>();
         drawingProcessService.updateAccomplishNum(accomplishNum,id);
+
         map.put("success",true);
+
+
+        Object []a = drawingProcessService.findStateByInformNum(informNum);
+        String Arr = Arrays.deepToString(a);
+
+        String state;
+        int m=0;
+        /*for(int i = 0 ;i<a.length;i++){
+            if(a[i] == "任务下发"){
+                m=m+1;
+            }
+        }*/
+
+        for(int i =0 ;i< a.length ;i++){
+            System.out.println(a[i]);
+            if(a[i].toString() == "生产完成"){
+                System.out.println("hahahhahahahahahahha");
+            }
+        }
+
+
+        /*if(m == a.length){
+            System.out.println("hahahahahahahhaha生产完成啦");
+        }
+        else{
+            System.out.println("没有生产完成");
+        }*/
+
         return map;
+    }
+
+    /**
+     * 判断所选工序之前还有没有未完成工序
+     * @param processId
+     * @param informNum
+     * @return
+     */
+    @RequestMapping("/whetherSamllerInformNum")
+    public Map<String,Object> whetherSamllerInformNum(Integer processId,String informNum){
+        Map<String,Object> map = new HashMap<>();
+        Integer min = drawingProcessService.findMinProcess(informNum);
+        if(processId==min){
+            map.put("success",true);
+        } else {
+          map.put("success",false);
+        }
+        return map;
+    }
+
+    /**
+     * 获取生产单号
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/genCode")
+    public String genCode() throws Exception {
+        StringBuffer code = new StringBuffer("SC");
+        String informNum = drawingProcessService.getTodayMaxinformNumNumber();
+        if (informNum != null) {
+            code.append(StringUtil.formatCode(informNum));
+        } else {
+            code.append("0000001");
+        }
+        return code.toString();
     }
 }

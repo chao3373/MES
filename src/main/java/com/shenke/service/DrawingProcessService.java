@@ -7,23 +7,12 @@ import java.util.List;
 
 public interface DrawingProcessService {
 
-    /**
-     * 查询所有的信息
-     * @return
-     */
-    public List<DrawingProcess> findStateNull();
 
     /**
      * 生产完成
      * @param id
      */
     public void setState(Integer id);
-
-    /**
-     * 查找审核通过的信息
-     * @return
-     */
-    public List<DrawingProcess> findAuditPass();
 
     /**
      * 保存图纸所含工序
@@ -55,4 +44,25 @@ public interface DrawingProcessService {
      * @return
      */
     public DrawingProcess findById(Integer id);
+
+    /**
+     * 查找某一通知单号的下未生产的最初工序
+     * @param informNum
+     * @return
+     */
+    public Integer findMinProcess(String informNum);
+
+    /**
+     * 获取最大的生产任务单号
+     * @return
+     */
+    public String getTodayMaxinformNumNumber();
+
+
+    /**
+     * 按照任务单号查找状态
+     * @param informNum
+     * @return
+     */
+    public Object[] findStateByInformNum(String informNum);
 }

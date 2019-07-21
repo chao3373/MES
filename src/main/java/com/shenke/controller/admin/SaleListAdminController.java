@@ -55,7 +55,7 @@ public class SaleListAdminController {
     }
 
     /**
-     * 查询下单成功的产品信息
+     * 查询状态为下单的产品信息
      * @return
      */
     @RequestMapping("/xiadanSuccess")
@@ -96,6 +96,34 @@ public class SaleListAdminController {
             list1.add(list.get(i).getDrawing());
         }
         map.put("rows",list1);
+        return map;
+    }
+
+    /**
+     * 设置订单状态
+     * @param id
+     * @param state
+     * @return
+     */
+    @RequestMapping("/setState")
+    public Map<String,Object> setState(Integer id,String state,Double prepareTime){
+        Map<String,Object> map = new HashMap<>();
+        saleListService.setState(id,state);
+        saleListService.setPrepareTime(id,prepareTime);
+        map.put("success",true);
+        return map;
+    }
+
+    /**
+     * 按照状态查询
+     * @param state
+     * @return
+     */
+    @RequestMapping("/findByState")
+    public Map<String,Object> findByState(String state){
+        Map<String,Object> map = new HashMap<>();
+        List<SaleList> list = saleListService.findByState(state);
+        map.put("rows",list);
         return map;
     }
 }

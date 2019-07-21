@@ -42,6 +42,6 @@ public class DrawingServiceImpl implements DrawingService {
     @Override
     public Drawing findById(Integer id) {
         //return drawingRepository.findByaId(id);
-        return drawingRepository.getOne(id);
+        return drawingRepository.findById(id).get();
     }
 }

@@ -51,6 +51,24 @@ public class SaleList {
 
     private String cunzai;//判断导入的订单是否已存在
 
+    private Double prepareTime;//准备工时
+
+    public Integer getAccomplishNum() {
+        return accomplishNum;
+    }
+
+    public void setAccomplishNum(Integer accomplishNum) {
+        this.accomplishNum = accomplishNum;
+    }
+
+    public Double getPrepareTime() {
+        return prepareTime;
+    }
+
+    public void setPrepareTime(Double prepareTime) {
+        this.prepareTime = prepareTime;
+    }
+
     public String getCunzai() {
         return cunzai;
     }
@@ -172,6 +190,7 @@ public class SaleList {
                 ", tuzhiName='" + tuzhiName + '\'' +
                 ", tuzhiId='" + tuzhiId + '\'' +
                 ", num=" + num +
+                ", accomplishNum=" + accomplishNum +
                 ", saleDate=" + saleDate +
                 ", referDate=" + referDate +
                 ", xiangmuId='" + xiangmuId + '\'' +
@@ -179,6 +198,7 @@ public class SaleList {
                 ", kucunzuzhi='" + kucunzuzhi + '\'' +
                 ", state='" + state + '\'' +
                 ", cunzai='" + cunzai + '\'' +
+                ", prepareTime=" + prepareTime +
                 '}';
     }
 }

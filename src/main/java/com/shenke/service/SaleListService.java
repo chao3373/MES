@@ -1,6 +1,7 @@
 package com.shenke.service;
 
 
+import com.shenke.entity.DrawingProcess;
 import com.shenke.entity.SaleList;
 import org.springframework.stereotype.Service;
 
@@ -24,5 +25,26 @@ public interface SaleListService {
      * @param id
      */
     public void addCunZai(Integer id);
+
+    /**
+     * 修改订单状态
+     * @param id
+     * @param state
+     */
+    public void setState(Integer id,String state);
+
+    /**
+     * 设置准备工时
+     * @param id
+     * @param prepareTime
+     */
+    public void setPrepareTime(Integer id,Double prepareTime);
+
+    /**
+     * 根据状态查找
+     * @param state
+     * @return
+     */
+    public List<SaleList> findByState(String state);
 
 }

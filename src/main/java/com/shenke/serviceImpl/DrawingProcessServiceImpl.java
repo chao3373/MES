@@ -17,19 +17,10 @@ public class DrawingProcessServiceImpl implements DrawingProcessService {
     @Resource
     private DrawingProcessRepository drawingProcessRepository;
 
-    @Override
-    public List<DrawingProcess> findStateNull() {
-        return drawingProcessRepository.findStateNull();
-    }
 
     @Override
     public void setState(Integer id) {
         drawingProcessRepository.setState(id);
-    }
-
-    @Override
-    public List<DrawingProcess> findAuditPass() {
-        return drawingProcessRepository.findAuditPass();
     }
 
     @Override
@@ -50,14 +41,7 @@ public class DrawingProcessServiceImpl implements DrawingProcessService {
     @Override
     public void updateAccomplishNum(Integer accomplishNum,Integer id) {
 
-        System.out.println("完成数量"+accomplishNum);
-        System.out.println("id"+id);
         DrawingProcess drawingProcess = this.findById(id);
-        System.out.println("*************对象*************");
-        System.out.println(drawingProcess);
-        System.out.println("*************对象*************");
-        //比较的是 传进来的完成数量与数据库中的相加是否等于num； 若等于 状态改为 生产完成； 若不等于 状态不变
-
         if((drawingProcess.getAccomplishNum()+accomplishNum) == drawingProcess.getNum()){
             drawingProcessRepository.updateAccomplishNum((drawingProcess.getAccomplishNum()+accomplishNum),id);
             drawingProcessRepository.setState(id);
@@ -70,5 +54,20 @@ public class DrawingProcessServiceImpl implements DrawingProcessService {
     @Override
     public DrawingProcess findById(Integer id) {
         return drawingProcessRepository.findById(id).get();
+    }
+
+    @Override
+    public Integer findMinProcess(String informNum) {
+        return drawingProcessRepository.findMinProcess(informNum);
+    }
+
+    @Override
+    public String getTodayMaxinformNumNumber() {
+        return drawingProcessRepository.getTodayMaxPurchaseNumber();
+    }
+
+    @Override
+    public Object[] findStateByInformNum(String informNum) {
+        return drawingProcessRepository.findStateByInformNum(informNum);
     }
 }

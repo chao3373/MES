@@ -32,11 +32,11 @@
         }
 
         $(document).ready(function () {
-
+            $("#informNum").load("/admin/drawingProcess/genCode")
             loadProcess();
             load();
             $("#dg").datagrid({
-                url:'/admin/saleList/xiadanSuccess',
+                url:'/admin/saleList/findByState?state='+"审核通过",
                 columns: [[
                     {
                         field: 'cb',
@@ -230,10 +230,11 @@
             $.post("/admin/drawingProcess/saveProcess",
                 {
                     DrawingId:row.id,
-                    BigDrawingId:rows.id,
+                    BigDrawingId:rows.tuzhiId,
                     ProcessIds:Ids,
                     saleNumber:rows.saleNumber,
-                    num:rows.num
+                    num:rows.num,
+                    informNum:$("#informNum").text()
                 },function (result) {
                     if(result.success){
                         $.messager.alert("系统提示","添加成功！");
@@ -278,8 +279,8 @@
     <!-- dg顶部工具栏 -->
     <div id="tb1">
         <fieldset style="border-color: #E7F0FF">
-            <legend>生产任务单号：</legend>
-            &nbsp;单据号&nbsp; <input type="text" id="s_saleNumber" size="15"
+            <legend>生产任务单号：<span id="informNum"></span></legend>
+            &nbsp;销售单号&nbsp; <input type="text" id="s_saleNumber" size="15"
                                    onkeydown="if(event.keyCode==13) searchSale()"/>
             &nbsp;&nbsp;<a href="javascript:searchSale()"
                            class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>

@@ -76,6 +76,11 @@
                         width: "150",
                         align: "center",
                         title: "完成数量"
+                    },{
+                        field: "informNum",
+                        width: "150",
+                        align: "center",
+                        title: "通知单号"
                     }
                 ]],
                 onLoadSuccess:function(data){
@@ -120,14 +125,19 @@
                 $.messager.alert("系统提示","请选择要加工的产品");
                 return;
             }
-            $.post("",{
-                pNum:row.process.pNum
-            },function () {
-
+            $.post("/admin/drawingProcess/whetherSamllerInformNum",{
+                informNum:row.informNum,
+                processId:row.process.id
+            },function (result) {
+                if(result.success){
+                    $("#dlg").dialog("open").dialog("setTitle", "添加工作量");
+                    restNum = row.num-row.accomplishNum;
+                }
+                else {
+                    $.messager.alert("系统提示","请先完成之前的工序")
+                    return;
+                }
             },"json");
-
-            $("#dlg").dialog("open").dialog("setTitle", "添加工作量");
-            restNum = row.num-row.accomplishNum;
         }
 
         function save() {
@@ -138,7 +148,8 @@
             else{
                 $.post("/admin/drawingProcess/updateAccomplishNum",{
                     accomplishNum:$("#productNum").val(),
-                    id:row.id
+                    id:row.id,
+                    informNum:row.informNum
                 },function (result) {
                     if(result.success){
                         $.messager.alert("系统提示","添加成功");
