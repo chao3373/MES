@@ -34,6 +34,13 @@ public interface SaleListService {
     public void setState(Integer id,String state);
 
     /**
+     * 设置展开单号
+     * @param id
+     * @param openNum
+     */
+    public void setOpenNum(Integer id,String openNum);
+
+    /**
      * 设置准备工时
      * @param id
      * @param prepareTime
@@ -46,5 +53,18 @@ public interface SaleListService {
      * @return
      */
     public List<SaleList> findByState(String state);
+
+    /**
+     * 获取最大展开单号
+     * @return
+     */
+    public String getMaxOpenNum();
+
+    /**
+     * 根据id查找订单
+     * @param id
+     * @return
+     */
+    public SaleList findById(Integer id);
 
 }

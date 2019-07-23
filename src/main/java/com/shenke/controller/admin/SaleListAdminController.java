@@ -46,7 +46,6 @@ public class SaleListAdminController {
            if(bigDrawingService.findBigDrawingId(saleList.getTuzhiId())!=null){
                saleList.setCunzai("存在");
            }
-
         }
         saleListService.save(plgList);
         map.put("success",true);

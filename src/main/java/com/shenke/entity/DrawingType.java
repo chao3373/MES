@@ -24,6 +24,8 @@ public class DrawingType {
     @JoinColumn
     private BigDrawing bigDrawing; //大图纸id
 
+
+
     public Integer getId() {
         return id;
     }

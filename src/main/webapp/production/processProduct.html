@@ -148,13 +148,20 @@
             else{
                 $.post("/admin/drawingProcess/updateAccomplishNum",{
                     accomplishNum:$("#productNum").val(),
-                    id:row.id,
-                    informNum:row.informNum
+                    id:row.id
                 },function (result) {
                     if(result.success){
                         $.messager.alert("系统提示","添加成功");
                         resetVal()
                         $("#dg").datagrid("reload");
+
+                        $.post("/admin/drawingProcess/isNoFinish",{
+                            informNum:row.informNum,
+                            saleListId:row.saleList.id
+                        },function () {
+
+                        },"json")
+
                     }
                     else {
                         $.messager.alert("系统提示","添加失败");

@@ -22,4 +22,6 @@ public class DrawingTypeServiceImpl implements DrawingTypeService {
     public List<DrawingType> findByBigDrawingId(Integer id) {
         return drawingTypeRespository.findByBigDrawingId(id);
     }
+
+
 }

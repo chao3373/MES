@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 public interface DrawingProcessRepository extends JpaRepository<DrawingProcess,Integer>, JpaSpecificationExecutor<DrawingProcess> {
@@ -61,7 +60,24 @@ public interface DrawingProcessRepository extends JpaRepository<DrawingProcess,I
      * @param informNum
      * @return
      */
-    @Query(value = "select state from t_drawing_process where inform_num =?1",nativeQuery = true)
-    public Object[] findStateByInformNum(String informNum);
+    @Query(value = "select * from t_drawing_process where inform_num =?1",nativeQuery = true)
+    public List<DrawingProcess> findByInformNum(String informNum);
+
+
+    /**
+     * 根据销售单号Id查询
+     * @param saleListId
+     * @return
+     */
+    @Query(value = "select * from t_drawing_process where sale_list_id =?1",nativeQuery = true)
+    public List<DrawingProcess> findBySaleListId(Integer saleListId);
+
+    /**
+     * 按照通知单号修改状态
+     * @param informNum
+     */
+    @Modifying
+    @Query(value = "update t_drawing_process set state = '准备入库' where inform_num =?1",nativeQuery = true)
+    public void updateStateByInformNum(String informNum);
 
 }

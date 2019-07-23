@@ -17,4 +17,6 @@ public interface DrawingTypeRespository extends JpaRepository<DrawingType,Intege
      */
     @Query(value = "select * from t_drawing_type where big_drawing_id =?1",nativeQuery = true)
     public List<DrawingType> findByBigDrawingId(Integer id);
+
+
 }

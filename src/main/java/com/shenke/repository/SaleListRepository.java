@@ -56,4 +56,20 @@ public interface SaleListRepository  extends JpaRepository<SaleList, Integer>, J
     @Query(value = "select * from t_sale_list where state =?1",nativeQuery = true)
     public List<SaleList> findByState(String state);
 
+    /**
+     * 设置展开单号
+     * @param id
+     * @param openNum
+     */
+    @Modifying
+    @Query(value = "update t_sale_list set open_num =?2 where id =?1",nativeQuery = true)
+    public void setOpenNum(Integer id,String openNum);
+
+    /**
+     * 获取最大展开单号
+     * @return
+     */
+    @Query(value = "SELECT MAX(open_num) FROM t_sale_list", nativeQuery = true)
+    public String getMaxOpenNum();
+
 }

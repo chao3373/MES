@@ -64,5 +64,22 @@ public interface DrawingProcessService {
      * @param informNum
      * @return
      */
-    public Object[] findStateByInformNum(String informNum);
+    public List<DrawingProcess> findByInformNum(String informNum);
+
+
+    /**
+     * 按照销售单号id查询
+     * @param saleListId
+     * @return
+     */
+    public List<DrawingProcess> findBySaleListId(Integer saleListId);
+
+
+    /**
+     * 按照任务单号修改状态
+     * @param informNum
+     */
+    public void updateStateByInformNum(String informNum);
+
+
 }

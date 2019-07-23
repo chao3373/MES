@@ -53,6 +53,16 @@ public class SaleList {
 
     private Double prepareTime;//准备工时
 
+    private String openNum;
+
+    public String getOpenNum() {
+        return openNum;
+    }
+
+    public void setOpenNum(String openNum) {
+        this.openNum = openNum;
+    }
+
     public Integer getAccomplishNum() {
         return accomplishNum;
     }
@@ -199,6 +209,7 @@ public class SaleList {
                 ", state='" + state + '\'' +
                 ", cunzai='" + cunzai + '\'' +
                 ", prepareTime=" + prepareTime +
+                ", openNum='" + openNum + '\'' +
                 '}';
     }
 }

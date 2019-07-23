@@ -80,20 +80,19 @@
          * 审核通过
          */
         function auditPass() {
-            var id = $("#dg").datagrid("getSelected").id;
             if($("#prepare").val() == ""){
                 $.messager.alert("系统提示","请添加准备工时")
                 return;
             }
 
-            if($("#dg").datagrid("getSelected").length!=null){
+            if($("#dg").datagrid("getSelected") == null){
                 $.messager.alert("系统提示","请选择要审核的信息");
                 return;
             }
 
             $.post("/admin/saleList/setState",
                 {
-                    id:id,
+                    id:$("#dg").datagrid("getSelected").id,
                     state:"审核通过",
                     prepareTime:$("#prepare").val()
                 },function (result) {

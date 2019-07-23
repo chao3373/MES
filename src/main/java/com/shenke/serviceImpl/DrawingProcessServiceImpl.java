@@ -1,5 +1,6 @@
 package com.shenke.serviceImpl;
 
+import com.shenke.entity.Drawing;
 import com.shenke.entity.DrawingProcess;
 import com.shenke.repository.DrawingProcessRepository;
 import com.shenke.service.DrawingProcessService;
@@ -49,6 +50,8 @@ public class DrawingProcessServiceImpl implements DrawingProcessService {
         else {
             drawingProcessRepository.updateAccomplishNum((drawingProcess.getAccomplishNum()+accomplishNum),id);
         }
+
+
     }
 
     @Override
@@ -67,7 +70,19 @@ public class DrawingProcessServiceImpl implements DrawingProcessService {
     }
 
     @Override
-    public Object[] findStateByInformNum(String informNum) {
-        return drawingProcessRepository.findStateByInformNum(informNum);
+    public List<DrawingProcess> findByInformNum(String informNum) {
+        return drawingProcessRepository.findByInformNum(informNum);
     }
+
+    @Override
+    public List<DrawingProcess> findBySaleListId(Integer saleListId) {
+        return drawingProcessRepository.findBySaleListId(saleListId);
+    }
+
+    @Override
+    public void updateStateByInformNum(String informNum) {
+        drawingProcessRepository.updateStateByInformNum(informNum);
+    }
+
+
 }

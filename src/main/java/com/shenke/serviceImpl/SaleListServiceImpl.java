@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.List;
 
-@Service("SaleListService")
+@Service("saleListService")
 @Transactional
 public class SaleListServiceImpl implements SaleListService {
 
@@ -36,10 +36,12 @@ public class SaleListServiceImpl implements SaleListService {
 
     @Override
     public void setState(Integer id, String state ) {
-        System.out.println("****************************");
-        System.out.println(id + state);
-        System.out.println("****************************");
         saleListRepository.setState(id,state);
+    }
+
+    @Override
+    public void setOpenNum(Integer id, String openNum) {
+        saleListRepository.setOpenNum(id,openNum);
     }
 
     @Override
@@ -53,5 +55,14 @@ public class SaleListServiceImpl implements SaleListService {
         return saleListRepository.findByState(state);
     }
 
+    @Override
+    public String getMaxOpenNum() {
+        return saleListRepository.getMaxOpenNum();
+    }
+
+    @Override
+    public SaleList findById(Integer id) {
+        return saleListRepository.findById(id).get();
+    }
 
 }

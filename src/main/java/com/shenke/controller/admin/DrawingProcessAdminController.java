@@ -2,10 +2,9 @@ package com.shenke.controller.admin;
 
 
 import com.shenke.entity.DrawingProcess;
-import com.shenke.service.BigDrawingService;
-import com.shenke.service.DrawingProcessService;
-import com.shenke.service.DrawingService;
-import com.shenke.service.ProcessService;
+import com.shenke.entity.SaleList;
+import com.shenke.entity.TemporaryStorage;
+import com.shenke.service.*;
 import com.shenke.util.DateUtil;
 import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +35,12 @@ public class DrawingProcessAdminController {
     @Resource
     private ProcessService processService;
 
+    @Resource
+    private TemporaryStorageService temporaryStorageService;
+
+    @Resource
+    private SaleListService saleListService;
+
     /**
      * 生产完成
      * @return
@@ -60,7 +65,7 @@ public class DrawingProcessAdminController {
      */
     @RequestMapping("/saveProcess")
     public Map<String,Object> saveProcess(Integer DrawingId,String ProcessIds,String BigDrawingId,
-                                          String saleNumber,Integer num,String informNum) {
+                                          String saleNumber,Integer num,String informNum,Integer saleListId) {
         Map<String,Object> map = new HashMap<>();
         Integer id = bigDrawingService.findIdByDrawingId(BigDrawingId);
         String idsStr[] = ProcessIds.split(",");
@@ -74,6 +79,7 @@ public class DrawingProcessAdminController {
             drawingProcess.setNum(num);
             drawingProcess.setAccomplishNum(0);
             drawingProcess.setInformNum(informNum);
+            drawingProcess.setSaleList(saleListService.findById(saleListId));
 
             System.out.println(drawingProcess);
             drawingProcessService.saveDrawingProcess(drawingProcess);
@@ -115,40 +121,46 @@ public class DrawingProcessAdminController {
      * @return
      */
     @RequestMapping("/updateAccomplishNum")
-    public Map<String,Object> updateAccomplishNum(Integer accomplishNum,Integer id,String informNum){
+    public Map<String,Object> updateAccomplishNum(Integer accomplishNum,Integer id){
         Map<String,Object> map = new HashMap<>();
         drawingProcessService.updateAccomplishNum(accomplishNum,id);
-
         map.put("success",true);
+        return map;
+    }
 
+    /**
+     * 判断生产通知单是否完成
+     * @param informNum
+     * @return
+     */
+    @RequestMapping("/isNoFinish")
+    public void isNoFinish(String informNum,Integer saleListId){
 
-        Object []a = drawingProcessService.findStateByInformNum(informNum);
-        String Arr = Arrays.deepToString(a);
-
-        String state;
-        int m=0;
-        /*for(int i = 0 ;i<a.length;i++){
-            if(a[i] == "任务下发"){
+        List<DrawingProcess> list = drawingProcessService.findByInformNum(informNum);
+        int m = 0;
+        for(DrawingProcess drawingProcess : list){
+            if(drawingProcess.getState().equals("生产完成")){
                 m=m+1;
             }
-        }*/
+        }
+        if(m == list.size()){
+            TemporaryStorage temporaryStorage = new TemporaryStorage();
+            temporaryStorage.setBigDrawing(bigDrawingService.findById(list.get(0).getBigDrawing().getId()));
+            temporaryStorage.setDrawing(drawingService.findById(list.get(0).getDrawing().getId()));
 
-        for(int i =0 ;i< a.length ;i++){
-            System.out.println(a[i]);
-            if(a[i].toString() == "生产完成"){
-                System.out.println("hahahhahahahahahahha");
+            temporaryStorageService.save(temporaryStorage);
+        }
+
+        List<DrawingProcess> list2 = drawingProcessService.findBySaleListId(saleListId);
+        int n = 0;
+        for(DrawingProcess drawingProcess : list2){
+            if(drawingProcess.getState().equals("生产完成")){
+                n = n + 1;
             }
         }
-
-
-        /*if(m == a.length){
-            System.out.println("hahahahahahahhaha生产完成啦");
+        if(n == list2.size()){
+            saleListService.setState(saleListId,"生产完成");
         }
-        else{
-            System.out.println("没有生产完成");
-        }*/
-
-        return map;
     }
 
     /**
@@ -185,4 +197,5 @@ public class DrawingProcessAdminController {
         }
         return code.toString();
     }
+
 }
