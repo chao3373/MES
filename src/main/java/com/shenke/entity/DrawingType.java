@@ -22,7 +22,7 @@ public class DrawingType {
 
     @ManyToOne
     @JoinColumn
-    private SaleList saleList; //大图纸id
+    private SaleList saleList; //订单
 
     private String state;//状态
 

@@ -41,6 +41,9 @@ public class DrawingProcessAdminController {
     @Resource
     private SaleListService saleListService;
 
+    @Resource
+    private DrawingTypeService drawingTypeService;
+
     /**
      * 生产完成
      * @return
@@ -64,7 +67,7 @@ public class DrawingProcessAdminController {
      * @return
      */
     @RequestMapping("/saveProcess")
-    public Map<String,Object> saveProcess(Integer DrawingId,String ProcessIds,String BigDrawingId,
+    public Map<String,Object> saveProcess(Integer ProcessTypeId,String state,Integer DrawingId,String ProcessIds,String BigDrawingId,
                                           String saleNumber,Integer num,String informNum,Integer saleListId) {
         Map<String,Object> map = new HashMap<>();
         Integer id = bigDrawingService.findIdByDrawingId(BigDrawingId);
@@ -85,6 +88,7 @@ public class DrawingProcessAdminController {
             drawingProcessService.saveDrawingProcess(drawingProcess);
         }
         map.put("success",true);
+        drawingTypeService.setState(ProcessTypeId,state);
         return map;
     }
 

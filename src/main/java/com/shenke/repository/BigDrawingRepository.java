@@ -21,13 +21,6 @@ public interface BigDrawingRepository extends JpaRepository<BigDrawing, Integer>
     public BigDrawing findDrawingId(String DrawingId);
 
 
-    /**
-     * 根据id查询
-     * @param id
-     * @return
-     */
-    @Query(value = "select * from t_big_drawing where id =?1",nativeQuery = true)
-    public BigDrawing findByaId(Integer id);
 
     @Query(value = "select id from  t_big_drawing where drawing_id =?1",nativeQuery = true)
     public Integer findIdByDrawingId(String drawingId);

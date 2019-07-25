@@ -32,6 +32,14 @@
         }
 
         $(document).ready(function () {
+            $('#addSon').datagrid({
+                rowStyler: function (index, row) {
+                    if (row.state == "任务下发") {
+                        return 'background-color:greenyellow;color:black;'
+                    }
+                }
+            });
+
             $("#informNum").load("/admin/drawingProcess/genCode")
             loadProcess();
             load();
@@ -84,24 +92,21 @@
                         width: "150",
                         align: "center",
                         title: "图纸编号"
-                    },{
-                        field: "openNum",
-                        width: "150",
-                        align: "center",
-                        title: "展开单号"
                     }
                 ]],
                 onClickRow:function (index,row) {
 
-
-
                     $("#addSon").datagrid({
                         url:"/admin/saleList/bigSmallDrawing",
                         queryParams:{
-                           drawingId:row.tuzhiId
+                           id:row.id
                         },
                         columns:[[
                             {
+                                field: 'cb',
+                                checkbox: "true",
+                                align: "center"
+                            },{
                                 field:'id',
                                 title:'id',
                                 width:100,
@@ -111,12 +116,27 @@
                                 field:'drawingId',
                                 title:'图纸编号',
                                 width:100,
-                                align:'center'
+                                align:'center',
+                                formatter: function (value, rows) {
+                                    if(rows.drawing){
+                                        return rows.drawing.drawingId;
+                                    }
+                                    else
+                                        return '';
+                                }
+
                             },{
                                 field:'name',
                                 title:'图纸名称',
                                 width:100,
-                                align:'center'
+                                align:'center',
+                                formatter: function (value, rows) {
+                                    if(rows.drawing){
+                                        return rows.drawing.name;
+                                    }
+                                    else
+                                        return '';
+                                }
                             }
                         ]]
                     });
@@ -198,12 +218,27 @@
                         field:'drawingId',
                         title:'图纸编号',
                         width:100,
-                        align:'center'
+                        align:'center',
+                        formatter: function (value, rows) {
+                            if(rows.drawing){
+                                return rows.drawing.drawingId;
+                            }
+                            else
+                                return '';
+                        }
+
                     },{
-                        field:'name',
+                        field:'drawingId',
                         title:'图纸名称',
                         width:100,
-                        align:'center'
+                        align:'center',
+                        formatter: function (value, rows) {
+                            if(rows.drawing){
+                                return rows.drawing.name;
+                            }
+                            else
+                                return '';
+                        }
                     }
                 ]]
             });
@@ -212,6 +247,7 @@
 
 
         function addProcess() {
+            console.log($("#addSon").datagrid("getSelected").id)
             var row= $("#addSon").datagrid("getSelected");
             var rows = $("#dg").datagrid("getSelected");
             if(row==null){
@@ -228,6 +264,7 @@
 
         function saveProcess() {
             var row = $("#addSon").datagrid("getSelected");
+            console.log(row.id)
             var rows = $("#dg").datagrid("getSelected");
             var rowss = $("#tb").datagrid("getSelections");
             var Arr = [];
@@ -237,7 +274,9 @@
             var Ids = Arr.join(",");
             $.post("/admin/drawingProcess/saveProcess",
                 {
-                    DrawingId:row.id,
+                    ProcessTypeId:row.id,
+                    state:"任务下发",
+                    DrawingId:row.drawing.id,
                     BigDrawingId:rows.tuzhiId,
                     ProcessIds:Ids,
                     saleNumber:rows.saleNumber,
@@ -247,6 +286,12 @@
                 },function (result) {
                     if(result.success){
                         alert("添加成功！");
+                        /*$.post("/admin/drawingType/setState",{
+                            id:$("#addSon").datagrid("getSelected").id,
+                            state:"任务下发"
+                        },function () {
+
+                        },"json")*/
                         window.location.reload();
                     }
                     else{
@@ -325,6 +370,8 @@
     <div>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:addProcess()"
                                          class="easyui-linkbutton" iconCls="icon-add" plain="true">添加工时工序</a>
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="background:greenyellow">背景色为绿色的为已分配工序的图纸信息</span>
     </div>
 </div>
 

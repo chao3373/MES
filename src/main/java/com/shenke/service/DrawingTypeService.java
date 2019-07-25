@@ -13,11 +13,19 @@ public interface DrawingTypeService {
     public void addSonDrawing(DrawingType drawingType);
 
     /**
-     * 根据大图id查询小图id
+     * 根据订单id查询小图id
      * @param id
      * @return
      */
-    public List<DrawingType> findByBigDrawingId(Integer id);
+    public List<DrawingType> findBySaleListId(Integer id);
+
+
+    /**
+     * 根据id修改状态
+     * @param id
+     * @param state
+     */
+    public void setState(Integer id,String state);
 
 
 }

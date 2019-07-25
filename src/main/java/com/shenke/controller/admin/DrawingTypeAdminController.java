@@ -49,6 +49,15 @@ public class DrawingTypeAdminController {
         saleListService.setState(id,"图纸展开");
         map.put("success",true);
         return map;
+    }
 
+    /**
+     * 根据id修改状态
+     * @param id
+     * @param state
+     */
+    @RequestMapping("/setState")
+    public void setState(Integer id,String state){
+        drawingTypeService.setState(id,state);
     }
 }

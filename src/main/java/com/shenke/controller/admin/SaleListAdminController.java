@@ -82,19 +82,17 @@ public class SaleListAdminController {
 
     /**
      * 点击大图纸信息显示所包含的小图纸信息
-     * @param drawingId
      * @return
      */
     @RequestMapping("/bigSmallDrawing")
-    public Map<String,Object> BigSmallDrawing(String drawingId){
+    public Map<String,Object> BigSmallDrawing(Integer id){
         Map<String,Object> map = new HashMap<>();
-        Integer id = bigDrawingService.findIdByDrawingId(drawingId);
-        List<DrawingType> list = drawingTypeService.findByBigDrawingId(id);
-        List<Drawing> list1 = new ArrayList<>();
-        for(int i = 0;i<list.size();i++){
+        List<DrawingType> list = drawingTypeService.findBySaleListId(id);
+        /* List<Drawing> list1 = new ArrayList<>();
+       for(int i = 0;i<list.size();i++){
             list1.add(list.get(i).getDrawing());
-        }
-        map.put("rows",list1);
+        }*/
+        map.put("rows",list);
         return map;
     }
 
