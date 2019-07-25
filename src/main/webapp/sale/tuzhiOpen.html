@@ -262,8 +262,20 @@
         }
 
         function OK() {
+
+            if($("#dg").datagrid("getSelected").backgroundColor == "orange"){
+                console.log("1111111");
+            }
+
+            if ( $("#dg").datagrid("getSelected") == null){
+                $.messager.alert("系统提示","请选择大图纸");
+                return;
+            }
+            if($("#addSon").datagrid("getRows").length == 0){
+                $.messager.alert("系统提示","请选择小图纸");
+                return;
+            }
             var id = $("#dg").datagrid("getSelected").id;
-            var bigDrawingId = $("#dg").datagrid("getSelected").tuzhiId;
             var smallDrawing = $("#addSon").datagrid("getRows");
             console.log(smallDrawing);
             var smallArr = [];
@@ -274,18 +286,18 @@
             $.post("/admin/drawingType/addSonDrawing",
                 {
                     id:id,
-                    bigDrawingId:bigDrawingId,
                     smallIds:smallIds
                 },function (result) {
-                if(result.success){
-                    $.messager.alert("系统提示","添加成功");
-                }
-                else {
-                    $.messager.alert("系统提示","添加失败");
-                }
+                    if(result.success){
+                        alert("添加成功");
+                        window.location.reload();
+                    }
+                    else {
+                        alert("添加失败");
+                    }
             },"json")
-
             //console.log(smallDrawing);
+
         }
 
         //添加大图纸信息

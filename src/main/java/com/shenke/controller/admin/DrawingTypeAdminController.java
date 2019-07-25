@@ -34,27 +34,18 @@ public class DrawingTypeAdminController {
 
 
     @RequestMapping("/addSonDrawing")
-    public Map<String,Object> addSonDrawing(Integer id,String smallIds, String bigDrawingId) throws Exception {
+    public Map<String,Object> addSonDrawing(String smallIds,Integer id) throws Exception {
         Map<String,Object> map = new HashMap<>();
         String idsStr[] = smallIds.split(",");
 
-        StringBuffer openNum = new StringBuffer("ZK");
-        String a = saleListService.getMaxOpenNum();
-        if (a != null) {
-            openNum.append(StringUtil.formatCode(a));
-        } else {
-            openNum.append("00001");
-        }
         for(int i =0 ;i<idsStr.length;i++){
             DrawingType drawingType = new DrawingType();
-            drawingType.setBigDrawing(bigDrawingService.findBigDrawingId(bigDrawingId));
+            drawingType.setSaleList(saleListService.findById(id));
             drawingType.setDrawing(drawingService.findById(Integer.parseInt(idsStr[i])));
+            drawingType.setState("图纸展开");
             drawingTypeService.addSonDrawing(drawingType);
         }
 
-        System.out.println("展开单号展开单号展开单号展开单号展开单号"+openNum);
-
-        saleListService.setOpenNum(id,openNum.toString());
         saleListService.setState(id,"图纸展开");
         map.put("success",true);
         return map;

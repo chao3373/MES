@@ -152,6 +152,7 @@ public class DrawingProcessAdminController {
         }
 
         List<DrawingProcess> list2 = drawingProcessService.findBySaleListId(saleListId);
+
         int n = 0;
         for(DrawingProcess drawingProcess : list2){
             if(drawingProcess.getState().equals("生产完成")){

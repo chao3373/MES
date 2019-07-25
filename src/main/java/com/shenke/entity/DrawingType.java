@@ -22,9 +22,9 @@ public class DrawingType {
 
     @ManyToOne
     @JoinColumn
-    private BigDrawing bigDrawing; //大图纸id
+    private SaleList saleList; //大图纸id
 
-
+    private String state;//状态
 
     public Integer getId() {
         return id;
@@ -42,12 +42,20 @@ public class DrawingType {
         this.drawing = drawing;
     }
 
-    public BigDrawing getBigDrawing() {
-        return bigDrawing;
+    public SaleList getSaleList() {
+        return saleList;
     }
 
-    public void setBigDrawing(BigDrawing bigDrawing) {
-        this.bigDrawing = bigDrawing;
+    public void setSaleList(SaleList saleList) {
+        this.saleList = saleList;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     @Override
@@ -55,7 +63,8 @@ public class DrawingType {
         return "DrawingType{" +
                 "id=" + id +
                 ", drawing=" + drawing +
-                ", bigDrawing=" + bigDrawing +
+                ", saleList=" + saleList +
+                ", state='" + state + '\'' +
                 '}';
     }
 }

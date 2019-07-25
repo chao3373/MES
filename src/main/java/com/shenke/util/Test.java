@@ -94,7 +94,7 @@ public class Test {
 
 
     public static void main(String[] args) {
-        String msg = "00001";
+        String msg = "AA-00001";
         String path = "D:/tm/" + msg + ".png";
         generateFile(msg, path);
     }
