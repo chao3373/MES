@@ -1,15 +1,11 @@
 package com.shenke.controller.admin;
 
-import com.shenke.entity.Brand;
 import com.shenke.entity.Client;
 import com.shenke.entity.Log;
-import com.shenke.service.BrandService;
 import com.shenke.service.ClientService;
 import com.shenke.service.LogService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -18,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 商标Controller
+ * 客户
  * 
  * @author Administrator
  *
@@ -30,6 +26,8 @@ public class ClientAdminController {
 	@Resource
 	private ClientService clientService;
 
+	@Resource
+	private LogService logService;
 	/**
 	 * 查询客户信息
 	 * 
@@ -42,6 +40,7 @@ public class ClientAdminController {
 		Map<String, Object> resultMap = new HashMap<>();
 		List<Client> entrepotList = clientService.list(client);
 		resultMap.put("rows", entrepotList);
+		logService.save(new Log(Log.SEARCH_ACTION, "查询客户信息"));
 		return resultMap;
 	}
 
@@ -61,6 +60,7 @@ public class ClientAdminController {
 		}
 		clientService.save(client);
 		resultMap.put("success", true);
+		logService.save(new Log(Log.UPDATE_ACTION, "添加或修改客户信息"));
 		return resultMap;
 	}
 
@@ -75,6 +75,7 @@ public class ClientAdminController {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		clientService.deleteById(id);
 		resultMap.put("success", true);
+		logService.save(new Log(Log.DELETE_ACTION, "删除客户信息"));
 		return resultMap;
 	}
 
@@ -90,6 +91,7 @@ public class ClientAdminController {
 		if (q == null) {
 			q = "";
 		}
+		logService.save(new Log(Log.SEARCH_ACTION, "模糊查询客户信息"));
 		return clientService.findCombobox("%" + q + "%");
 	}
 }

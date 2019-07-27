@@ -2,13 +2,11 @@ package com.shenke.controller.admin;
 
 
 import com.shenke.entity.Drawing;
+import com.shenke.entity.Log;
 import com.shenke.service.DrawingService;
-import com.shenke.util.StringUtil;
+import com.shenke.service.LogService;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -29,19 +27,21 @@ public class DrawingAdminController {
     @Resource
     private DrawingService drawingService;
 
+    @Resource
+    private LogService logService;
+
     /**
-     * 分页查询商标信息
+     * 分页查询图纸信息
      *
      * @param
      * @throws Exception
      */
     @RequestMapping("/list")
     public Map<String, Object> list(Drawing drawing) throws Exception {
-        System.out.println("==========");
-        System.out.println(drawing);
         Map<String, Object> map = new HashMap<>();
         List<Drawing> list = drawingService.list(drawing);
         map.put("rows", list);
+        logService.save(new Log(Log.SEARCH_ACTION, "查询图纸信息"));
         return map;
     }
 
@@ -50,7 +50,6 @@ public class DrawingAdminController {
      */
     @RequestMapping("/save")
     public Map<String, Object> save(HttpServletRequest request, Drawing drawing) {
-        System.out.println(drawing);
         if (!drawing.getDrawingURL().isEmpty()) {
             String fileName = drawing.getDrawingURL().getOriginalFilename();
             String path = "D:/drawing/";
@@ -62,7 +61,7 @@ public class DrawingAdminController {
             //将文件上传到目标文件中
             try {
                 drawing.getDrawingURL().transferTo(new File(path + File.separator + fileName));
-                drawing.setUrl(path + fileName);
+                drawing.setUrl(fileName);
                 System.out.println(drawing.getUrl());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -71,11 +70,12 @@ public class DrawingAdminController {
         Map<String, Object> resultMap = new HashMap<>();
         drawingService.save(drawing);
         resultMap.put("success", true);
+        logService.save(new Log(Log.UPDATE_ACTION, "添加或修改图纸信息"));
         return resultMap;
     }
 
     /**
-     * 删除商标信息
+     * 删除图纸信息
      *
      * @param id
      * @return
@@ -85,6 +85,7 @@ public class DrawingAdminController {
         Map<String, Object> map = new HashMap<>();
         drawingService.delete(id);
         map.put("success", true);
+        logService.save(new Log(Log.DELETE_ACTION, "删除图纸信息"));
         return map;
     }
 
@@ -101,6 +102,7 @@ public class DrawingAdminController {
         if (q == null) {
             q = "";
         }
+        logService.save(new Log(Log.SEARCH_ACTION, "模糊查询图纸信息"));
         return drawingService.conboList("%" + q + "%");
     }
 }

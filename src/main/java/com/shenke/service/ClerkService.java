@@ -18,59 +18,17 @@ public interface ClerkService {
 	 */
 	public  List<Clerk> findByDepId(Integer id);
 
-	/**
-	 * 分页查询员工信息
-	 * @param clerk
-	 * @param page
-	 * @param rows
-	 * @param asc
-	 * @param string
-	 * @return
-	 */
-	public List<Clerk> list(Clerk clerk, Integer page, Integer rows, Direction asc, String... string);
-
-	/**
-	 * 查询员工信息数量
-	 * @param goods
-	 * @return
-	 */
-	public Long getCount(Clerk clerk);
-
-	/**
-	 * 保存员工信息
-	 * @param clerk
-	 */
-	public void save(Clerk clerk);
-
-	/**
-	 * 根据id查询员工信息
-	 * @param id
-	 * @return
-	 */
-	public Clerk findById(Integer id);
-
-	/**
-	 * 根据id删除员工
+	/***
+	 * 根据depid删除员工信息
 	 * @param id
 	 */
-	public void deleteById(Integer id);
+	void deleteByDepId(Integer id);
 
-	/**
-	 * 下拉框模糊查询
-	 * @param string
-	 * @return
-	 */
-	public List<Clerk> findByName(String string);
+	List<Clerk> findAll();
 
-	/**
-	 * 模糊查询所有生产员工
-	* @Description:
-	* @Param:
-	* @return:
-	* @Author: Andy
-	* @Date:
-	*/
-	public List<Clerk> findByProName(String name);
+	void add(Clerk clerk);
 
-    public Clerk finName(String name);
+	void deleteByIds(Integer[] ids);
+
+	List<Clerk> clerkName(String clerkName);
 }

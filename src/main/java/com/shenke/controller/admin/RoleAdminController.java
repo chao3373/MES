@@ -111,6 +111,7 @@ public class RoleAdminController {
 		}
 		roleService.save(role);
 		resultMap.put("success", true);
+		logService.save(new Log(Log.UPDATE_ACTION, "添加或者修改角色信息"));
 		return resultMap;
 	}
 
@@ -130,6 +131,7 @@ public class RoleAdminController {
 		userRoleService.deleteByRoleId(id);
 		roleService.delete(id);
 		resultMap.put("success", true);
+		logService.save(new Log(Log.DELETE_ACTION, "删除角色信息"));
 		return resultMap;
 	}
 
@@ -223,6 +225,7 @@ public class RoleAdminController {
 			}
 		}
 		resultMap.put("success", true);
+		logService.save(new Log(Log.UPDATE_ACTION,"修改角色权限"));
 		return resultMap;
 	}
 

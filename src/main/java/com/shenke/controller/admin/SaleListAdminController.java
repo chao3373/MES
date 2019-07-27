@@ -5,9 +5,11 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shenke.entity.Drawing;
 import com.shenke.entity.DrawingType;
+import com.shenke.entity.Log;
 import com.shenke.entity.SaleList;
 import com.shenke.service.BigDrawingService;
 import com.shenke.service.DrawingTypeService;
+import com.shenke.service.LogService;
 import com.shenke.service.SaleListService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +32,9 @@ public class SaleListAdminController {
     @Resource
     private DrawingTypeService drawingTypeService;
 
+    @Resource
+    private LogService logService;
+
     /**
      * 保存添加订单
      * @return
@@ -49,7 +54,7 @@ public class SaleListAdminController {
         }
         saleListService.save(plgList);
         map.put("success",true);
-        System.out.println(map);
+        logService.save(new Log(Log.ADD_ACTION, "保存添加订单"));
         return map;
     }
 
@@ -62,7 +67,7 @@ public class SaleListAdminController {
         Map<String,Object> map = new HashMap<>();
         List<SaleList> list = saleListService.xiadan();
         map.put("rows",list);
-        System.out.println(map);
+        logService.save(new Log(Log.SEARCH_ACTION, "查询状态为下单的商品"));
         return map;
     }
 
@@ -73,10 +78,10 @@ public class SaleListAdminController {
      */
     @RequestMapping("/addCunZai")
     public Map<String,Object> addCunZai(Integer id){
-        System.out.println(id);
         Map<String,Object> map = new HashMap<>();
         saleListService.addCunZai(id);
         map.put("success",true);
+        logService.save(new Log(Log.SEARCH_ACTION, "根据id修改存在状态"));
         return map;
     }
 
@@ -88,11 +93,8 @@ public class SaleListAdminController {
     public Map<String,Object> BigSmallDrawing(Integer id){
         Map<String,Object> map = new HashMap<>();
         List<DrawingType> list = drawingTypeService.findBySaleListId(id);
-        /* List<Drawing> list1 = new ArrayList<>();
-       for(int i = 0;i<list.size();i++){
-            list1.add(list.get(i).getDrawing());
-        }*/
         map.put("rows",list);
+        logService.save(new Log(Log.SEARCH_ACTION, "根据大图纸查询小图纸信息"));
         return map;
     }
 
@@ -108,6 +110,7 @@ public class SaleListAdminController {
         saleListService.setState(id,state);
         saleListService.setPrepareTime(id,prepareTime);
         map.put("success",true);
+        logService.save(new Log(Log.UPDATE_ACTION, "设置订单状态"));
         return map;
     }
 
@@ -121,6 +124,7 @@ public class SaleListAdminController {
         Map<String,Object> map = new HashMap<>();
         List<SaleList> list = saleListService.findByState(state);
         map.put("rows",list);
+        logService.save(new Log(Log.SEARCH_ACTION, "按照订单状态查询订单信息"));
         return map;
     }
 }

@@ -2,8 +2,10 @@ package com.shenke.controller.admin;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.shenke.entity.Log;
 import com.shenke.entity.Purchase;
 import com.shenke.entity.PurchaseProduct;
+import com.shenke.service.LogService;
 import com.shenke.service.PurchaseProductService;
 import com.shenke.service.PurchaseService;
 import com.shenke.util.DateUtil;
@@ -36,6 +38,9 @@ public class PurchaseAdminController {
     @Resource
     private PurchaseProductService purchaseProductService;
 
+    @Resource
+    private LogService logService;
+
     /**
      *保存采购单
      */
@@ -43,15 +48,8 @@ public class PurchaseAdminController {
     public Map<String,Object> save(String purchaseNumber, String purchaseAgent, String purchaseDate,
                                    Double sumWeightCol, Double sumMoneyCol, String remark, String goodsJson) throws ParseException {
         Map<String,Object> map = new HashMap<>();
-
-        System.out.println(purchaseDate);
-
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
         Date date = sdf.parse(purchaseDate);
-
-        System.out.println(date);
-
 
         Purchase purchase = new Purchase();
         purchase.setPurchaseNumber(purchaseNumber);
@@ -72,7 +70,7 @@ public class PurchaseAdminController {
 
         purchaseService.save(purchase);
         purchaseProductService.save(list);
-
+        logService.save(new Log(Log.ADD_ACTION,"添加采购单"));
         map.put("success",true);
         return map;
     }
@@ -106,6 +104,7 @@ public class PurchaseAdminController {
         Map<String,Object> map = new HashMap<>();
         List<Purchase> list = purchaseService.listPurchase(purchase);
         map.put("rows",list);
+        logService.save(new Log(Log.SEARCH_ACTION,"查询所有采购信息"));
         return map;
     }
 
@@ -119,8 +118,8 @@ public class PurchaseAdminController {
         System.out.println(id);
         Map<String,Object> map = new HashMap<>();
         List<PurchaseProduct> list = purchaseProductService.listProductByPurchase(id);
-        System.out.println(list);
         map.put("rows",list);
+        logService.save(new Log(Log.ADD_ACTION,"根据采购单查询商品信息"));
         return map;
     }
 
@@ -134,6 +133,7 @@ public class PurchaseAdminController {
         Map<String,Object> map = new HashMap<>();
         List<Purchase> list = purchaseService.findByPurchaseNumber(purchaseNumber);
         map.put("rows",list);
+        logService.save(new Log(Log.ADD_ACTION,"根据单据号查询订单"));
         return map;
     }
 }

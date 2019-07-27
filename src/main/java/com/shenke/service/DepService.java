@@ -1,8 +1,8 @@
 package com.shenke.service;
 
-import java.util.List;
-
 import com.shenke.entity.Dep;
+
+import java.util.List;
 
 /**
  * 部门管理Service
@@ -11,31 +11,11 @@ import com.shenke.entity.Dep;
  */
 public interface DepService {
 
-	/**
-	 * 根据父节点查找所有子节点
-	 * @param parentId
-	 * @return
-	 */
-	public List<Dep> findByParentId(Integer parentId);
+	List<Dep> findAll();
 
-	/**
-	 * 根据id查询dep信息
-	 * @param id
-	 * @return
-	 */
-	public Dep findById(Integer id);
+	void add(Dep dep);
 
-	/**
-	 * 添加或修改部门信息
-	 * @param parentGoodsType
-	 */
-	public void save(Dep parentGoodsType);
+	void deleteById(Integer id);
 
-	/**
-	 * 根据id删除部门信息
-	 * @param id
-	 */
-	public void delete(Integer id);
-
-	
+	List<Dep> findBytext(String s);
 }

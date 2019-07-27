@@ -14,7 +14,7 @@ public interface DrawingProcessRepository extends JpaRepository<DrawingProcess,I
      * 查询状态为任务下发的信息
      * @return
      */
-    @Query(value = "SELECT * FROM t_drawing_process WHERE state LIKE '任务下发' ORDER BY process_id Asc",nativeQuery = true)
+    @Query(value = "select * from (select * from t_drawing_process where state = '任务下发' ORDER BY sale_list_id, inform_num, drawing_id, process_id) a GROUP BY a.inform_num",nativeQuery = true)
     public List<DrawingProcess> findProcessIssue();
 
 

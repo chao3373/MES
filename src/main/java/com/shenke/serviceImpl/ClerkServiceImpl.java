@@ -16,6 +16,7 @@ import com.shenke.entity.Clerk;
 import com.shenke.repository.ClerkRepository;
 import com.shenke.service.ClerkService;
 import com.shenke.util.StringUtil;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 员工Service实现类
@@ -24,87 +25,68 @@ import com.shenke.util.StringUtil;
  *
  */
 @Service("clerkService")
+@Transactional
 public class ClerkServiceImpl implements ClerkService {
 
 	@Resource
 	private ClerkRepository clerkRepository;
 
+	/***
+	 * 根据部门id查询员工信息
+	 * @param id
+	 * @return
+	 */
 	@Override
 	public List<Clerk> findByDepId(Integer id) {
 		return clerkRepository.findByDepId(id);
 	}
 
+	/**
+	 * 根据部门id删除员工信息
+	 * @param id
+	 */
 	@Override
-	public List<Clerk> list(Clerk goods, Integer page, Integer pageSize, Direction direction, String... properties) {
-		Pageable pageable = new PageRequest(page - 1, pageSize);
-		Page<Clerk> pageGoods = clerkRepository.findAll(new Specification<Clerk>() {
-
-			@Override
-			public Predicate toPredicate(Root<Clerk> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				Predicate predicate = cb.conjunction();
-				if (goods != null) {
-					if (StringUtil.isNotEmpty(goods.getName())) {
-						predicate.getExpressions().add(cb.like(root.get("name"), "%" + goods.getName() + "%"));
-					}
-					if (goods.getDep() != null && goods.getDep().getId() != null && goods.getDep().getId() != 1) {
-						predicate.getExpressions().add(cb.equal(root.get("dep").get("id"), goods.getDep().getId()));
-					}
-				}
-				return predicate;
-			}
-		}, pageable);
-		return pageGoods.getContent();
+	public void deleteByDepId(Integer id) {
+		clerkRepository.deleteByDepId(id);
 	}
 
+	/***
+	 * 查询所有员工信息
+	 * @return
+	 */
 	@Override
-	public Long getCount(Clerk goods) {
-		Long count = clerkRepository.count(new Specification<Clerk>() {
-
-			@Override
-			public Predicate toPredicate(Root<Clerk> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				Predicate predicate = cb.conjunction();
-				if (goods != null) {
-					if (StringUtil.isNotEmpty(goods.getName())) {
-						predicate.getExpressions().add(cb.like(root.get("name"), "%" + goods.getName() + "%"));
-					}
-					if (goods.getDep() != null && goods.getDep().getId() != null && goods.getDep().getId() != 1) {
-						predicate.getExpressions().add(cb.equal(root.get("dep").get("id"), goods.getDep().getId()));
-					}
-				}
-				return predicate;
-			}
-
-		});
-		return count;
+	public List<Clerk> findAll() {
+		return clerkRepository.findAll();
 	}
 
+	/***
+	 * 添加员工信息
+	 * @param clerk
+	 */
 	@Override
-	public void save(Clerk clerk) {
+	public void add(Clerk clerk) {
 		clerkRepository.save(clerk);
 	}
 
+	/**
+	 * 根据id数组删除员工信息
+	 * @param ids
+	 */
 	@Override
-	public Clerk findById(Integer id) {
-		return clerkRepository.findById(id).get();
+	public void deleteByIds(Integer[] ids) {
+		for (int i = 0; i < ids.length; i++) {
+			clerkRepository.deleteById(ids[i]);
+		}
 	}
 
+	/***
+	 * 根据员工姓名模糊查询员工信息
+	 * @param clerkName
+	 * @return
+	 */
 	@Override
-	public void deleteById(Integer id) {
-		clerkRepository.deleteById(id);
+	public List<Clerk> clerkName(String clerkName) {
+		return clerkRepository.clerkName(clerkName);
 	}
 
-	@Override
-	public List<Clerk> findByName(String string) {
-		return clerkRepository.findByName(string);
-	}
-
-	@Override
-	public List<Clerk> findByProName(String string) {
-		return clerkRepository.findByProName(string);
-	}
-
-    @Override
-    public Clerk finName(String name) {
-        return clerkRepository.findByNam(name);
-    }
 }

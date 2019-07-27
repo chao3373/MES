@@ -2,6 +2,7 @@ package com.shenke.controller.admin;
 
 
 import com.shenke.entity.DrawingProcess;
+import com.shenke.entity.Log;
 import com.shenke.entity.SaleList;
 import com.shenke.entity.TemporaryStorage;
 import com.shenke.service.*;
@@ -44,6 +45,9 @@ public class DrawingProcessAdminController {
     @Resource
     private DrawingTypeService drawingTypeService;
 
+    @Resource
+    private LogService logService;
+
     /**
      * 生产完成
      * @return
@@ -53,6 +57,7 @@ public class DrawingProcessAdminController {
         Map<String,Object> map = new HashMap<>();
         drawingProcessService.setState(id);
         map.put("success",true);
+        logService.save(new Log(Log.ADD_ACTION,"入库"));
         return map;
 
     }
@@ -89,6 +94,7 @@ public class DrawingProcessAdminController {
         }
         map.put("success",true);
         drawingTypeService.setState(ProcessTypeId,state);
+        logService.save(new Log(Log.ADD_ACTION,"保存工序信息"));
         return map;
     }
 
@@ -102,6 +108,7 @@ public class DrawingProcessAdminController {
         Map<String,Object> map = new HashMap<>();
         List<DrawingProcess> list = drawingProcessService.findProcessIssue();
         map.put("rows",list);
+        logService.save(new Log(Log.SEARCH_ACTION,"查询状态为下发的订单信息"));
         return map;
     }
 
@@ -116,6 +123,7 @@ public class DrawingProcessAdminController {
         Map<String,Object> map = new HashMap<>();
         List<DrawingProcess> list = drawingProcessService.findByProcess(id);
         map.put("rows",list);
+        logService.save(new Log(Log.ADD_ACTION,"按照工序查找"));
         return map;
     }
 
@@ -129,6 +137,7 @@ public class DrawingProcessAdminController {
         Map<String,Object> map = new HashMap<>();
         drawingProcessService.updateAccomplishNum(accomplishNum,id);
         map.put("success",true);
+        logService.save(new Log(Log.UPDATE_ACTION,"更新完成数量"));
         return map;
     }
 

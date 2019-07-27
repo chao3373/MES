@@ -2,10 +2,8 @@ package com.shenke.controller.admin;
 
 
 import com.shenke.entity.DrawingType;
-import com.shenke.service.BigDrawingService;
-import com.shenke.service.DrawingService;
-import com.shenke.service.DrawingTypeService;
-import com.shenke.service.SaleListService;
+import com.shenke.entity.Log;
+import com.shenke.service.*;
 import com.shenke.util.DateUtil;
 import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +30,9 @@ public class DrawingTypeAdminController {
     @Resource
     private SaleListService saleListService;
 
+    @Resource
+    private LogService logService;
+
 
     @RequestMapping("/addSonDrawing")
     public Map<String,Object> addSonDrawing(String smallIds,Integer id) throws Exception {
@@ -48,6 +49,7 @@ public class DrawingTypeAdminController {
 
         saleListService.setState(id,"图纸展开");
         map.put("success",true);
+        logService.save(new Log(Log.ADD_ACTION,"添加图图纸信息"));
         return map;
     }
 
@@ -58,6 +60,7 @@ public class DrawingTypeAdminController {
      */
     @RequestMapping("/setState")
     public void setState(Integer id,String state){
+        logService.save(new Log(Log.UPDATE_ACTION,"根据id修改状态"));
         drawingTypeService.setState(id,state);
     }
 }
