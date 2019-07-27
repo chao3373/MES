@@ -64,7 +64,7 @@ public class ClerkAdminController {
 
 	/***
 	 * 根据id数组删除员工信息
-	 * @param ids
+	 * @param
 	 */
 	@RequestMapping("/deleteByIds")
 	public void deleteByIds(Integer[] ids){

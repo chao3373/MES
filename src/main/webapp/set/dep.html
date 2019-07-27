@@ -256,7 +256,7 @@
 
                     $.ajax({
                         url: "/admin/clerk/deleteByIds",
-                        data: {ids: idArr},
+                        data: {clerks: idArr},
                         success: function (result) {
                             loadDg($("#tree").tree("getSelected").id);
                         }
