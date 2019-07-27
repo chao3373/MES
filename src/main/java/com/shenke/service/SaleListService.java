@@ -3,6 +3,7 @@ package com.shenke.service;
 
 import com.shenke.entity.DrawingProcess;
 import com.shenke.entity.SaleList;
+import org.eclipse.jdt.internal.compiler.ast.IntersectionCastTypeReference;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -66,5 +67,28 @@ public interface SaleListService {
      * @return
      */
     public SaleList findById(Integer id);
+
+    /**
+     * 获取当日最大销售单号
+     * @return
+     */
+    public String getTodayMaxSaleNumber();
+
+
+    /**
+     * 显示可以被加急的订单
+     * @return
+     */
+    public List<SaleList> urgent();
+
+
+    /**
+     * 设置 订单备注
+     * @param id
+     * @param remark
+     */
+    public void setRemark(Integer id,Integer remark);
+
+
 
 }

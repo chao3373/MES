@@ -53,6 +53,15 @@ public class SaleList {
 
     private Double prepareTime;//准备工时
 
+    private Integer remark;//订单备注（例如 常规单：null 加急单：1 重要订单：2  暂停：-1）
+
+    public Integer getRemark() {
+        return remark;
+    }
+
+    public void setRemark(Integer remark) {
+        this.remark = remark;
+    }
 
     public Integer getAccomplishNum() {
         return accomplishNum;
@@ -200,6 +209,7 @@ public class SaleList {
                 ", state='" + state + '\'' +
                 ", cunzai='" + cunzai + '\'' +
                 ", prepareTime=" + prepareTime +
+                ", remark='" + remark + '\'' +
                 '}';
     }
 }

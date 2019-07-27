@@ -18,6 +18,7 @@
 		var url;
 		$(document).ready(function () {
 			$("#saleDate").datebox("setValue", genTodayStr());
+			$("#dh").load("/admin/saleList/genCode");
 		});
 
 
@@ -81,11 +82,11 @@
 		function saveSaleGoods(){
 			$("#saleNumber").val("我是订单号");
 			var row = $("#dg").datagrid("getRows");
-			for(var i=1;i<=row.length;i++){
-				row[i-1].num=100;
-				row[i-1].saleDate=$("#saleDate").combobox("getText");
-				row[i-1].referDate=$("#referDate").combobox("getText");
-				row[i-1].saleNumber="12312dfsvdgnfghm";
+			for(var i=0;i<=row.length;i++){
+				row[i].num=100;
+				row[i].saleDate=$("#saleDate").combobox("getText");
+				row[i].referDate=$("#referDate").combobox("getText");
+				row[i].saleNumber=$("#dh").text();
 			}
 			$("#goodsJson").val(JSON.stringify(row));
 			$("#fm").form("submit",{
@@ -180,7 +181,7 @@
 	 style="height: 135px; padding: 10px; border: 0px; padding-top: 20px">
 	<fieldset style="border-color: #E7F0FF">
 		<legend>
-			单号：<span id="dh">1223123123</span>
+			单号：<span id="dh"></span>
 		</legend>
 		<form id="fm" method="post">
 			<table cellspacing="8px">
@@ -189,7 +190,7 @@
 							type="text" id="saleDate" name="saleDate" class="easyui-datebox"
 							demandd="true" data-options="editable:false" size="15"/>
 					</td>
-					<td>需交日期<input
+					<td>需交日期：<input
 							type="text" id="referDate" name="referDate" class="easyui-datebox" required
 							demandd="true" data-options="editable:false" size="15"/>
 					</td>

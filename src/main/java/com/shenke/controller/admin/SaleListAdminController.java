@@ -11,6 +11,8 @@ import com.shenke.service.BigDrawingService;
 import com.shenke.service.DrawingTypeService;
 import com.shenke.service.LogService;
 import com.shenke.service.SaleListService;
+import com.shenke.util.DateUtil;
+import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,6 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/***
+ * 销售订单Controller
+ */
 @RestController
 @RequestMapping("/admin/saleList")
 public class SaleListAdminController {
@@ -125,6 +130,57 @@ public class SaleListAdminController {
         List<SaleList> list = saleListService.findByState(state);
         map.put("rows",list);
         logService.save(new Log(Log.SEARCH_ACTION, "按照订单状态查询订单信息"));
+        return map;
+    }
+
+    /**
+     * 获取销售单号
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/genCode")
+    public String genCode() throws Exception {
+        StringBuffer code = new StringBuffer("XS");
+        code.append(DateUtil.getCurrentDateStr());
+        String saleNumber = saleListService.getTodayMaxSaleNumber();
+        if (saleNumber != null) {
+            code.append(StringUtil.formatCode(saleNumber));
+        } else {
+            code.append("0001");
+        }
+        return code.toString();
+    }
+
+    /**
+     * 显示可以被加急的订单
+     * @return
+     */
+    @RequestMapping("/urgent")
+    public Map<String,Object> urgent(){
+        Map<String,Object> map = new HashMap<>();
+        List<SaleList> list = saleListService.urgent();
+        map.put("rows",list);
+        return map;
+    }
+
+    /**
+     * 设置订单备注
+     * @param remark
+     * @return
+     */
+    @RequestMapping("/setRemark")
+    public Map<String,Object> setRemark(String Ids,Integer remark){
+
+        System.out.println("*******************************");
+        System.out.println(remark);
+        System.out.println("*******************************");
+        Map<String,Object> map = new HashMap<>();
+        String idsStr[] = Ids.split(",");
+        for(int i=0;i<idsStr.length;i++){
+            saleListService.setRemark(Integer.parseInt(idsStr[i]),remark);
+        }
+
+        map.put("success",true);
         return map;
     }
 }

@@ -13,6 +13,9 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 大小图纸关系Controller
+ */
 @RestController
 @RequestMapping("/admin/drawingType")
 public class DrawingTypeAdminController {

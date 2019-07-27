@@ -97,6 +97,12 @@
                     if (row.cunzai == null) {
                         return 'background-color:orange;color:blue;font-weight:bold;';
                     }
+                    if (row.remark == "2") {
+                        return 'background: #CC2222;color:white'
+                    }
+                    if (row.remark == "1") {
+                        return 'background: #a333c8;color:white'
+                    }
                 }
             });
             load();

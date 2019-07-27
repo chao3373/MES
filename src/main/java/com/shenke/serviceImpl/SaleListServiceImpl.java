@@ -65,4 +65,19 @@ public class SaleListServiceImpl implements SaleListService {
         return saleListRepository.findById(id).get();
     }
 
+    @Override
+    public String getTodayMaxSaleNumber() {
+        return saleListRepository.getTodayMaxSaleNumber();
+    }
+
+    @Override
+    public List<SaleList> urgent() {
+        return saleListRepository.urgent();
+    }
+
+    @Override
+    public void setRemark(Integer id, Integer remark) {
+        saleListRepository.setRemark(id,remark);
+    }
+
 }
