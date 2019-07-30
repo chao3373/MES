@@ -55,6 +55,7 @@ public class SaleListAdminController {
            saleList.setState("下单");
            if(bigDrawingService.findBigDrawingId(saleList.getTuzhiId())!=null){
                saleList.setCunzai("存在");
+               saleList.setRemark(0);
            }
         }
         saleListService.save(plgList);

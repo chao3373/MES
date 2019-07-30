@@ -1,360 +1,362 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<title>销售订货单</title>
-	<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
-	<link rel="stylesheet" type="text/css"
-		  href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
-	<script type="text/javascript"
-			src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
-	<script type="text/javascript"
-			src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
-	<script type="text/javascript"
-			src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
-	<script type="text/javascript" src="/static/js/date.js"></script>
-	<script type="text/javascript" src="print.js"></script>
-	<script type="text/javascript">
-		var url;
-		$(document).ready(function () {
-			$("#saleDate").datebox("setValue", genTodayStr());
-			$("#dh").load("/admin/saleList/genCode");
-		});
+    <meta charset="UTF-8">
+    <title>销售订货单</title>
+    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/static/js/date.js"></script>
+    <script type="text/javascript" src="print.js"></script>
+    <script type="text/javascript">
+        var url;
+        $(document).ready(function () {
+            $("#saleDate").datebox("setValue", genTodayStr());
+            $("#dh").load("/admin/saleList/genCode");
+        });
 
 
-		function deleteSaleListGoods() {
-			var selectedRows = $("#dg").datagrid("getSelections");
-			if (selectedRows.length != 1) {
-				$.messager.alert("系统提示", "请选择一条要删除的商品！");
-				return;
-			}
-			$.messager.confirm("系统提示", "您确定要删除这商品吗?", function (r) {
-				if (r) {
-					$("#dg").datagrid("deleteRow",
-							$("#dg").datagrid("getRowIndex", selectedRows[0]));
-					setSaleListAmount();
-				}
-			});
-		}
+        function deleteSaleListGoods() {
+            var selectedRows = $("#dg").datagrid("getSelections");
+            if (selectedRows.length != 1) {
+                $.messager.alert("系统提示", "请选择一条要删除的商品！");
+                return;
+            }
+            $.messager.confirm("系统提示", "您确定要删除这商品吗?", function (r) {
+                if (r) {
+                    $("#dg").datagrid("deleteRow",
+                        $("#dg").datagrid("getRowIndex", selectedRows[0]));
+                    setSaleListAmount();
+                }
+            });
+        }
 
-		//打开上传文件面板
-		function toLead() {
-			$("#dlg3").dialog("open").dialog("setTitle", "选择上传文件");
-		}
+        //打开上传文件面板
+        function toLead() {
+            $("#dlg3").dialog("open").dialog("setTitle", "选择上传文件");
+        }
 
-		//提交上传文件
-		function saveToLead() {
-			$("#fm3").form(
-					'submit',
-					{
-						url: "/admin/toLead/importFile",
-						onSubmit: function () { //onSubmit  事件会在表单中的确认按钮被点击时发生
-							var fileAccept = $("#fil").val().split(".")[1];
-							if (fileAccept != "xls" && fileAccept != "xlsx") {
-								alert("只能上传.xls和.xlsx的文件！");
-								return false;
-							}
-							return true;
-						},
-						success: function (result) {
-							var obj = eval('(' + result + ')');
-							if (obj.success) {
+        //提交上传文件
+        function saveToLead() {
+            $("#fm3").form(
+                'submit',
+                {
+                    url: "/admin/toLead/importFile",
+                    onSubmit: function () { //onSubmit  事件会在表单中的确认按钮被点击时发生
+                        var fileAccept = $("#fil").val().split(".")[1];
+                        if (fileAccept != "xls" && fileAccept != "xlsx") {
+                            alert("只能上传.xls和.xlsx的文件！");
+                            return false;
+                        }
+                        return true;
+                    },
+                    success: function (result) {
+                        var obj = eval('(' + result + ')');
+                        if (obj.success) {
 
-							} else {
-								$.messager.alert("系统提示", "<span style='color:red'>"
-										+ obj.errorInfo + "</span>");
+                        } else {
+                            $.messager.alert("系统提示", "<span style='color:red'>"
+                                + obj.errorInfo + "</span>");
 
-							}
-							var resultt = $.parseJSON(result);
-							$("#dg").datagrid({
-								data: resultt.rows
-							});
-						}
-					});
-			closeToLead();
-		}
+                        }
+                        var resultt = $.parseJSON(result);
+                        $("#dg").datagrid({
+                            data: resultt.rows
+                        });
+                    }
+                });
+            closeToLead();
+        }
 
-		//关闭面导入面板
-		function closeToLead() {
-			$("#dlg3").dialog("close");
-		}
+        //关闭面导入面板
+        function closeToLead() {
+            $("#dlg3").dialog("close");
+        }
 
-		function saveSaleGoods(){
-			$("#saleNumber").val("我是订单号");
-			var row = $("#dg").datagrid("getRows");
-			for(var i=0;i<=row.length;i++){
-				row[i].num=100;
-				row[i].saleDate=$("#saleDate").combobox("getText");
-				row[i].referDate=$("#referDate").combobox("getText");
-				row[i].saleNumber=$("#dh").text();
-			}
-			$("#goodsJson").val(JSON.stringify(row));
-			$("#fm").form("submit",{
-				url:"/admin/saleList/save",
-				onSubmit:function () {
-				},
-				success:function (result) {
-					var result = eval('(' + result + ')');
-					if(row.length == 0){
-						$.messager.alert("系统提示", "请导入订单信息！！");
-						return;
-					}
-					else {
-						if(result.success){
-							alert("保存成功");
-							window.location.reload();
-						} else{
-							$.messager.alert("系统提示", "保存失败！");
-							return;
-						}
-					}
-				}
-			});
-		}
+        function saveSaleGoods() {
+            $("#saleNumber").val("我是订单号");
+            var row = $("#dg").datagrid("getRows");
+            for (var i = 0; i < row.length; i++) {
+                row[i].num = 100;
+                row[i].saleDate = $("#saleDate").combobox("getText");
+                row[i].referDate = $("#referDate").combobox("getText");
+                row[i].saleNumber = $("#dh").text();
+            }
+            $("#goodsJson").val(JSON.stringify(row));
+            $("#fm").form("submit", {
+                url: "/admin/saleList/save",
+                onSubmit: function () {
+                },
+                success: function (result) {
+                    var result = eval('(' + result + ')');
+                    if (row.length == 0) {
+                        $.messager.alert("系统提示", "请导入订单信息！！");
+                        return;
+                    } else {
+                        if (result.success) {
+                            alert("保存成功");
+                            window.location.reload();
+                        } else {
+                            $.messager.alert("系统提示", "保存失败！");
+                            return;
+                        }
+                    }
+                }
+            });
+        }
 
-		//修改订单信息
-		function openSaleListGoodsModifyDialog() {
-			//$("#saveAddAddNextButton").hide();   屏蔽按钮
-			var selectedRows = $("#dg").datagrid("getSelections");
-			if (selectedRows.length != 1) {
-				$.messager.alert("系统提示", "请选择一条信息！");
-				return;
-			}
-			var row = selectedRows[0];
-			$("#dlg").dialog("open").dialog("setTitle", "修改订单信息");
-			$("#fm2").form("load", row);
-		}
-		//保存修改
-		function savechange(){
-			//$("#save").attr("style","display:block;")
-			$("#save").attr("style","display:none;");
+        //修改订单信息
+        function openSaleListGoodsModifyDialog() {
+            //$("#saveAddAddNextButton").hide();   屏蔽按钮
+            var selectedRows = $("#dg").datagrid("getSelections");
+            if (selectedRows.length != 1) {
+                $.messager.alert("系统提示", "请选择一条信息！");
+                return;
+            }
+            var row = selectedRows[0];
+            $("#dlg").dialog("open").dialog("setTitle", "修改订单信息");
+            $("#fm2").form("load", row);
+        }
 
-			var row =  $("#dg").datagrid("getSelected");
-			var index = $("#dg").datagrid("getRowIndex",row);
-			$("#dg").datagrid("updateRow",{
-				index:index,
-				row :{
-					kucunzuzhi:$("#kucunzuzhi-change").val(),
-					hangHao:$("#hangHao-change").val(),
-					wuliaoId:$("#wuliaoId-change").val(),
-					tuzhiName:$("#tuzhiName-change").val(),
-					tuzhiId:$("#tuzhiId-change").val(),
-					num:$("#num-change").val(),
-					xiangmuId:$("#xiangmuId-change").val(),
-					shenqingNumber:$("#shenqingNumber-change").val()
-				}
-			});
-			closechangeDialog();
-			$.messager.alert("系统提示","修改成功");
-		}
-		function closechangeDialog(){
-			$("#dlg").dialog("close");
-		}
+        //保存修改
+        function savechange() {
+            //$("#save").attr("style","display:block;")
+            $("#save").attr("style", "display:none;");
 
-		//新增订单信息
-		function openSaleListGoodsAddDialog(){
-			$("#dlg2").dialog("open").dialog("setTitle", "新增订单信息");
-		}
+            var row = $("#dg").datagrid("getSelected");
+            var index = $("#dg").datagrid("getRowIndex", row);
+            $("#dg").datagrid("updateRow", {
+                index: index,
+                row: {
+                    kucunzuzhi: $("#kucunzuzhi-change").val(),
+                    hangHao: $("#hangHao-change").val(),
+                    wuliaoId: $("#wuliaoId-change").val(),
+                    tuzhiName: $("#tuzhiName-change").val(),
+                    tuzhiId: $("#tuzhiId-change").val(),
+                    num: $("#num-change").val(),
+                    xiangmuId: $("#xiangmuId-change").val(),
+                    shenqingNumber: $("#shenqingNumber-change").val()
+                }
+            });
+            closechangeDialog();
+            $.messager.alert("系统提示", "修改成功");
+        }
 
-		//新增保存订单信息
-		function saveadd() {
-			$('#dg').datagrid('appendRow',{
-				kucunzuzhi:$("#kucunzuzhi-add").val(),
-				hangHao:$("#hangHao-add").val(),
-				wuliaoId:$("#wuliaoId-add").val(),
-				tuzhiName:$("#tuzhiName-add").val(),
-				tuzhiId:$("#tuzhiId-add").val(),
-				num:$("#num-add").val(),
-				xiangmuId:$("#xiangmuId-add").val(),
-				shenqingNumber:$("#shenqingNumber-add").val()
-			});
-			closeaddDialog();
-			$.messager.alert("系统提示","保存成功");
-		}
-		function closeaddDialog() {
-			$("#dlg2").dialog("close");
-		}
-	</script>
+        function closechangeDialog() {
+            $("#dlg").dialog("close");
+        }
+
+        //新增订单信息
+        function openSaleListGoodsAddDialog() {
+            $("#dlg2").dialog("open").dialog("setTitle", "新增订单信息");
+        }
+
+        //新增保存订单信息
+        function saveadd() {
+            $('#dg').datagrid('appendRow', {
+                kucunzuzhi: $("#kucunzuzhi-add").val(),
+                hangHao: $("#hangHao-add").val(),
+                wuliaoId: $("#wuliaoId-add").val(),
+                tuzhiName: $("#tuzhiName-add").val(),
+                tuzhiId: $("#tuzhiId-add").val(),
+                num: $("#num-add").val(),
+                xiangmuId: $("#xiangmuId-add").val(),
+                shenqingNumber: $("#shenqingNumber-add").val()
+            });
+            closeaddDialog();
+            $.messager.alert("系统提示", "保存成功");
+        }
+
+        function closeaddDialog() {
+            $("#dlg2").dialog("close");
+        }
+    </script>
 </head>
 <body class="easyui-layout">
 <div data-options="region:'north'"
-	 style="height: 135px; padding: 10px; border: 0px; padding-top: 20px">
-	<fieldset style="border-color: #E7F0FF">
-		<legend>
-			单号：<span id="dh"></span>
-		</legend>
-		<form id="fm" method="post">
-			<table cellspacing="8px">
-				<tr>
-					<td>日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;期：<input
-							type="text" id="saleDate" name="saleDate" class="easyui-datebox"
-							demandd="true" data-options="editable:false" size="15"/>
-					</td>
-					<td>需交日期：<input
-							type="text" id="referDate" name="referDate" class="easyui-datebox" required
-							demandd="true" data-options="editable:false" size="15"/>
-					</td>
-					<td><input type="hidden" id="saleNumber" name="saleNumber"/>
-						<input type="hidden" id="goodsJson" name="goodsJson"/> <a
-								href="javascript:saveSaleGoods()" class="easyui-linkbutton"
-								iconCls="icon-ok">保存</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
-								href="javascript:toLead()" class="easyui-linkbutton"
-								iconCls="icon-add">导入</a></td>
-				</tr>
-			</table>
-		</form>
-	</fieldset>
+     style="height: 135px; padding: 10px; border: 0px; padding-top: 20px">
+    <fieldset style="border-color: #E7F0FF">
+        <legend>
+            单号：<span id="dh"></span>
+        </legend>
+        <form id="fm" method="post">
+            <table cellspacing="8px">
+                <tr>
+                    <td>日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;期：<input
+                            type="text" id="saleDate" name="saleDate" class="easyui-datebox"
+                            demandd="true" data-options="editable:false" size="15"/>
+                    </td>
+                    <td>需交日期：<input
+                            type="text" id="referDate" name="referDate" class="easyui-datebox" required
+                            demandd="true" data-options="editable:false" size="15"/>
+                    </td>
+                    <td><input type="hidden" id="saleNumber" name="saleNumber"/>
+                        <input type="hidden" id="goodsJson" name="goodsJson"/> <a
+                                href="javascript:saveSaleGoods()" class="easyui-linkbutton"
+                                iconCls="icon-ok">保存</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+                                href="javascript:toLead()" class="easyui-linkbutton"
+                                iconCls="icon-add">导入</a></td>
+                </tr>
+            </table>
+        </form>
+    </fieldset>
 </div>
 <div data-options="region:'center'" style="padding: 10px; border: 1px">
-	<table id="dg" class="easyui-datagrid" style="" rownumbers="true"
-		   singleSelect="true" fit="true" toolbar="#tb">
-		<thead>
-		<th id="kucunzuzhi" field="kucunzuzhi" width="200" align="center">库存组织</th>
-		<th id="hangHao" field="hangHao" width="100" align="center">行号</th>
-		<th id="wuliaoId" field="wuliaoId" width="100" align="center">物料编号</th>
-		<th id="tuzhiName" field="tuzhiName" width="100" align="center">图纸名称</th>
-		<th id="tuzhiId" field="tuzhiId" width="100" align="center">图纸编号</th>
-		<th id="num" field="num" width="100" align="center">数量</th>
-		<th id="xiangmuId" field="xiangmuId" width="100" align="center">项目号</th>
-		<th id="shenqingNumber" field="shenqingNumber" width="100" align="center">申请单号</th>
-		</thead>
-	</table>
+    <table id="dg" class="easyui-datagrid" style="" rownumbers="true"
+           singleSelect="true" fit="true" toolbar="#tb">
+        <thead>
+        <th id="kucunzuzhi" field="kucunzuzhi" width="200" align="center">库存组织</th>
+        <th id="hangHao" field="hangHao" width="100" align="center">行号</th>
+        <th id="wuliaoId" field="wuliaoId" width="100" align="center">物料编号</th>
+        <th id="tuzhiName" field="tuzhiName" width="100" align="center">图纸名称</th>
+        <th id="tuzhiId" field="tuzhiId" width="100" align="center">图纸编号</th>
+        <th id="num" field="num" width="100" align="center">数量</th>
+        <th id="xiangmuId" field="xiangmuId" width="100" align="center">项目号</th>
+        <th id="shenqingNumber" field="shenqingNumber" width="100" align="center">申请单号</th>
+        </thead>
+    </table>
 
-	<div id="tb">
-		<div style="padding: 2px">
-			<a href="javascript:openSaleListGoodsAddDialog()"
-			   class="easyui-linkbutton" iconCls="icon-add" plain="true">手动添加订单</a> <a
-				href="javascript:openSaleListGoodsModifyDialog()"
-				class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a> <a
-				href="javascript:deleteSaleListGoods()" class="easyui-linkbutton"
-				iconCls="icon-remove" plain="true">删除</a>
-		</div>
-	</div>
+    <div id="tb">
+        <div style="padding: 2px">
+            <a href="javascript:openSaleListGoodsAddDialog()"
+               class="easyui-linkbutton" iconCls="icon-add" plain="true">手动添加订单</a> <a
+                href="javascript:openSaleListGoodsModifyDialog()"
+                class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a> <a
+                href="javascript:deleteSaleListGoods()" class="easyui-linkbutton"
+                iconCls="icon-remove" plain="true">删除</a>
+        </div>
+    </div>
 </div>
 
 
 <div id="dlg3" class="easyui-dialog"
-	 style="width: 400px; height: 180px; padding: 10px 20px" closed="true"
-	 buttons="#dlg-buttons2"
-	 data-options="">
-	<form id="fm3" method="post" enctype="multipart/form-data"
-		  action="/admin/toLead/importFile">
-		<input id="fil" name="fileName" type="file"/>
-	</form>
+     style="width: 400px; height: 180px; padding: 10px 20px" closed="true"
+     buttons="#dlg-buttons2"
+     data-options="">
+    <form id="fm3" method="post" enctype="multipart/form-data"
+          action="/admin/toLead/importFile">
+        <input id="fil" name="fileName" type="file"/>
+    </form>
 </div>
 
 <!--导入文件-->
 <div id="dlg-buttons2">
-	<a href="javascript:saveToLead()" class="easyui-linkbutton"
-	   iconCls="icon-ok">确定</a> <a href="javascript:closeToLead()"
-								   class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+    <a href="javascript:saveToLead()" class="easyui-linkbutton"
+       iconCls="icon-ok">确定</a> <a href="javascript:closeToLead()"
+                                   class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 </div>
 
 <!--修改订单信息-->
 <div id="dlg" class="easyui-dialog"
-	 style="width: 450px; height: 250px; padding: 10px 20px" closed="true"
-	 buttons="#dlg-buttons">
-	<form id="fm2" method="post">
-		<table>
-			<tr>
+     style="width: 450px; height: 250px; padding: 10px 20px" closed="true"
+     buttons="#dlg-buttons">
+    <form id="fm2" method="post">
+        <table>
+            <tr>
 
-				<td>库存组织：</td>
-				<td><input type="text" id="kucunzuzhi-change" name="kucunzuzhi"
-						   class="easyui-validatebox" style="width: 120px"/></td>
-				<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>行&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：</td>
-				<td><input type="text" id="hangHao-change" name="hangHao"
-						   class="easyui-validatebox" style="width: 120px"/></td>
-			</tr>
-			<tr>
-				<td>物料编号：</td>
-				<td><input type="text" id="wuliaoId-change" name="wuliaoId"
-						   class="easyui-validatebox" style="width: 120px"/></td>
-				<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>图纸名称：</td>
-				<td><input type="text" id="tuzhiName-change" name="tuzhiName"
-						   class="easyui-validatebox" style="width: 120px"/></td>
-			</tr>
-			<tr>
-				<td>图纸编号：</td>
-				<td><input type="text" id="tuzhiId-change" name="tuzhiId"
-						   class="easyui-validatebox" style="width: 120px"/></td>
-				<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量：</td>
-				<td><input type="text" id="num-change" name="num"
-						   class="easyui-validatebox" style="width: 120px"/></td>
-			</tr>
-			<tr>
-				<td>项&nbsp;&nbsp;目&nbsp;&nbsp;号：</td>
-				<td><input type="text" id="xiangmuId-change" name="xiangmuId"
-						   class="easyui-validatebox" style="width: 120px"/></td>
-				<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>申请单号：</td>
-				<td><input type="text" id="shenqingNumber-change" name="shenqingNumber"
-						   class="easyui-validatebox" style="width: 120px"/></td>
-			</tr>
-		</table>
-	</form>
+                <td>库存组织：</td>
+                <td><input type="text" id="kucunzuzhi-change" name="kucunzuzhi"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>行&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：</td>
+                <td><input type="text" id="hangHao-change" name="hangHao"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+            </tr>
+            <tr>
+                <td>物料编号：</td>
+                <td><input type="text" id="wuliaoId-change" name="wuliaoId"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>图纸名称：</td>
+                <td><input type="text" id="tuzhiName-change" name="tuzhiName"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+            </tr>
+            <tr>
+                <td>图纸编号：</td>
+                <td><input type="text" id="tuzhiId-change" name="tuzhiId"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量：</td>
+                <td><input type="text" id="num-change" name="num"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+            </tr>
+            <tr>
+                <td>项&nbsp;&nbsp;目&nbsp;&nbsp;号：</td>
+                <td><input type="text" id="xiangmuId-change" name="xiangmuId"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>申请单号：</td>
+                <td><input type="text" id="shenqingNumber-change" name="shenqingNumber"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+            </tr>
+        </table>
+    </form>
 </div>
 <div id="dlg-buttons">
-	<a href="javascript:savechange()" class="easyui-linkbutton"
-		iconCls="icon-ok">保存修改</a>
-	<a href="javascript:closechangeDialog()"
-									class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+    <a href="javascript:savechange()" class="easyui-linkbutton"
+       iconCls="icon-ok">保存修改</a>
+    <a href="javascript:closechangeDialog()"
+       class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 </div>
 
 
 <!--新增订单信息-->
 <div id="dlg2" class="easyui-dialog"
-	 style="width: 450px; height: 250px; padding: 10px 20px" closed="true"
-	 buttons="#dlg2-buttons">
-	<form id="fm-add" method="post">
-		<table>
-			<tr>
+     style="width: 450px; height: 250px; padding: 10px 20px" closed="true"
+     buttons="#dlg2-buttons">
+    <form id="fm-add" method="post">
+        <table>
+            <tr>
 
-				<td>库存组织：</td>
-				<td><input type="text" id="kucunzuzhi-add" name="kucunzuzhi"
-						   class="easyui-validatebox" style="width: 120px"/></td>
-				<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>行&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：</td>
-				<td><input type="text" id="hangHao-add" name="hangHao"
-						   class="easyui-validatebox" style="width: 120px"/></td>
-			</tr>
-			<tr>
-				<td>物料编号：</td>
-				<td><input type="text" id="wuliaoId-add" name="wuliaoId"
-						   class="easyui-validatebox" style="width: 120px"/></td>
-				<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>图纸名称：</td>
-				<td><input type="text" id="tuzhiName-add" name="tuzhiName"
-						   class="easyui-validatebox" style="width: 120px"/></td>
-			</tr>
-			<tr>
-				<td>图纸编号：</td>
-				<td><input type="text" id="tuzhiId-add" name="tuzhiId"
-						   class="easyui-validatebox" style="width: 120px"/></td>
-				<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量：</td>
-				<td><input type="text" id="num-add" name="num"
-						   class="easyui-validatebox" style="width: 120px"/></td>
-			</tr>
-			<tr>
-				<td>项&nbsp;&nbsp;目&nbsp;&nbsp;号：</td>
-				<td><input type="text" id="xiangmuId-add" name="xiangmuId"
-						   class="easyui-validatebox" style="width: 120px"/></td>
-				<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>申请单号：</td>
-				<td><input type="text" id="shenqingNumber-add" name="shenqingNumber"
-						   class="easyui-validatebox" style="width: 120px"/></td>
-			</tr>
-		</table>
-	</form>
+                <td>库存组织：</td>
+                <td><input type="text" id="kucunzuzhi-add" name="kucunzuzhi"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>行&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：</td>
+                <td><input type="text" id="hangHao-add" name="hangHao"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+            </tr>
+            <tr>
+                <td>物料编号：</td>
+                <td><input type="text" id="wuliaoId-add" name="wuliaoId"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>图纸名称：</td>
+                <td><input type="text" id="tuzhiName-add" name="tuzhiName"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+            </tr>
+            <tr>
+                <td>图纸编号：</td>
+                <td><input type="text" id="tuzhiId-add" name="tuzhiId"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量：</td>
+                <td><input type="text" id="num-add" name="num"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+            </tr>
+            <tr>
+                <td>项&nbsp;&nbsp;目&nbsp;&nbsp;号：</td>
+                <td><input type="text" id="xiangmuId-add" name="xiangmuId"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>申请单号：</td>
+                <td><input type="text" id="shenqingNumber-add" name="shenqingNumber"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+            </tr>
+        </table>
+    </form>
 </div>
 <div id="dlg2-buttons">
-	<a href="javascript:saveadd()" class="easyui-linkbutton"
-	   iconCls="icon-ok">保存</a>
-	<a href="javascript:closeaddDialog()"
-	   class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+    <a href="javascript:saveadd()" class="easyui-linkbutton"
+       iconCls="icon-ok">保存</a>
+    <a href="javascript:closeaddDialog()"
+       class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 </div>
 </body>
 </html>
