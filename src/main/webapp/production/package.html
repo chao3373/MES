@@ -180,42 +180,48 @@
 
         var rows;
         var row;
-        function goIn() {
+        function panduan() {
             rows = $("#dg").datagrid("getSelected");
             row = $("#addSon").datagrid("getRows");
             if(rows == null){
                 $.messager.alert("系统提示","请选择大图纸信息");
-                return;
+                return false;
             }
             if (row == null){
                 $.messager.alert("系统提示","无小图纸信息，不得入库！");
+                return false;
+            }
+            console.log("判断");
+            return true;
+        }
+
+
+        function goIn() {
+            if(panduan()){
+                $.post("/admin/storage/save",{
+                    saleListId:row[0].saleList.id,
+                    bigDrawingId:rows.tuzhiId,
+                    drawingId:row[0].drawing.id,
+                    state:"生产完成",
+                    standard:"合格",
+                    remark:"合格"
+                },function (result) {
+                    if(result.success){
+                        alert("操作成功");
+                        window.location.reload();
+                    }
+                },"json")
+            }else {
                 return;
             }
-            $.post("/admin/storage/save",{
-                saleListId:row[0].saleList.id,
-                bigDrawingId:rows.tuzhiId,
-                drawingId:row[0].drawing.id,
-                state:"生产完成",
-                standard:"合格",
-                remark:"合格"
-            },function (result) {
-                if(result.success){
-                    alert("入库成功");
-                    window.location.reload();
-                }
-            },"json")
         }
 
         function baofei(){
-            if(rows == null){
-                $.messager.alert("系统提示","请选择大图纸信息");
+            if(panduan()){
+                $("#dlg").dialog("open").dialog("setTitle","添加报废原因");
+            }else {
                 return;
             }
-            if (row == null){
-                $.messager.alert("系统提示","无小图纸信息，不得入库！");
-                return;
-            }
-            $("#dlg").dialog("open").dialog("setTitle","添加报废原因");
         }
 
         function closeDialog() {
@@ -232,7 +238,7 @@
                 remark:$("#remark").val()
             },function (result) {
                 if(result.success){
-                    alert("入库成功");
+                    alert("操作成功");
                     window.location.reload();
                 }
             },"json")
@@ -240,6 +246,26 @@
 
         function resetValue() {
             $("#remark").val("");
+        }
+
+        function fanxiu() {
+            if(panduan()){
+                $.post("/admin/saleList/fanXiu",{
+                    saleListId:row[0].saleList.id,
+                    state:"返修"
+                },function (result) {
+                    if(result.success){
+                        alert("成功");
+                        window.location.reload();
+                    }
+                    else {
+                        alert("失败");
+                    }
+                },"json")
+            }else {
+                return;
+            }
+
         }
 
 
@@ -280,7 +306,8 @@
                            class="easyui-linkbutton" iconCls="icon-ok" plain="true">合格</a>
             &nbsp;&nbsp;<a href="javascript:baofei()"
                            class="easyui-linkbutton" iconCls="icon-no" plain="true">报废</a>
-
+            &nbsp;&nbsp;<a href="javascript:fanxiu()"
+                           class="easyui-linkbutton" iconCls="icon-refresh" plain="true">返修</a>
         </fieldset>
     </div>
 </div>
@@ -297,14 +324,6 @@
     <th field="name" width="100" align="center">图纸名称
     </th>
     </thead>
-</div>
-
-<div id="tb2">
-    <div>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:addProcess()"
-                                         class="easyui-linkbutton" iconCls="icon-add" plain="true">添加工时工序</a>
-
-    </div>
 </div>
 
 <div id="dlg" class="easyui-dialog"

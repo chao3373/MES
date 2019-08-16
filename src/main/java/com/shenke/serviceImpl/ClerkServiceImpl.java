@@ -89,4 +89,14 @@ public class ClerkServiceImpl implements ClerkService {
 		return clerkRepository.clerkName(clerkName);
 	}
 
+	@Override
+	public List<Clerk> combobox(String s) {
+		return clerkRepository.combobo(s);
+	}
+
+    @Override
+    public Clerk findById(Integer clerkId) {
+        return clerkRepository.findById(clerkId).get();
+    }
+
 }

@@ -88,4 +88,19 @@ public class ClerkAdminController {
 		return map;
 	}
 
+	/**
+	 * 下拉框模糊查询生产员工
+	 *
+	 * @param q
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping("/combobox")
+	public List<Clerk> combobox(String q) throws Exception {
+		if (q == null) {
+			q = "";
+		}
+		return clerkService.combobox("%" + q + "%");
+	}
+
 }

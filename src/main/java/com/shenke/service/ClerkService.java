@@ -31,4 +31,8 @@ public interface ClerkService {
 	void deleteByIds(Integer[] ids);
 
 	List<Clerk> clerkName(String clerkName);
+
+	List<Clerk> combobox(String s);
+
+	Clerk findById(Integer clerkId);
 }

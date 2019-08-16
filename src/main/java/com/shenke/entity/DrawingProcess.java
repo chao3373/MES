@@ -2,6 +2,7 @@ package com.shenke.entity;
 
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "t_drawing_process")
@@ -36,6 +37,16 @@ public class DrawingProcess {
     private String saleNumber;//销售单号
 
     private String informNum;//生产通知单号
+
+    private Date dataInProduct;
+
+    public Date getDataInProduct() {
+        return dataInProduct;
+    }
+
+    public void setDataInProduct(Date dataInProduct) {
+        this.dataInProduct = dataInProduct;
+    }
 
     public String getInformNum() {
         return informNum;
@@ -131,6 +142,7 @@ public class DrawingProcess {
                 ", accomplishNum=" + accomplishNum +
                 ", saleNumber='" + saleNumber + '\'' +
                 ", informNum='" + informNum + '\'' +
+                ", dataInProduct=" + dataInProduct +
                 '}';
     }
 }

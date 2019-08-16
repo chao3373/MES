@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -65,5 +66,18 @@ public class DrawingTypeAdminController {
     public void setState(Integer id,String state){
         logService.save(new Log(Log.UPDATE_ACTION,"根据id修改状态"));
         drawingTypeService.setState(id,state);
+    }
+
+    /**
+     * 根据saleListId查询
+     * @param id
+     * @return
+     */
+    @RequestMapping("/findBySaleListId")
+    public Map<String,Object> findBySaleListId(Integer id){
+        Map<String,Object> map = new HashMap<>();
+        List<DrawingType> list = drawingTypeService.findBySaleListId(id);
+        map.put("rows",list);
+        return map;
     }
 }

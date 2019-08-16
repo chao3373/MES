@@ -7,6 +7,7 @@ import org.eclipse.jdt.internal.compiler.ast.IntersectionCastTypeReference;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SaleListService {
 
@@ -90,5 +91,7 @@ public interface SaleListService {
     public void setRemark(Integer id,Integer remark);
 
 
+    List<SaleList> findAll();
 
+    public List<SaleList> dingDanZhuiZong(SaleList saleList,String saleDated,Integer yaoqiu);
 }

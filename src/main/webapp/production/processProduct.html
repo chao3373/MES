@@ -100,33 +100,7 @@
                             return str;
                         }
                     }
-                ]],
-                onLoadSuccess:function(data){
-                   /* var ROW = data.rows;
-                    for(var i =0 ;i<ROW.length ;i++){
-                        console.log(ROW[i].accomplishNum.length);
-                        console.log(ROW[i].num.length);
-                        console.log((ROW.num) == (ROW.accomplishNum))
-                            /!*alert("11111111");
-                            $.post("/admin/drawingProcess/setState",{
-                                id:ROW[i].id
-                            },function (result) {
-
-                            },"josn");
-                            $("#dg").datagrid("reload");
-                        }*!/
-                    }*/
-                }
-            });
-
-        }
-
-        function searchProcess() {
-            $("#dg").datagrid({
-                url:'/admin/drawingProcess/findByProcess',
-                queryParams:{
-                    id:$("#name").combobox("getValue")
-                }
+                ]]
             });
         }
 
@@ -138,6 +112,10 @@
         var restNum;//剩余需要生产的件数
         var row;
         function productProcess() {
+            if($("#name").combobox("getValue") == ''){
+                $.messager.alert("系统提示","请添加生产人员！");
+                return;
+            }
             row = $("#dg").datagrid("getSelected");
             if(row==null){
                 $.messager.alert("系统提示","请选择要加工的产品");
@@ -166,7 +144,8 @@
             else{
                 $.post("/admin/drawingProcess/updateAccomplishNum",{
                     accomplishNum:$("#productNum").val(),
-                    id:row.id
+                    id:row.id,
+                    clerkId:$("#name").combobox("getValue")
                 },function (result) {
                     if(result.success){
                         $.messager.alert("系统提示","添加成功");
@@ -209,11 +188,9 @@
 <!-- dg顶部工具栏 -->
 <div id="tb1">
     <fieldset style="border-color: #E7F0FF">
-        选择工序：<input class="easyui-combobox" id="name" name="name"
+        生产人员：<input class="easyui-combobox" id="name" name="name" required
                     style="width: 100px" data-options="panelHeight:'auto',
-            valueField:'id',textField:'name',url:'/admin/process/processCombobox'"/>
-        &nbsp;&nbsp;&nbsp;<a href="javascript:searchProcess()" class="easyui-linkbutton"
-                             iconCls="icon-ok">确定</a>
+            valueField:'id',textField:'name',url:'/admin/clerk/combobox'"/>
         &nbsp;&nbsp;&nbsp;<a href="javascript:reload()"
                              class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
         &nbsp;&nbsp;&nbsp;<a href="javascript:productProcess()" class="easyui-linkbutton">生 产</a>

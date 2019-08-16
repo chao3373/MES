@@ -1,14 +1,11 @@
 package com.shenke.repository;
 
 import com.shenke.entity.SaleList;
-import jdk.internal.org.objectweb.asm.tree.analysis.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import javax.persistence.ManyToOne;
-import java.nio.channels.InterruptedByTimeoutException;
 import java.util.List;
 
 public interface SaleListRepository  extends JpaRepository<SaleList, Integer>, JpaSpecificationExecutor<SaleList> {

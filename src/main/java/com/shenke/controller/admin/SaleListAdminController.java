@@ -13,6 +13,7 @@ import com.shenke.service.LogService;
 import com.shenke.service.SaleListService;
 import com.shenke.util.DateUtil;
 import com.shenke.util.StringUtil;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -57,6 +58,7 @@ public class SaleListAdminController {
                saleList.setCunzai("存在");
                saleList.setRemark(0);
            }
+           saleList.setRemark(0);
         }
         saleListService.save(plgList);
         map.put("success",true);
@@ -172,15 +174,63 @@ public class SaleListAdminController {
     @RequestMapping("/setRemark")
     public Map<String,Object> setRemark(String Ids,Integer remark){
 
-        System.out.println("*******************************");
-        System.out.println(remark);
-        System.out.println("*******************************");
         Map<String,Object> map = new HashMap<>();
         String idsStr[] = Ids.split(",");
         for(int i=0;i<idsStr.length;i++){
             saleListService.setRemark(Integer.parseInt(idsStr[i]),remark);
         }
 
+        map.put("success",true);
+        return map;
+    }
+
+    /**
+     * 产品返修
+     * @param state
+     * @return
+     */
+    @RequestMapping("/fanXiu")
+    public Map<String,Object> fanXiu(Integer saleListId,String state){
+        Map<String,Object> map = new HashMap<>();
+        saleListService.setState(saleListId,state);
+        map.put("success",true);
+        return map;
+    }
+
+    /**
+     * 查找全部
+     * @return
+     */
+    @RequestMapping("/findAll")
+    public Map<String,Object> findAll(){
+        Map<String,Object> map = new HashMap<>();
+        List<SaleList> list = saleListService.findAll();
+        map.put("rows",list);
+        return map;
+    }
+
+
+    /**
+     * 订单追踪
+     * @param saleList
+     * @param saleDated
+     * @return
+     */
+    @RequestMapping("/dingDanZhuiZong")
+    public Map<String,Object> dingDanZhuiZong(SaleList saleList,String saleDated,Integer yaoqiu){
+        Map<String,Object> map = new HashMap<>();//此处的要求为同样的查询字段但是要求不相同
+        List<SaleList> list = saleListService.dingDanZhuiZong(saleList,saleDated,yaoqiu);
+        map.put("success",true);
+        map.put("rows",list);
+        return map;
+    }
+
+    @RequestMapping("/setStateByIds")
+    public Map<String,Object> setStateByIds(String Ids,String state){
+        Map<String,Object> map = new HashMap<>();
+        for (int i = 0;i<Ids.split(",").length;i++){
+            saleListService.setState(Integer.parseInt(Ids.split(",")[i]),state);
+        }
         map.put("success",true);
         return map;
     }

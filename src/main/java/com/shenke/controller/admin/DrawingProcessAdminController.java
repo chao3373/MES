@@ -1,21 +1,14 @@
 package com.shenke.controller.admin;
 
 
-import com.shenke.entity.DrawingProcess;
-import com.shenke.entity.Log;
-import com.shenke.entity.SaleList;
-import com.shenke.entity.TemporaryStorage;
+import com.shenke.entity.*;
 import com.shenke.service.*;
-import com.shenke.util.DateUtil;
 import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.persistence.ManyToOne;
-import java.lang.reflect.Array;
-import java.security.PrivateKey;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +46,11 @@ public class DrawingProcessAdminController {
     @Resource
     private LogService logService;
 
+    @Resource
+    private ClerkProductService clerkProductService;
+
+    @Resource
+    private ClerkService clerkService;
     /**
      * 生产完成
      * @return
@@ -138,11 +136,17 @@ public class DrawingProcessAdminController {
      * @return
      */
     @RequestMapping("/updateAccomplishNum")
-    public Map<String,Object> updateAccomplishNum(Integer accomplishNum,Integer id){
+    public Map<String,Object> updateAccomplishNum(Integer accomplishNum,Integer id,Integer clerkId){
         Map<String,Object> map = new HashMap<>();
         drawingProcessService.updateAccomplishNum(accomplishNum,id);
         map.put("success",true);
         logService.save(new Log(Log.UPDATE_ACTION,"更新完成数量"));
+        ClerkProduct clerkProduct = new ClerkProduct();
+        clerkProduct.setClerk(clerkService.findById(clerkId));
+        clerkProduct.setDrawingProcess(drawingProcessService.findById(id));
+        clerkProduct.setNum(accomplishNum);
+        clerkProduct.setDateInProduct(new Date(System.currentTimeMillis()));
+        clerkProductService.save(clerkProduct);
         return map;
     }
 

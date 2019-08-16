@@ -42,4 +42,12 @@ public interface ClerkRepository extends JpaRepository<Clerk, Integer>, JpaSpeci
      */
     @Query(value = "select * from t_clerk where name like ?1", nativeQuery = true)
     List<Clerk> clerkName(String clerkName);
+
+    /**
+     * 下拉框模糊查询生产人员
+     * @param name
+     * @return
+     */
+    @Query(value="SELECT * FROM t_clerk WHERE NAME LIKE ?1 AND dep_id = (select id from t_dep where text like '%生产%')", nativeQuery=true)
+    public List<Clerk> combobo(String name);
 }
