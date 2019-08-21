@@ -234,4 +234,16 @@ public class SaleListAdminController {
         map.put("success",true);
         return map;
     }
+
+    /**
+     * 根据销售单号查询
+     * @param saleNumber
+     * @return
+     */
+    @RequestMapping("/findBySaleNumber")
+    public Map<String,Object> findBySaleNumber(String saleNumber){
+        Map<String,Object> map = new HashMap<>();
+        map.put("rows",saleListService.findBySaleNumber(saleNumber));
+        return map;
+    }
 }

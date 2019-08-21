@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>工序生产加工</title>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/static/js/date.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            load();
+        });
+
+
+        function load(){
+            $("#dg").datagrid({
+                url:"/admin/drawingProcess/findAll",
+                columns:[[
+                    {
+                        field: "informNum",
+                        width: "150",
+                        align: "center",
+                        title: "生产通知单号"
+                    },{
+                        field: "processId",
+                        width: "150",
+                        align: "center",
+                        title: "工序",
+                        formatter: function (value, rows) {
+                            if(rows.process){
+                                return rows.process.name;
+                            }
+                            else
+                                return '';
+                        }
+                    },{
+                        field: "saleNumber",
+                        width: "150",
+                        align: "center",
+                        title: "订单号"
+                    },{
+                        field: "drawingId",
+                        width: "150",
+                        align: "center",
+                        title: "小图纸编号",
+                        formatter:function (value, rows) {
+                            return rows.drawing.drawingId;
+                        }
+                    },{
+                        field: "bigDrawingId",
+                        width: "150",
+                        align: "center",
+                        title: "所属大图纸编号",
+                        formatter:function (value, rows) {
+                            if(rows.bigDrawing){
+                                return rows.bigDrawing.drawingId;
+                            }
+                            return '';
+                        }
+                    },{
+                        field: "num",
+                        width: "150",
+                        align: "center",
+                        title: "总数量"
+                    },{
+                        field: "accomplishNum",
+                        width: "150",
+                        align: "center",
+                        title: "完成数量"
+                    },{
+                        field: "informNum",
+                        width: "150",
+                        align: "center",
+                        title: "通知单号",
+                        hidden: "true"
+                    }
+                ]]
+            });
+        }
+
+        //搜索
+        function search() {
+            $("#dg").datagrid({
+                url:'/admin/drawingProcess/findByInformNum',
+                queryParams:{
+                    informNum:$("#informNum").val()
+                }
+            });
+        }
+
+        //刷新
+        function reload() {
+            window.location.reload();
+        }
+
+        //点击添加工序按钮
+        function add() {
+            var rows = $("#dg").datagrid("getSelected");
+            if(rows == null){
+                $.messager.alert("系统提示","请选择一条信息");
+                return;
+            }
+            $("#dlg1").dialog("open");
+        }
+
+        //添加工序
+        function saveProcess() {
+            var rows = $("#dg").datagrid("getSelected");
+            var rowss = $("#tb").datagrid("getSelections");
+            var Arr = [];
+            for (var i = 0; i < rowss.length; i++){
+                Arr.push(rowss[i].id);
+            }
+            var Ids = Arr.join(",");
+            $.post("/admin/drawingProcess/saveProcess",
+                {
+                    state:"任务下发",
+                    DrawingId:rows.drawing.id,
+                    BigDrawingId:rows.saleList.tuzhiId,
+                    ProcessIds:Ids,
+                    saleNumber:rows.saleNumber,
+                    num:rows.num,
+                    informNum:rows.informNum,
+                    saleListId:rows.saleList.id
+                },function (result) {
+                    if(result.success){
+                        alert("添加成功！");
+                        window.location.reload();
+                    }
+                    else{
+                        alert("添加失败！");
+                    }
+                },"json");
+            closedia();
+        }
+        //关闭添加工序对话框
+        function closedia() {
+            $("#dlg1").dialog("close");
+        }
+
+        function subtract() {
+            var row = $("#dg").datagrid("getSelected");
+            if(row.accomplishNum !=0){
+                $.messager.alert("系统提示","此工序已开始生产不可取消！");
+                return;
+            }
+            $.post("/admin/drawingProcess/deleteById",{
+                id:row.id
+            },function (result) {
+                if(result.success){
+                    $.messager.alert("系统提示","操作成功！");
+                    $("#dg").datagrid("reload");
+                }
+            },"json")
+        }
+
+
+    </script>
+</head>    <!--上面的dg  下面的addSon-->
+<body class="easyui-layout" style="margin: 1px">
+<table id="dg" title="工序操作" singleSelect="true"
+       fitColumns="false" rownumbers="true" fit="true"
+       toolbar="#tb1" split="true">
+</table>
+
+<!-- dg顶部工具栏 -->
+<div id="tb1">
+    <fieldset style="border-color: #E7F0FF">
+        生产通知单号：<input type="text" id="informNum" size="15"
+                      onkeydown="if(event.keyCode==13) search()"/>
+        &nbsp;&nbsp;&nbsp;<a href="javascript:search()"
+                       class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+        &nbsp;&nbsp;&nbsp;<a href="javascript:reload()"
+                             class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+        &nbsp;&nbsp;&nbsp;<a href="javascript:add()"
+                             class="easyui-linkbutton" iconCls="icon-add" plain="true">添加工序</a>
+        &nbsp;&nbsp;&nbsp;<a href="javascript:subtract()"
+                             class="easyui-linkbutton" iconCls="icon-remove" plain="true">取消工序</a>
+    </fieldset>
+</div>
+
+<div class="easyui-dialog" title="添加工序" id="dlg1" fit="true" closed="true">
+    <table id="tb" class="easyui-datagrid" fitColumns="false" buttons="#buttons"  toolbar="#toolbar"
+           rownumbers="true" url="/admin/process/list">
+        <thead>
+        <th field="name" width="200" align="center">工序名称</th>
+        <th field="pNum" width="200" align="center">理论工序序号</th>
+        </thead>
+    </table>
+    <div id="buttons">
+        <a href="javascript:saveProcess()" class="easyui-linkbutton"
+           iconCls="icon-ok">保存</a>
+        <a href="javascript:closedia()"  class="easyui-linkbutton"
+           iconCls="icon-cancel">关闭</a>
+    </div>
+</div>
+
+
+
+</body>
+</html>

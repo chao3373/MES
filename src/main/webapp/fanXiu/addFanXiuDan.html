@@ -221,6 +221,20 @@
             $("#dlg1").dialog("close");
         }
 
+        function search() {
+            $("#dg").datagrid({
+                url:'/admin/saleList/findBySaleNumber',
+                queryParams:{
+                    saleNumber:$("#saleNumber").val()
+                }
+            });
+            $("#addSon").datagrid("loadData", []);
+        }
+
+        //搜索
+        function reload() {
+            window.location.reload();
+        }
 
     </script>
 </head>    <!--上面的dg  下面的addSon-->
@@ -252,8 +266,12 @@
     <div id="tb1">
         <fieldset style="border-color: #E7F0FF">
             <legend>生产任务单号：<span id="informNum"></span></legend>
-            &nbsp;销售单号&nbsp; <input type="text" id="s_saleNumber" size="15"
-                                    onkeydown="if(event.keyCode==13) searchSale()"/>
+            &nbsp;销售单号&nbsp; <input type="text" id="saleNumber" size="15"
+                                    onkeydown="if(event.keyCode==13) search()"/>
+            &nbsp;&nbsp;<a href="javascript:search()"
+                           class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+            &nbsp;&nbsp;<a href="javascript:reload()"
+                           class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
         </fieldset>
     </div>
 </div>

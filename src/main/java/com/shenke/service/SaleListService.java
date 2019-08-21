@@ -94,4 +94,6 @@ public interface SaleListService {
     List<SaleList> findAll();
 
     public List<SaleList> dingDanZhuiZong(SaleList saleList,String saleDated,Integer yaoqiu);
+
+    public List<SaleList> findBySaleNumber(String saleNumber);
 }

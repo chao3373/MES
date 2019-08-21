@@ -95,4 +95,11 @@ public interface SaleListRepository  extends JpaRepository<SaleList, Integer>, J
     @Query(value = "update t_sale_list set remark =?2 where id =?1",nativeQuery = true)
     public void setRemark(Integer id,Integer remark);
 
+    /**
+     * 根据销售单号查询
+     * @param saleNumber
+     * @return
+     */
+    @Query(value = "select * from t_sale_list where sale_number =?1",nativeQuery = true)
+    public List<SaleList> findBySaleNumber(String saleNumber);
 }

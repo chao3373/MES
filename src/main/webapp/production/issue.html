@@ -307,7 +307,7 @@
                 },"json");
             closedia();
         }
-        //关闭添加大图对话框
+        //关闭添加工序对话框
         function closedia() {
             $("#dlg1").dialog("close");
         }
@@ -319,6 +319,22 @@
             },function () {
 
             },"json")
+        }
+
+        //搜索
+        function search() {
+            $("#dg").datagrid({
+                url:'/admin/saleList/findBySaleNumber',
+                queryParams:{
+                    saleNumber:$("#saleNumber").val()
+                }
+            });
+            $("#addSon").datagrid("loadData", []);
+        }
+
+        //刷新
+        function reload() {
+            window.location.reload();
         }
 
     </script>
@@ -351,10 +367,12 @@
     <div id="tb1">
         <fieldset style="border-color: #E7F0FF">
             <legend>生产任务单号：<span id="informNum"></span></legend>
-            &nbsp;销售单号&nbsp; <input type="text" id="s_saleNumber" size="15"
-                                   onkeydown="if(event.keyCode==13) searchSale()"/>
-            &nbsp;&nbsp;<a href="javascript:searchSale()"
+            &nbsp;销售单号&nbsp; <input type="text" id="saleNumber" size="15"
+                                   onkeydown="if(event.keyCode==13) search()"/>
+            &nbsp;&nbsp;<a href="javascript:search()"
                            class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+            &nbsp;&nbsp;<a href="javascript:reload()"
+                           class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
         </fieldset>
     </div>
 </div>

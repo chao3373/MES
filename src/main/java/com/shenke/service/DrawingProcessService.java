@@ -82,4 +82,11 @@ public interface DrawingProcessService {
     public void updateStateByInformNum(String informNum);
 
 
+    /**
+     * 查找全部
+     * @return
+     */
+    public List<DrawingProcess> findAll();
+
+    void deleteById(Integer id);
 }

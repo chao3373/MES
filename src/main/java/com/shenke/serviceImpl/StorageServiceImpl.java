@@ -19,4 +19,14 @@ public class StorageServiceImpl implements StorageService {
     public void save(Storage storage) {
         storageRepository.save(storage);
     }
+
+    @Override
+    public Storage selectByMaxId() {
+        return storageRepository.selectByMaxId();
+    }
+
+    @Override
+    public Storage findById(Integer id) {
+        return storageRepository.findById(id).get();
+    }
 }

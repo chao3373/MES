@@ -56,8 +56,21 @@ public class StorageAdminController {
         storageService.save(storage);
         saleListService.setState(saleListId,standard+"入库");
 
+        Integer id = storageService.selectByMaxId().getId();
         map.put("success",true);
+        map.put("id",id);
         return map;
+    }
 
+    /**
+     * 根据ID查找对象
+     * @param id
+     * @return
+     */
+    @RequestMapping("/findById")
+    public Map<String,Object> findById(Integer id){
+        Map<String,Object> map = new HashMap<>();
+        map.put("data",storageService.findById(id));
+        return map;
     }
 }

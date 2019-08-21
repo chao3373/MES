@@ -28,8 +28,6 @@ public class DrawingTypeServiceImpl implements DrawingTypeService {
 
     @Override
     public void setState(Integer id, String state) {
-        System.out.println("走到这里啦哈哈哈哈");
-        System.out.println(id + state);
         drawingTypeRespository.setState(id,state);
     }
 

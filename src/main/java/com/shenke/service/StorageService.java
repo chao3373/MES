@@ -9,4 +9,16 @@ public interface StorageService {
      * @param storage
      */
     public void save (Storage storage);
+
+    /**
+     * 查询最大ID
+     * @return
+     */
+    public Storage selectByMaxId();
+
+    /**
+     * 根据ID查找对象
+     * @return
+     */
+    public Storage findById(Integer id);
 }

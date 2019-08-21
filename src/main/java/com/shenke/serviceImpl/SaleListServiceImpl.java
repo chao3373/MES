@@ -133,4 +133,9 @@ public class SaleListServiceImpl implements SaleListService {
         });
     }
 
+    @Override
+    public List<SaleList> findBySaleNumber(String saleNumber) {
+        return saleListRepository.findBySaleNumber(saleNumber);
+    }
+
 }

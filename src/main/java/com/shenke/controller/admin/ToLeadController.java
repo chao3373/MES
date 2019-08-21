@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.shenke.entity.Log;
 import com.shenke.entity.SaleList;
 import com.shenke.service.*;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -39,6 +40,15 @@ public class ToLeadController {
     @Resource
     private ToLeadService toLeadService;
 
+    @Resource
+    private LogService logService;
+
+    /**
+     * 导入订单表格
+     * @param file
+     * @return
+     * @throws IOException
+     */
     @RequestMapping("/importFile")
     public Map<String, Object> getExcel(@RequestParam("fileName") MultipartFile file) throws IOException {
         Map<String, Object> map = new HashMap<>();
@@ -57,6 +67,7 @@ public class ToLeadController {
         }
         map.put("success", true);
         map.put("rows", maps);
+        logService.save(new Log(Log.SEARCH_ACTION, "导入订单表格"));
         return map;
     }
 

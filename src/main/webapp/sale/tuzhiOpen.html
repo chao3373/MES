@@ -22,29 +22,13 @@
         }
 
         function searchSale() {
-            var clientId;
-            var clerkId;
-            if (isNaN($("#s_client").combobox("getValue"))) {
-                clientId = "";
-            } else {
-                clientId = $("#s_client").combobox("getValue");
-            }
-
-            if (isNaN($("#s_clerk").combobox("getValue"))) {
-                clerkId = "";
-            } else {
-                clerkId = $("#s_clerk").combobox("getValue");
-            }
             $("#dg").datagrid({
-                url: '/admin/saleList/list',
-                queryParams: {
-                    saleNumber: $("#s_saleNumber").val(),
-                    clientId: clientId,
-                    clerkId: clerkId,
-                    bSaleDate: $("#s_bSaleDate").datebox("getValue"),
-                    eSaleDate: $("#s_eSaleDate").datebox("getValue")
+                url:'/admin/saleList/findBySaleNumber',
+                queryParams:{
+                    saleNumber:$("#saleNumber").val()
                 }
             });
+            $("#addSon").datagrid("loadData", []);
         }
 
         function formatSupplier(val, row) {
@@ -373,6 +357,11 @@
         function closedia() {
             $("#dlg2").dialog("close");
         }
+
+        //刷新
+        function reload() {
+            window.location.reload();
+        }
     </script>
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
@@ -407,6 +396,8 @@
                                    onkeydown="if(event.keyCode==13) searchSale()"/>
             &nbsp;&nbsp;<a href="javascript:searchSale()"
                            class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+            &nbsp;&nbsp;<a href="javascript:reload()"
+                                 class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
             &nbsp;&nbsp;<a href="javascript:addBidDrawingInfo()"
                            class="easyui-linkbutton" iconCls="icon-add" plain="true">添加大图信息</a>
             <span style="background:orange">背景色为橙色的需要添加图纸信息及所包含子图</span>

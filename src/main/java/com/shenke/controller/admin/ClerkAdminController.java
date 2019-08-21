@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
 
+import com.shenke.entity.Log;
 import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +35,7 @@ public class ClerkAdminController {
 	 */
 	@RequestMapping("/list")
 	public List<Clerk> list(){
+		logService.save(new Log(Log.SEARCH_ACTION, "查询所有员工信息"));
 		return clerkService.findAll();
 	}
 
@@ -47,6 +49,7 @@ public class ClerkAdminController {
 		Map<String, Object> map = new HashMap<>();
 		map.put("success", true);
 		map.put("rows", clerkService.findByDepId(id));
+		logService.save(new Log(Log.SEARCH_ACTION, "根据id查询员工信息"));
 		return map;
 	}
 
@@ -59,6 +62,7 @@ public class ClerkAdminController {
 		Map<String, Object> map = new HashMap<>();
 		clerkService.add(clerk);
 		map.put("success", true);
+		logService.save(new Log(Log.SEARCH_ACTION, "添加员工信息"));
 		return map;
 	}
 
@@ -69,6 +73,7 @@ public class ClerkAdminController {
 	@RequestMapping("/deleteByIds")
 	public void deleteByIds(Integer[] ids){
 		clerkService.deleteByIds(ids);
+		logService.save(new Log(Log.SEARCH_ACTION, "删除员工信息"));
 	}
 
 	/***
@@ -85,6 +90,7 @@ public class ClerkAdminController {
 		}
 		System.out.println(clerkName);
 		map.put("rows", clerkService.clerkName("%" + clerkName + "%"));
+		logService.save(new Log(Log.SEARCH_ACTION, "根据员工姓名模糊查询员工信息"));
 		return map;
 	}
 
@@ -100,6 +106,7 @@ public class ClerkAdminController {
 		if (q == null) {
 			q = "";
 		}
+		logService.save(new Log(Log.SEARCH_ACTION, "下拉框模糊查询员工信息"));
 		return clerkService.combobox("%" + q + "%");
 	}
 

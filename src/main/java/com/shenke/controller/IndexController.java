@@ -1,10 +1,15 @@
 package com.shenke.controller;
 
 import com.shenke.service.RoleMenuService;
+import com.shenke.util.QRCode;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Auther: Administrator
@@ -25,5 +30,22 @@ public class IndexController {
     @RequestMapping("/static/teess")
     public void test(){
         roleMenuService.teess();
+    }
+
+    // 根据数据库中的信息输出二维码
+    @ResponseBody
+    @RequestMapping("/static/erweima")
+    public Map<String, Object> erweima(HttpServletRequest request, String url) throws Exception {
+        System.out.println(url);
+        Map<String, Object> map = new HashMap<String, Object>();
+        System.out.println(url);
+        String urlInfo = QRCode.getQRCode(request, url);
+//		String urlInfo = this.getURLInfo(url, "utf-8");
+//		System.out.println("图片路径：");
+//		System.out.println(urlInfo);
+        map.put("success", true);
+        map.put("url", urlInfo);
+        System.out.println(map);
+        return map;
     }
 }

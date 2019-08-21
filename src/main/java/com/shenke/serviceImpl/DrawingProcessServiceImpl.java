@@ -84,5 +84,15 @@ public class DrawingProcessServiceImpl implements DrawingProcessService {
         drawingProcessRepository.updateStateByInformNum(informNum);
     }
 
+    @Override
+    public List<DrawingProcess> findAll() {
+        return drawingProcessRepository.findAll();
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        drawingProcessRepository.deleteById(id);
+    }
+
 
 }

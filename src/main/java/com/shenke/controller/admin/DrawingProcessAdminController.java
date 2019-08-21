@@ -78,6 +78,17 @@ public class DrawingProcessAdminController {
     public Map<String,Object> saveProcess(Integer ProcessTypeId,String state,Integer DrawingId,String ProcessIds,String BigDrawingId,
                                           String saleNumber,Integer num,String informNum,Integer saleListId) {
         Map<String,Object> map = new HashMap<>();
+
+        System.out.println("1"+ProcessTypeId);
+        System.out.println("2"+state);
+        System.out.println("3"+DrawingId);
+        System.out.println("4"+ProcessIds);
+        System.out.println("5"+BigDrawingId);
+        System.out.println("6"+saleNumber);
+        System.out.println("7"+num);
+        System.out.println("8"+informNum);
+        System.out.println("9"+saleListId);
+
         Integer id = bigDrawingService.findIdByDrawingId(BigDrawingId);
         String idsStr[] = ProcessIds.split(",");
         for(int i=0;i<idsStr.length;i++) {
@@ -96,7 +107,12 @@ public class DrawingProcessAdminController {
             drawingProcessService.saveDrawingProcess(drawingProcess);
         }
         map.put("success",true);
-        drawingTypeService.setState(ProcessTypeId,state);
+        if(ProcessTypeId != null){
+            drawingTypeService.setState(ProcessTypeId,state);
+        }
+
+
+
         logService.save(new Log(Log.ADD_ACTION,"保存工序信息"));
         return map;
     }
@@ -157,8 +173,7 @@ public class DrawingProcessAdminController {
      */
     @RequestMapping("/isNoFinish")
     public void isNoFinish(String informNum,Integer saleListId){
-
-        List<DrawingProcess> list = drawingProcessService.findByInformNum(informNum);
+        /*List<DrawingProcess> list = drawingProcessService.findByInformNum(informNum);
         int m = 0;
         for(DrawingProcess drawingProcess : list){
             if(drawingProcess.getState().equals("生产完成")){
@@ -171,7 +186,7 @@ public class DrawingProcessAdminController {
             temporaryStorage.setDrawing(drawingService.findById(list.get(0).getDrawing().getId()));
 
             temporaryStorageService.save(temporaryStorage);
-        }
+        }*/
 
         List<DrawingProcess> list2 = drawingProcessService.findBySaleListId(saleListId);
 
@@ -221,4 +236,41 @@ public class DrawingProcessAdminController {
         return code.toString();
     }
 
+    /**
+     * 查找全部
+     * @return
+     */
+    @RequestMapping("/findAll")
+    public Map<String,Object> findAll(){
+        Map<String,Object> map = new HashMap<>();
+        map.put("rows",drawingProcessService.findAll());
+        logService.save(new Log(Log.UPDATE_ACTION,"查询所有通知单号工序信息"));
+        return map;
+    }
+
+    /**
+     * 根据通知单号查找
+     * @param informNum
+     * @return
+     */
+    @RequestMapping("/findByInformNum")
+    public Map<String,Object> findByInformNum(String informNum){
+        Map<String,Object> map = new HashMap<>();
+        map.put("rows",drawingProcessService.findByInformNum(informNum));
+        logService.save(new Log(Log.UPDATE_ACTION,"通过通知单号查询工序信息"));
+        return map;
+    }
+
+    /**
+     * 通过Id删除
+     * @return
+     */
+    @RequestMapping("/deleteById")
+    public Map<String,Object> deleteById(Integer id){
+        Map<String,Object> map = new HashMap<>();
+        drawingProcessService.deleteById(id);
+        map.put("success",true);
+        logService.save(new Log(Log.UPDATE_ACTION,"通过id删除通知单号下的工序信息"));
+        return map;
+    }
 }
