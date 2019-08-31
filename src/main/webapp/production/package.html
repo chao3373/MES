@@ -183,7 +183,7 @@
         function panduan() {
             rows = $("#dg").datagrid("getSelected");
             row = $("#addSon").datagrid("getRows");
-            if(rows.length == 0){
+            if(rows==null){
                 $.messager.alert("系统提示","请选择大图纸信息");
                 return false;
             }
@@ -195,6 +195,7 @@
         }
 
 
+        //合格入库
         function goIn() {
             if(panduan()){
                 $.post("/admin/storage/save",{
@@ -206,9 +207,9 @@
                     remark:"合格"
                 },function (result) {
                     if(result.success){
-                        /*alert("操作成功");
-                        window.location.reload();*/
+                        alert("操作成功");
                         printt(result.id);
+                        $("#dg").datagrid("reload");
                     }
                 },"json")
             }else {
@@ -220,7 +221,6 @@
         var url = "https://cli.im/api/qrcode/code?text=";
 
         function printt(id) {
-            alert(id);
             url = "";
             $.ajax({
                 type: "POST",

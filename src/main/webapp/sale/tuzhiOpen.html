@@ -362,6 +362,22 @@
         function reload() {
             window.location.reload();
         }
+
+        //删除选中的小图纸
+        function shanchu() {
+            var row = $("#addSon").datagrid("getSelected");
+            console.log(row);
+            if(row == null){
+                $.messager.alert("系统提示","请选择一条信息！");
+                return;
+            }
+            $.messager.confirm("系统提示", "您确定要删除吗?", function (r) {
+                if (r) {
+                    $("#addSon").datagrid("deleteRow",
+                        $("#addSon").datagrid("getRowIndex", row[0]));
+                }
+            });
+        }
     </script>
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
@@ -425,6 +441,8 @@
                                          class="easyui-linkbutton" iconCls="icon-add" plain="true">添加子图</a>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:OK()"
                                          class="easyui-linkbutton" iconCls="icon-ok" plain="true">确定</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:shanchu()"
+                                         class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
     </div>
 </div>
 

@@ -5,13 +5,14 @@ import com.shenke.entity.BigDrawing;
 import com.shenke.entity.Log;
 import com.shenke.service.BigDrawingService;
 import com.shenke.service.LogService;
+import com.shenke.util.GetFileName;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,5 +104,59 @@ public class BigDrawingAdminController {
         }
         logService.save(new Log(Log.SEARCH_ACTION, "下拉框模糊查询图纸信息"));
         return bigDrawingService.conboList("%" + q + "%");
+    }
+
+    /***
+     * 文件下载
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("/download")
+    public String downloadFile(HttpServletRequest request, HttpServletResponse response,String fileName) throws Exception {
+        System.out.println("下载");
+        if (fileName != null) {
+            //当前是从该工程的WEB-INF//File//下获取文件(该目录可以在下面一行代码配置)然后下载到C:\\users\\downloads即本机的默认下载的目录
+            String realPath = "d:/drawing/";
+            System.out.println(realPath);
+            System.out.println(fileName);
+            File file = new File(realPath, fileName);
+            String filena = GetFileName.getFilename(request, fileName);
+            if (file.exists()) {
+                System.out.println("是个文额");
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/force-download");// 设置强制下载不打开
+                response.addHeader("Content-Disposition",
+                        "attachment;fileName=" + filena);// 设置文件名
+                byte[] buffer = new byte[1024];
+                FileInputStream fis = null;
+                BufferedInputStream bis = null;
+                try {
+                    System.out.println("开始读取");
+                    fis = new FileInputStream(file);
+                    bis = new BufferedInputStream(fis);
+                    OutputStream os = response.getOutputStream();
+                    int i = bis.read(buffer);
+                    while (i != -1) {
+                        os.write(buffer, 0, i);
+                        i = bis.read(buffer);
+                    }
+                    return "下载成功";
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return "下载失败";
+                } finally {
+                    if (bis != null && fis != null) {
+                        try {
+                            bis.close();
+                            fis.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        return "下载失败";
     }
 }

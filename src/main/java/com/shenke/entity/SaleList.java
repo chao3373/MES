@@ -29,8 +29,6 @@ public class SaleList {
 
     private Integer num ; //数量
 
-    private Integer accomplishNum;//完成数量
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date saleDate;//销售日期
 
@@ -63,13 +61,6 @@ public class SaleList {
         this.remark = remark;
     }
 
-    public Integer getAccomplishNum() {
-        return accomplishNum;
-    }
-
-    public void setAccomplishNum(Integer accomplishNum) {
-        this.accomplishNum = accomplishNum;
-    }
 
     public Double getPrepareTime() {
         return prepareTime;
@@ -200,7 +191,6 @@ public class SaleList {
                 ", tuzhiName='" + tuzhiName + '\'' +
                 ", tuzhiId='" + tuzhiId + '\'' +
                 ", num=" + num +
-                ", accomplishNum=" + accomplishNum +
                 ", saleDate=" + saleDate +
                 ", referDate=" + referDate +
                 ", xiangmuId='" + xiangmuId + '\'' +
@@ -209,7 +199,7 @@ public class SaleList {
                 ", state='" + state + '\'' +
                 ", cunzai='" + cunzai + '\'' +
                 ", prepareTime=" + prepareTime +
-                ", remark='" + remark + '\'' +
+                ", remark=" + remark +
                 '}';
     }
 }

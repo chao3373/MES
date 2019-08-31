@@ -94,6 +94,23 @@
             });
         }
 
+        function download(){
+            alert("down");
+            // var row = $("#dg").datagrid("getSelected");
+            // var href = "/admin/bigdrawing/download?fileName=" + row.url;
+            // $("#download").attr("href",href);
+            // xiazai();
+        }
+
+        function xiazai(){
+            // setTimeout(xiazai2(), 1000);
+            var row = $("#dg").datagrid("getSelected");
+            console.log(row);
+            var href = "/admin/bigdrawing/download?fileName=" + row.url;
+            $("#download").attr("href",href);
+            $("#xz").click();
+        }
+
         $(document).ready(function () {
             $("#dg").datagrid({
                 columns: [[
@@ -103,8 +120,15 @@
                     {field: 'url', title: "文件名", width: 100, aligh: "center"},
                     {
                         field: 'operate', title: '操作', align: 'center', width: $(this).width() * 0.1,
-                        formatter: function (value, row, index) {
+                        formatter: function () {
                             var str = '<a href="javascript:chaKanXTZ()" id="chaKanTZ" name="chaKanTZ" class="easyui-linkbutton" >查看图纸</a>';
+                            return str;
+                        }
+                    },
+                    {
+                        field: 'download', title: '下载', align: 'center', width: $(this).width() * 0.1,
+                        formatter: function (value, row, index) {
+                            var str = '<a href="#123" id="download" onclick="xiazai();return false;" name="download" class="easyui-linkbutton" ><p id="xz">下载</p></a>';
                             return str;
                         }
                     }
@@ -131,7 +155,9 @@
             href="javascript:openRoleModifyDialog()" class="easyui-linkbutton"
             iconCls="icon-edit" plain="true">修改</a> <a
             href="javascript:deleteRole()" class="easyui-linkbutton"
-            iconCls="icon-remove" plain="true">删除</a>
+            iconCls="icon-remove" plain="true">删除</a><a
+            href="javascript:xiazai()" class="easyui-linkbutton"
+            iconCls="icon-download" plain="true">下载</a>
     </div>
     <div>
         &nbsp;图纸名称：&nbsp;<input type="text" id="s_roleName" size="20"
