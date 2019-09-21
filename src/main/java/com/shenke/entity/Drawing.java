@@ -14,10 +14,7 @@ public class Drawing {
     private Integer id;//id
 
     @Column(length = 100)
-    private String drawingId;//图纸编号
-
-    @Column(length = 100)
-    private String name;//图纸名称
+    private String wuliaoId;//物料编号
 
     @Column(length = 2000)
     private String url;//图纸路径
@@ -29,11 +26,18 @@ public class Drawing {
     public String toString() {
         return "Drawing{" +
                 "id=" + id +
-                ", drawingId='" + drawingId + '\'' +
-                ", name='" + name + '\'' +
+                ", wuliaoId='" + wuliaoId + '\'' +
                 ", url='" + url + '\'' +
                 ", drawingURL=" + drawingURL +
                 '}';
+    }
+
+    public String getWuliaoId() {
+        return wuliaoId;
+    }
+
+    public void setWuliaoId(String wuliaoId) {
+        this.wuliaoId = wuliaoId;
     }
 
     public String getUrl() {
@@ -42,22 +46,6 @@ public class Drawing {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public String getDrawingId() {
-        return drawingId;
-    }
-
-    public void setDrawingId(String drawingId) {
-        this.drawingId = drawingId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Integer getId() {

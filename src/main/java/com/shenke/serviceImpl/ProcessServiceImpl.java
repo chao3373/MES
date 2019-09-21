@@ -6,10 +6,12 @@ import com.shenke.repository.DrawingProcessRepository;
 import com.shenke.repository.ProcessRepository;
 import com.shenke.service.ProcessService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
 
+@Transactional
 @Service("processService")
 public class ProcessServiceImpl implements ProcessService {
 

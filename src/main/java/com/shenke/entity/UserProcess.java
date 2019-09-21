@@ -1,23 +1,24 @@
 package com.shenke.entity;
 
-
 import javax.persistence.*;
-import java.util.Date;
 
+/**
+ * 用户、工序实体类
+ */
 @Entity
-@Table(name = "t_drawing_process")
-public class DrawingProcess {
+@Table(name = "t_user_process")
+public class UserProcess {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Integer id;//id
 
-    @ManyToOne
     @JoinColumn
-    private Drawing drawing; //小图纸对象
+    @ManyToOne
+    private User user; //用户对象
 
-    @ManyToOne
     @JoinColumn
+    @ManyToOne
     private Process process;//工序对象
 
     public Integer getId() {
@@ -28,12 +29,12 @@ public class DrawingProcess {
         this.id = id;
     }
 
-    public Drawing getDrawing() {
-        return drawing;
+    public User getUser() {
+        return user;
     }
 
-    public void setDrawing(Drawing drawing) {
-        this.drawing = drawing;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Process getProcess() {
@@ -46,9 +47,9 @@ public class DrawingProcess {
 
     @Override
     public String toString() {
-        return "DrawingProcess{" +
+        return "UserProcess{" +
                 "id=" + id +
-                ", drawing=" + drawing +
+                ", user=" + user +
                 ", process=" + process +
                 '}';
     }

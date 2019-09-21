@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>设置展开工时</title>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/static/js/date.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            load();
+        });
+
+
+        function load(){
+            $("#dg").datagrid({
+                url:"/admin/saleList/setOpenTime",
+                columns:[[
+                    {
+                        field: "id",
+                        width: "150",
+                        align: "center",
+                        title: "id",
+                        hidden:"true"
+                    },{
+                        field: "kucunzuzhi",
+                        width: "150",
+                        align: "center",
+                        title: "库存组织"
+                    },{
+                        field: "hangHao",
+                        width: "150",
+                        align: "center",
+                        title: "行号"
+                    },{
+                        field: "wuliaoId",
+                        width: "150",
+                        align: "center",
+                        title: "物料编号"
+                    },{
+                        field: "tuzhiName",
+                        width: "150",
+                        align: "center",
+                        title: "图纸名称"
+                    },{
+                        field: "tuzhiId",
+                        width: "150",
+                        align: "center",
+                        title: "图纸编号"
+                    },{
+                        field: "num",
+                        width: "150",
+                        align: "center",
+                        title: "数量"
+                    },{
+                        field: "xiangmuId",
+                        width: "150",
+                        align: "center",
+                        title: "项目编号"
+                    },{
+                        field: "shenqingNumber",
+                        width: "150",
+                        align: "center",
+                        title: "申请编号"
+                    }
+                ]]
+            });
+        }
+
+        /**
+         * 审核通过
+         */
+        function auditPass() {
+            if($("#yuGuGongShi").val() == ""){
+                $.messager.alert("系统提示","请添加展开工时")
+                return;
+            }
+
+            if($("#dg").datagrid("getSelected") == null){
+                $.messager.alert("系统提示","请选择要添加工时的信息");
+                return;
+            }
+
+            $.post("/admin/saleList/baoCunOpenTime",
+                {
+                    id:$("#dg").datagrid("getSelected").id,
+                    yuGuGongShi:$("#yuGuGongShi").val(),
+                    wuliaoId:$("#dg").datagrid("getSelected").wuliaoId
+                },function (result) {
+                    if(result.success){
+                        $.messager.alert("系统提示","添加成功！")
+                        $("#dg").datagrid("reload");
+                    }
+                    else {
+                        $.messager.alert("系统提示","添加失败!")
+                    }
+                },"json");
+            $("#yuGuGongShi").val('');
+
+
+        }
+
+
+    </script>
+</head>    <!--上面的dg  下面的addSon-->
+<body class="easyui-layout" style="margin: 1px">
+    <table id="dg" class="easyui-datagrid"
+           fitColumns="false" rownumbers="true" fit="true" singleSelect="true"
+           toolbar="#tb1" split="true">
+        <thead>
+        <th id="id" width="200" hidden="true" align="center">id</th>
+        <th id="kucunzuzhi" field="kucunzuzhi" width="200" align="center">库存组织</th>
+        <th id="hangHao" field="hangHao" width="100" align="center">行号</th>
+        <th id="wuliaoId" field="wuliaoId" width="100" align="center">物料编号</th>
+        <th id="tuzhiName" field="tuzhiName" width="100" align="center">图纸名称</th>
+        <th id="tuzhiId" field="tuzhiId" width="100" align="center">图纸编号</th>
+        <th id="num" field="num" width="100" align="center">数量</th>
+        <th id="xiangmuId" field="xiangmuId" width="100" align="center">项目号</th>
+        <th id="shenqingNumber" field="shenqingNumber" width="100" align="center">申请单号</th>
+        </thead>
+    </table>
+
+    <!-- dg顶部工具栏 -->
+    <div id="tb1">
+        <fieldset style="border-color: #E7F0FF">
+            <legend></legend>
+            &nbsp;图纸所用展开工时：&nbsp; <input class="easyui-numberbox" type="text" id="yuGuGongShi" name="yuGuGongShi"
+                                         autocomplete="off"  size="15" />
+                &nbsp;&nbsp;<a href="javascript:auditPass()"
+                           class="easyui-linkbutton" iconCls="icon-ok" plain="true">添加并保存大图信息</a>
+        </fieldset>
+    </div>
+</body>
+</html>

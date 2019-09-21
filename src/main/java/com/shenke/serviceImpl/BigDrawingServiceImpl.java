@@ -47,6 +47,11 @@ public class BigDrawingServiceImpl implements BigDrawingService {
     }
 
     @Override
+    public BigDrawing findByWuLiaoId(String wuliaoId) {
+        return bigDrawingRepository.findByWuLiaoId(wuliaoId);
+    }
+
+    @Override
     public Integer findIdByDrawingId(String drawingId) {
         return bigDrawingRepository.findIdByDrawingId(drawingId);
     }

@@ -79,6 +79,7 @@
 	}
 	
 	function openUserModifyDialog(){
+		console.log($("#dg").datagrid("getSelections"))
 		var selectedRows=$("#dg").datagrid("getSelections");
 		if(selectedRows.length!=1){
 			$.messager.alert("系统提示","请选择一条要修改的数据！");
@@ -147,6 +148,69 @@
 	function closeRoleSetDialog(){
 		$("#dlg2").dialog("close");
 	}
+
+	function gongxuEdit(val,row) {
+		return "<a href=\"javascript:openProcessChooseDialog('" + row.gongxus + "'," + row.id + ")\"><img style='margin-top:4px' src='/static/images/edit.gif'/></a>";
+	}
+
+	/**
+	 * 添加工序
+	 * @param roles
+	 * @param userId
+	 */
+	function openProcessChooseDialog(gongxus,id){
+		var processArr=gongxus.split(",");
+		$("#dlg3").dialog("open").dialog("setTitle","选择工序");
+		$("#dg3").datagrid({
+			url:'/admin/process/list',
+			onLoadSuccess:function(data){
+				var allRows=$("#dg3").datagrid("getRows");
+				for(var i=0;i<allRows.length;i++){
+					var name=allRows[i].name;
+					if($.inArray(name,processArr)>=0){
+						$("#dg3").datagrid("checkRow",i);
+					}
+				}
+			}
+		});
+		$("#yonghu").val(id);
+	}
+
+	//保存工序
+	function saveProcess(){
+		var yonghu=$("#yonghu").val();
+		var selectedRows=$("#dg3").datagrid("getSelections");
+		var str=[];
+		for(var i=0;i<selectedRows.length;i++){
+			str.push(selectedRows[i].id);
+		}
+		var processIds=str.join(",");
+		$.post("/admin/userProcess/addProcess",{
+			processIds:processIds,
+			yonghu:yonghu
+		},function(result){
+			if(result.success) {
+				closesaveProcessDialog();
+				$.messager.alert("系统提示","添加成功");
+				$("#dg").datagrid("reload");
+				/*var row = $("#addSon").datagrid("getRows");
+                var m=0;
+                for (var i = 0; i < row.length; i++){
+                    if(row[i].gongxus != null){
+                        m+=1;
+                    }
+                }
+                console.log(m)*/
+
+			}else{
+				$.messager.alert("系统提示","添加失败");
+			}
+		},"json");
+	}
+
+	function closesaveProcessDialog(){
+		$("#dlg3").dialog("close");
+	}
 	
 	
 </script>
@@ -160,9 +224,10 @@
 			<th field="userName" width="50" align="center">用户名</th>
 			<th field="password" width="50" align="center">密码</th>
 			<th field="trueName" width="50" align="center">真实姓名</th>
-			<th field="remarks" width="80" align="center">备注</th>
 			<th field="roles" width="150" align="center">拥有角色</th>
 			<th field="aa" width="50" align="center" formatter="formatEdit">角色设置</th>
+			<th field="gongxus" width="150" align="center">擅长工序</th>
+			<th field="choose" width="50" align="center" formatter="gongxuEdit">工序设置</th>
 		</thead>
 	</table>
 	
@@ -237,5 +302,23 @@
 		<a href="javascript:saveRoleSet()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
 		<a href="javascript:closeRoleSetDialog()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
 	</div>
+
+	<div id="dlg3" class="easyui-dialog" style="width: 500px;height: 350px;"
+		 closed="true" buttons="#dlg-buttons3">
+		<input type="hidden" id="yonghu" name="yonghu"/>
+		<table id="dg3"  class="easyui-datagrid" fitColumns="true" fit="true">
+			<thead>
+			<th field="cb" checkbox="true" align="center"></th>
+			<th field="id" width="20" align="left" hidden="true">编号</th>
+			<th field="name" width="100" align="left">工序名称</th>
+			</thead>
+		</table>
+	</div>
+	<!-- 对话框按钮2 -->
+	<div id="dlg-buttons3">
+		<a href="javascript:saveProcess()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+		<a href="javascript:closesaveProcessDialog()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
+	</div>
+
 </body>
 </html>

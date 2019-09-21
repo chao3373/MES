@@ -39,9 +39,9 @@ public class ClerkProductServiceImpl implements ClerkProductService {
             public Predicate toPredicate(Root<ClerkProduct> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 Predicate predicate = cb.conjunction();
 
-                if((StringUtil.isNotEmpty(clerkProduct.getDrawingProcess().getInformNum()))){
+               /* if((StringUtil.isNotEmpty(clerkProduct.getDrawingProcess().getInformNum()))){
                     predicate.getExpressions().add(cb.equal(root.get("drawingProcess").get("informNum"),clerkProduct.getDrawingProcess().getInformNum()));
-                }
+                }*/
                 if((clerkProduct.getDrawingProcess().getProcess()!= null)){
                     predicate.getExpressions().add(cb.equal(root.get("drawingProcess").get("process").get("id"),clerkProduct.getDrawingProcess().getProcess().getId()));
                 }

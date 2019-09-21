@@ -20,79 +20,22 @@ public class DrawingProcessServiceImpl implements DrawingProcessService {
 
 
     @Override
-    public void setState(Integer id) {
-        drawingProcessRepository.setState(id);
+    public void deleteByDrawingId(Integer drawingId) {
+        drawingProcessRepository.deleteByDrawingId(drawingId);
     }
 
     @Override
-    public void saveDrawingProcess(DrawingProcess drawingProcess) {
+    public void save(DrawingProcess drawingProcess) {
         drawingProcessRepository.save(drawingProcess);
     }
 
     @Override
-    public List<DrawingProcess> findProcessIssue() {
-        return drawingProcessRepository.findProcessIssue();
+    public List<DrawingProcess> findByDrawingId(Integer id) {
+        return drawingProcessRepository.findByDrawingId(id);
     }
 
     @Override
-    public List<DrawingProcess> findByProcess(Integer id) {
-        return drawingProcessRepository.findByProcess(id);
+    public List<DrawingProcess> findByArr(Integer[] a) {
+        return drawingProcessRepository.findByArr(a);
     }
-
-    @Override
-    public void updateAccomplishNum(Integer accomplishNum,Integer id) {
-
-        DrawingProcess drawingProcess = this.findById(id);
-        if((drawingProcess.getAccomplishNum()+accomplishNum) == drawingProcess.getNum()){
-            drawingProcessRepository.updateAccomplishNum((drawingProcess.getAccomplishNum()+accomplishNum),id);
-            drawingProcessRepository.setState(id);
-        }
-        else {
-            drawingProcessRepository.updateAccomplishNum((drawingProcess.getAccomplishNum()+accomplishNum),id);
-        }
-
-
-    }
-
-    @Override
-    public DrawingProcess findById(Integer id) {
-        return drawingProcessRepository.findById(id).get();
-    }
-
-    @Override
-    public Integer findMinProcess(String informNum) {
-        return drawingProcessRepository.findMinProcess(informNum);
-    }
-
-    @Override
-    public String getTodayMaxinformNumNumber() {
-        return drawingProcessRepository.getTodayMaxPurchaseNumber();
-    }
-
-    @Override
-    public List<DrawingProcess> findByInformNum(String informNum) {
-        return drawingProcessRepository.findByInformNum(informNum);
-    }
-
-    @Override
-    public List<DrawingProcess> findBySaleListId(Integer saleListId) {
-        return drawingProcessRepository.findBySaleListId(saleListId);
-    }
-
-    @Override
-    public void updateStateByInformNum(String informNum) {
-        drawingProcessRepository.updateStateByInformNum(informNum);
-    }
-
-    @Override
-    public List<DrawingProcess> findAll() {
-        return drawingProcessRepository.findAll();
-    }
-
-    @Override
-    public void deleteById(Integer id) {
-        drawingProcessRepository.deleteById(id);
-    }
-
-
 }

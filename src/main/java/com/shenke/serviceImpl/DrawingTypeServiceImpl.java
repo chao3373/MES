@@ -22,14 +22,10 @@ public class DrawingTypeServiceImpl implements DrawingTypeService {
     }
 
     @Override
-    public List<DrawingType> findBySaleListId(Integer id) {
-        return drawingTypeRespository.findBySaleListId(id);
+    public List<DrawingType> findByBigDrawingId(Integer id) {
+        return drawingTypeRespository.findByBigDrawingId(id);
     }
 
-    @Override
-    public void setState(Integer id, String state) {
-        drawingTypeRespository.setState(id,state);
-    }
 
 
 }

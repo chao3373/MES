@@ -123,7 +123,6 @@ public class BigDrawingAdminController {
             File file = new File(realPath, fileName);
             String filena = GetFileName.getFilename(request, fileName);
             if (file.exists()) {
-                System.out.println("是个文额");
                 response.setCharacterEncoding("UTF-8");
                 response.setContentType("application/force-download");// 设置强制下载不打开
                 response.addHeader("Content-Disposition",

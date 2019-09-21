@@ -22,9 +22,18 @@ public class DrawingType {
 
     @ManyToOne
     @JoinColumn
-    private SaleList saleList; //订单
+    private BigDrawing bigDrawing; //大图纸id
 
-    private String state;//状态
+    @Transient
+    private String gongxus; //所属工序
+
+    public String getGongxus() {
+        return gongxus;
+    }
+
+    public void setGongxus(String gongxus) {
+        this.gongxus = gongxus;
+    }
 
     public Integer getId() {
         return id;
@@ -42,20 +51,12 @@ public class DrawingType {
         this.drawing = drawing;
     }
 
-    public SaleList getSaleList() {
-        return saleList;
+    public BigDrawing getBigDrawing() {
+        return bigDrawing;
     }
 
-    public void setSaleList(SaleList saleList) {
-        this.saleList = saleList;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
+    public void setBigDrawing(BigDrawing bigDrawing) {
+        this.bigDrawing = bigDrawing;
     }
 
     @Override
@@ -63,8 +64,8 @@ public class DrawingType {
         return "DrawingType{" +
                 "id=" + id +
                 ", drawing=" + drawing +
-                ", saleList=" + saleList +
-                ", state='" + state + '\'' +
+                ", bigDrawing=" + bigDrawing +
+                ", gongxus='" + gongxus + '\'' +
                 '}';
     }
 }

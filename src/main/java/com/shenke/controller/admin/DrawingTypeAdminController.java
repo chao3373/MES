@@ -1,6 +1,7 @@
 package com.shenke.controller.admin;
 
 
+import com.shenke.entity.Drawing;
 import com.shenke.entity.DrawingType;
 import com.shenke.entity.Log;
 import com.shenke.service.*;
@@ -39,45 +40,19 @@ public class DrawingTypeAdminController {
 
 
     @RequestMapping("/addSonDrawing")
-    public Map<String,Object> addSonDrawing(String smallIds,Integer id) throws Exception {
+    public Map<String,Object> addSonDrawing(String wuliaoId,String []smallIds,Integer id) throws Exception {
         Map<String,Object> map = new HashMap<>();
-        String idsStr[] = smallIds.split(",");
 
-        for(int i =0 ;i<idsStr.length;i++){
+        for (int i = 0 ;i < smallIds.length; i++){
             DrawingType drawingType = new DrawingType();
-            drawingType.setSaleList(saleListService.findById(id));
-            drawingType.setDrawing(drawingService.findById(Integer.parseInt(idsStr[i])));
-            drawingType.setState("图纸展开");
+            drawingType.setDrawing(drawingService.findByWuliaoId(smallIds[i]));
+            drawingType.setBigDrawing(bigDrawingService.findByWuLiaoId(wuliaoId));
             drawingTypeService.addSonDrawing(drawingType);
         }
-
-        saleListService.setState(id,"图纸展开");
+        saleListService.setCunZai(id,"存在");
         map.put("success",true);
-        logService.save(new Log(Log.ADD_ACTION,"添加图图纸信息"));
         return map;
     }
 
-    /**
-     * 根据id修改状态
-     * @param id
-     * @param state
-     */
-    @RequestMapping("/setState")
-    public void setState(Integer id,String state){
-        logService.save(new Log(Log.UPDATE_ACTION,"根据id修改状态"));
-        drawingTypeService.setState(id,state);
-    }
 
-    /**
-     * 根据saleListId查询
-     * @param id
-     * @return
-     */
-    @RequestMapping("/findBySaleListId")
-    public Map<String,Object> findBySaleListId(Integer id){
-        Map<String,Object> map = new HashMap<>();
-        List<DrawingType> list = drawingTypeService.findBySaleListId(id);
-        map.put("rows",list);
-        return map;
-    }
 }

@@ -43,13 +43,6 @@ public interface SaleListService {
     public void setOpenNum(Integer id,String openNum);
 
     /**
-     * 设置准备工时
-     * @param id
-     * @param prepareTime
-     */
-    public void setPrepareTime(Integer id,Double prepareTime);
-
-    /**
      * 根据状态查找
      * @param state
      * @return
@@ -96,4 +89,13 @@ public interface SaleListService {
     public List<SaleList> dingDanZhuiZong(SaleList saleList,String saleDated,Integer yaoqiu);
 
     public List<SaleList> findBySaleNumber(String saleNumber);
+
+    //setOpenTime界面显的列（状态为下单，物料编号在数据库中不存在的）
+    public List<SaleList> setOpenTime();
+
+    public void baoCunOpenTime(Double yuGuGongShi,String wuliaoId);
+
+    public List<SaleList> showTuZhiOpen();
+
+    public void setCunZai(Integer id,String cunzai);
 }

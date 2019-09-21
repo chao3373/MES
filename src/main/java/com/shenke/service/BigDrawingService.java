@@ -41,6 +41,13 @@ public interface BigDrawingService {
 
     public BigDrawing findById(Integer id);
 
+    /**
+     * 根据物料单号查询
+     * @param wuliaoId
+     * @return
+     */
+    public BigDrawing findByWuLiaoId(String wuliaoId);
+
 
     /**
      * 根据图纸号查询id

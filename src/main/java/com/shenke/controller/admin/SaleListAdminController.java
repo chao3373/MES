@@ -3,14 +3,8 @@ package com.shenke.controller.admin;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.shenke.entity.Drawing;
-import com.shenke.entity.DrawingType;
-import com.shenke.entity.Log;
-import com.shenke.entity.SaleList;
-import com.shenke.service.BigDrawingService;
-import com.shenke.service.DrawingTypeService;
-import com.shenke.service.LogService;
-import com.shenke.service.SaleListService;
+import com.shenke.entity.*;
+import com.shenke.service.*;
 import com.shenke.util.DateUtil;
 import com.shenke.util.StringUtil;
 import org.apache.commons.collections.map.HashedMap;
@@ -41,6 +35,9 @@ public class SaleListAdminController {
     @Resource
     private LogService logService;
 
+    @Resource
+    private DrawingProcessService drawingProcessService;
+
     /**
      * 保存添加订单
      * @return
@@ -54,7 +51,7 @@ public class SaleListAdminController {
 
        for(SaleList saleList : plgList){
            saleList.setState("下单");
-           if(bigDrawingService.findBigDrawingId(saleList.getTuzhiId())!=null){
+           if(bigDrawingService.findByWuLiaoId(saleList.getWuliaoId())!=null){
                saleList.setCunzai("存在");
                saleList.setRemark(0);
            }
@@ -98,9 +95,18 @@ public class SaleListAdminController {
      * @return
      */
     @RequestMapping("/bigSmallDrawing")
-    public Map<String,Object> BigSmallDrawing(Integer id){
+    public Map<String,Object> BigSmallDrawing(String wuliaoId){
         Map<String,Object> map = new HashMap<>();
-        List<DrawingType> list = drawingTypeService.findBySaleListId(id);
+        List<DrawingType> list = drawingTypeService.findByBigDrawingId(bigDrawingService.findByWuLiaoId(wuliaoId).getId());
+
+        for (DrawingType d : list){
+            List<DrawingProcess> dpList = drawingProcessService.findByDrawingId(d.getDrawing().getId());
+            StringBuffer sb = new StringBuffer();
+            for (DrawingProcess dp : dpList){
+                sb.append(","+dp.getProcess().getName());
+            }
+            d.setGongxus(sb.toString().replaceFirst(",",""));
+        }
         map.put("rows",list);
         logService.save(new Log(Log.SEARCH_ACTION, "根据大图纸查询小图纸信息"));
         return map;
@@ -113,10 +119,9 @@ public class SaleListAdminController {
      * @return
      */
     @RequestMapping("/setState")
-    public Map<String,Object> setState(Integer id,String state,Double prepareTime){
+    public Map<String,Object> setState(Integer id,String state){
         Map<String,Object> map = new HashMap<>();
         saleListService.setState(id,state);
-        saleListService.setPrepareTime(id,prepareTime);
         map.put("success",true);
         logService.save(new Log(Log.UPDATE_ACTION, "设置订单状态"));
         return map;
@@ -244,6 +249,44 @@ public class SaleListAdminController {
     public Map<String,Object> findBySaleNumber(String saleNumber){
         Map<String,Object> map = new HashMap<>();
         map.put("rows",saleListService.findBySaleNumber(saleNumber));
+        return map;
+    }
+
+    /**
+     * 显示setOpenTime界面的信息
+     * @return
+     */
+    @RequestMapping("/setOpenTime")
+    public Map<String,Object> setOpenTime(){
+        Map<String,Object> map = new HashMap<>();
+        map.put("rows",saleListService.setOpenTime());
+        return  map;
+    }
+
+    /**
+     * 保存展开工时
+     * @param id
+     * @param yuGuGongShi
+     * @return
+     */
+    @RequestMapping("/baoCunOpenTime")
+    public Map<String,Object> baoCunOpenTime(Integer id,Double yuGuGongShi,String wuliaoId){
+        Map<String,Object> map = new HashMap<>();
+        saleListService.baoCunOpenTime(yuGuGongShi,wuliaoId);
+        saleListService.setCunZai(id,"分配工时");
+        map.put("success",true);
+        return map;
+    }
+
+
+    /**
+     * 图纸展开界面显示的信息
+     * @return
+     */
+    @RequestMapping("/showTuZhiOpen")
+    public Map<String,Object> showTuZhiOpen(){
+        Map<String,Object> map = new HashMap<>();
+        map.put("rows",saleListService.showTuZhiOpen());
         return map;
     }
 }

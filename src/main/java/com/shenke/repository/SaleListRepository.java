@@ -15,7 +15,7 @@ public interface SaleListRepository  extends JpaRepository<SaleList, Integer>, J
      * 查询状态为下单的产品信息
      * @return
      */
-    @Query(value = "select * from t_sale_list where state = '下单'",nativeQuery = true)
+    @Query(value = "select * from t_sale_list where state = '下单' and cunzai = '存在'",nativeQuery = true)
     public List<SaleList> xiadan();
 
     /**
@@ -36,14 +36,6 @@ public interface SaleListRepository  extends JpaRepository<SaleList, Integer>, J
     @Query(value = "update  t_sale_list set state =?2 where id =?1",nativeQuery = true)
     public void setState(Integer id ,String state);
 
-    /**
-     * 设置准备工时
-     * @param id
-     * @param prepareTime
-     */
-    @Modifying
-    @Query(value = "update  t_sale_list set prepare_time =?2 where id =?1",nativeQuery = true)
-    public void setPrepareTime(Integer id ,Double prepareTime);
 
     /**
      * 按照状态查询订单信息
@@ -102,4 +94,26 @@ public interface SaleListRepository  extends JpaRepository<SaleList, Integer>, J
      */
     @Query(value = "select * from t_sale_list where sale_number =?1",nativeQuery = true)
     public List<SaleList> findBySaleNumber(String saleNumber);
+
+    /**
+     * 显示setOpenTime界面的信息
+     * @return
+     */
+    @Query(value = "select * from t_sale_list where state = '下单' and cunzai is null",nativeQuery = true)
+    public List<SaleList> setOpenTime();
+
+    /**
+     * 把cunzai的状态改为分配工时
+     * @param id
+     */
+    @Modifying
+    @Query(value = "update t_sale_list set cunzai =?2 where id =?1",nativeQuery = true)
+    public void setCunZai(Integer id,String cunzai);
+
+    /**
+     * 图纸展开界面的显示信息
+     * @return
+     */
+    @Query(value = "select * from t_sale_list where cunzai = '分配工时' and state = '下单'",nativeQuery = true)
+    public List<SaleList> showTuZhiOpen();
 }

@@ -1,7 +1,9 @@
 package com.shenke.serviceImpl;
 
+import com.shenke.entity.BigDrawing;
 import com.shenke.entity.DrawingProcess;
 import com.shenke.entity.SaleList;
+import com.shenke.repository.BigDrawingRepository;
 import com.shenke.repository.SaleListRepository;
 import com.shenke.service.SaleListService;
 import com.shenke.util.StringUtil;
@@ -25,6 +27,9 @@ public class SaleListServiceImpl implements SaleListService {
 
     @Resource
     private SaleListRepository saleListRepository;
+
+    @Resource
+    private BigDrawingRepository bigDrawingRepository;
 
     @Override
     public void save(List<SaleList> plgList) {
@@ -54,11 +59,6 @@ public class SaleListServiceImpl implements SaleListService {
     @Override
     public void setOpenNum(Integer id, String openNum) {
         saleListRepository.setOpenNum(id,openNum);
-    }
-
-    @Override
-    public void setPrepareTime(Integer id,Double prepareTime) {
-        saleListRepository.setPrepareTime(id,prepareTime);
     }
 
 
@@ -138,4 +138,26 @@ public class SaleListServiceImpl implements SaleListService {
         return saleListRepository.findBySaleNumber(saleNumber);
     }
 
+    @Override
+    public List<SaleList> setOpenTime() {
+        return saleListRepository.setOpenTime();
+    }
+
+    @Override
+    public void baoCunOpenTime(Double yuGuGongShi,String wuliaoId) {
+        BigDrawing bigDrawing = new BigDrawing();
+        bigDrawing.setWuliaoId(wuliaoId);
+        bigDrawing.setYuGuGongShi(yuGuGongShi);
+        bigDrawingRepository.save(bigDrawing);
+    }
+
+    @Override
+    public List<SaleList> showTuZhiOpen() {
+        return saleListRepository.showTuZhiOpen();
+    }
+
+    @Override
+    public void setCunZai(Integer id,String cunzai) {
+        saleListRepository.setCunZai(id,cunzai);
+    }
 }

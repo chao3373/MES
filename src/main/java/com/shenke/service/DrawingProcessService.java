@@ -7,86 +7,13 @@ import java.util.List;
 
 public interface DrawingProcessService {
 
+    public void deleteByDrawingId(Integer drawingId);
 
-    /**
-     * 生产完成
-     * @param id
-     */
-    public void setState(Integer id);
+    public void save(DrawingProcess drawingProcess);
 
-    /**
-     * 保存图纸所含工序
-     * @param drawingProcess
-     */
-    public void saveDrawingProcess(DrawingProcess drawingProcess);
+    public List<DrawingProcess> findByDrawingId(Integer id);
 
-    /**
-     * 查找状态为任务下发的信息
-     * @return
-     */
-    public List<DrawingProcess> findProcessIssue();
-
-    /**
-     * 按照工序名称查找信息
-     * @return
-     */
-    public List<DrawingProcess> findByProcess(Integer id);
-
-    /**
-     * 更新完成数量
-     * @param accomplishNum
-     */
-    public void updateAccomplishNum(Integer accomplishNum,Integer id);
-
-    /**
-     * 通过id查找对象
-     * @param id
-     * @return
-     */
-    public DrawingProcess findById(Integer id);
-
-    /**
-     * 查找某一通知单号的下未生产的最初工序
-     * @param informNum
-     * @return
-     */
-    public Integer findMinProcess(String informNum);
-
-    /**
-     * 获取最大的生产任务单号
-     * @return
-     */
-    public String getTodayMaxinformNumNumber();
+    public List<DrawingProcess> findByArr(Integer []a);
 
 
-    /**
-     * 按照任务单号查找状态
-     * @param informNum
-     * @return
-     */
-    public List<DrawingProcess> findByInformNum(String informNum);
-
-
-    /**
-     * 按照销售单号id查询
-     * @param saleListId
-     * @return
-     */
-    public List<DrawingProcess> findBySaleListId(Integer saleListId);
-
-
-    /**
-     * 按照任务单号修改状态
-     * @param informNum
-     */
-    public void updateStateByInformNum(String informNum);
-
-
-    /**
-     * 查找全部
-     * @return
-     */
-    public List<DrawingProcess> findAll();
-
-    void deleteById(Integer id);
 }

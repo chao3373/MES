@@ -78,7 +78,7 @@
         $(document).ready(function () {
             load();
             $("#dg").datagrid({
-                url:'/admin/saleList/showTuZhiOpen',
+                url:'/admin/saleList/xiadanSuccess',
                 columns: [[
                     {
                         field: "saleNumber",
@@ -128,34 +128,50 @@
                         align: "center",
                         title: "图纸编号"
                     }
-                ]]/*,
+                ]],
                 onClickRow:function (index,row) {
+                    if(row!=null){
                     $("#addSon").datagrid({
-                        url:"/admin/saleList/bigSmallDrawing",
-                        queryParams:{
-                            wuliaoId:row.wuliaoId
+                        url: "/admin/saleList/bigSmallDrawing",
+                        queryParams: {
+                            wuliaoId: row.wuliaoId
                         },
-                        columns:[[
+                        columns: [[
                             {
-                                field:'id',
-                                title:'id',
-                                width:100,
-                                hidden:'true',
-                                align:'center'
-                            },{
-                                field:'drawingId',
-                                title:'图纸编号',
-                                width:100,
-                                align:'center'
-                            },{
-                                field:'name',
-                                title:'图纸名称',
-                                width:100,
-                                align:'center'
+                                field: 'id',
+                                title: 'id',
+                                width: 100,
+                                hidden: 'true',
+                                align: 'center'
+                            }, {
+                                field: 'wuliaoId',
+                                title: '小图物料编号',
+                                width: 100,
+                                align: 'center',
+                                formatter: function (value, row, index) {
+                                    if (!row.drawing) {
+                                        return '';
+                                    } else {
+                                        return row.drawing.wuliaoId;
+                                    }
+                                }
+                            }, {
+                                field: 'gongxus',
+                                title: '所含工序',
+                                width: 200,
+                                align: 'center'
+                            }, {
+                                field: 'choose',
+                                title: '选择工序',
+                                width: 100,
+                                align: 'center',
+                                formatter: function (val, row) {
+                                    return "<a href=\"javascript:openProcessChooseDialog('" + row.gongxus + "'," + row.drawing.id + ")\"><img style='margin-top:4px' src='/static/images/edit.gif'/></a>";
+                                }
                             }
                         ]]
                     });
-                }*/
+                }  }
             });
 
         });
@@ -205,10 +221,83 @@
                         title:'小图物料编号',
                         width:100,
                         align:'center'
+                    },{
+                        field:'gongxus',
+                        title:'所含工序',
+                        width:200,
+                        align:'center'
+                    },{
+                        field:'choose',
+                        title:'选择工序',
+                        width:100,
+                        align:'center',
+                        formatter:function (val,row) {
+                            return "<a href=\"javascript:openProcessChooseDialog('"+row.gongxus+"',"+row.drawing.id+")\"><img style='margin-top:4px' src='/static/images/edit.gif'/></a>";
+                        }
                     }
                 ]]
             });
 
+        }
+
+        /**
+         * 添加工序
+         * @param roles
+         * @param userId
+         */
+        function openProcessChooseDialog(gongxus,id){
+            var processArr=gongxus.split(",");
+            $("#dlg2").dialog("open").dialog("setTitle","选择工序");
+            $("#dg2").datagrid({
+                url:'/admin/process/list',
+                onLoadSuccess:function(data){
+                    var allRows=$("#dg2").datagrid("getRows");
+                    for(var i=0;i<allRows.length;i++){
+                        var name=allRows[i].name;
+                        if($.inArray(name,processArr)>=0){
+                            $("#dg2").datagrid("checkRow",i);
+                        }
+                    }
+                }
+            });
+            $("#drawingId").val(id);
+        }
+
+        //保存工序
+        function saveProcess(){
+            var drawingId=$("#drawingId").val();
+            console.log("小图"+drawingId)
+            var selectedRows=$("#dg2").datagrid("getSelections");
+            var str=[];
+            for(var i=0;i<selectedRows.length;i++){
+                str.push(selectedRows[i].id);
+            }
+            var processIds=str.join(",");
+            $.post("/admin/drawingProcess/addProcess",{
+                processIds:processIds,
+                drawingId:drawingId
+            },function(result){
+                if(result.success) {
+                    closesaveProcessDialog();
+                    $.messager.alert("系统提示","添加成功");
+                    $("#addSon").datagrid("reload");
+                    /*var row = $("#addSon").datagrid("getRows");
+                    var m=0;
+                    for (var i = 0; i < row.length; i++){
+                        if(row[i].gongxus != null){
+                            m+=1;
+                        }
+                    }
+                    console.log(m)*/
+
+                }else{
+                    $.messager.alert("系统提示","添加失败");
+                }
+            },"json");
+        }
+
+        function closesaveProcessDialog(){
+            $("#dlg2").dialog("close");
         }
 
 
@@ -264,7 +353,6 @@
         //删除选中的小图纸
         function shanchu() {
             var row = $("#addSon").datagrid("getSelected");
-            console.log(row);
             if(row == null){
                 $.messager.alert("系统提示","请选择一条信息！");
                 return;
@@ -332,7 +420,6 @@
             $("#addSonDrawing").dialog("open").dialog("setTitle", "添加图纸信息");
         }
 
-        //添加小图物料
         function addWuLiaoId() {
             $("#addSon").datagrid("appendRow",{
                 wuliaoId:$("#wuliaoId").val()
@@ -345,34 +432,24 @@
             $("#addSonDrawing").dialog("close");
         }
 
-        //添加生产物料
-        function addWuliao() {
-            $("#dlg").dialog("open").dialog("setTitle","添加生产物料");
-        }
-
-        function saveWuliao() {
-            if($("#dg").datagrid("getSelected")==null){
-                $.messager.alert("系统提示","请选择大图信息！");
-                return;
-            }
-            $.post("/admin/wuliao/save",{
+        function xiafa() {
+            $.post("/admin/shengChan/save",{
                 wuliaoId:$("#dg").datagrid("getSelected").wuliaoId,
-                mingxi:$("#mingxi").val()
+                id:$("#dg").datagrid("getSelected").id
             },function (result) {
                 if(result.success){
-                    closeWuliao();
-                    $.messager.alert("系统提示","保存成功！");
+                    $.post("/admin/saleList/setState",{
+                        id:$("#dg").datagrid("getSelected").id,
+                        state:"任务下发"
+                    },function (result) {
+                        if(result.success){
+                            $("#dg").datagrid("reload");
+                            $("#addSon").datagrid("loadData",[]);
+                        }
+                    },"json");
+                    $.messager.alert("系统提示","下发成功");
                 }
-                else {
-                    closeWuliao();
-                    $.messager.alert("系统提示","保存失败！");
-                }
-            },"json");
-        }
-
-        function closeWuliao() {
-            $("#mingxi").val("");
-            $("#dlg").dialog("close");
+            },"json")
         }
 
 
@@ -412,8 +489,8 @@
                            class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
             &nbsp;&nbsp;<a href="javascript:reload()"
                                  class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
-            &nbsp;&nbsp;<a href="javascript:addWuliao()"
-                                             class="easyui-linkbutton" iconCls="icon-add" plain="true">添加生产物料</a>
+            &nbsp;&nbsp;<a href="javascript:xiafa()"
+                                             class="easyui-linkbutton" iconCls="icon-remove" plain="true">下发</a>
         </fieldset>
     </div>
 </div>
@@ -480,24 +557,52 @@
                                    class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 </div>
 
-<div id="dlg" class="easyui-dialog"
-     style="width: 450px; height: 250px; padding: 10px 20px" closed="true"
-     buttons="#dlg-buttons">
-    <form id="fm1" method="post">
-        <table cellspacing="8px">
-            <tr>
-                <td valign="top">物料明细：</td>
-                <td><textarea rows="3" cols="35" id="mingxi" name="mingxi"></textarea>
-                </td>
-            </tr>
-        </table>
-    </form>
+<!--选择工序对话框--><!--
+<div id="dlg2" class="easyui-dialog" style="width: 500px;height: 350px;"
+     closed="true" buttons="#dlg-buttons3">
+    <input type="hidden" id="drawingId" name="drawingId"/>
+    <table id="dg2"  class="easyui-datagrid" fitColumns="true" fit="true">
+        <thead>
+        <th field="cb" checkbox="true" align="center"></th>
+        <th field="id" width="20" align="left" hidden="true">编号</th>
+        <th field="name" width="100" align="left">工序名称</th>
+        </thead>
+    </table>
+</div>-->
+<div id="dlg2" class="easyui-dialog" style="width: 800px;height: 500px;"
+     closed="true" buttons="#dlg-buttons3">
+    <div  class="easyui-layout" data-options="fit:true" >
+        <div data-options="region:'west',split:true,collapsible:false" style="width:390px;height:498px;">
+            <table id="dg2"  class="easyui-datagrid" fitColumns="true" fit="true">
+                <thead>
+                <th field="cb" checkbox="true" align="center"></th>
+                <th field="id" width="20" align="left" hidden="true">编号</th>
+                <th field="name" width="100" align="left">工序名称</th>
+                </thead>
+            </table>
+        </div>
+        <div data-options="region:'east',split:true,collapsible:false" style="width:390px;height:498px;">
+            <table id="dg3"  class="easyui-datagrid" fitColumns="true" fit="true">
+                <thead>
+                <th field="cb" checkbox="true" align="center"></th>
+                <th field="id" width="20" align="left" hidden="true">编号</th>
+                <th field="name" width="100" align="left">工序名称</th>
+                </thead>
+            </table>
+        </div>
+    </div>
 </div>
 
-<div id="dlg-buttons">
-    <a href="javascript:saveWuliao()" class="easyui-linkbutton"
-       iconCls="icon-ok">保存</a> <a href="javascript:closeWuliao()"
-                                   class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+
+<!-- 对话框按钮2 -->
+<div id="dlg-buttons3">
+
+    <a href="javascript:saveProcess()" class="easyui-linkbutton" iconCls="icon-redo" ></a>
+    <a href="javascript:saveProcess()" class="easyui-linkbutton" iconCls="icon-undo" ></a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="javascript:saveProcess()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+    <a href="javascript:closesaveProcessDialog()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
 </div>
 
 

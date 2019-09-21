@@ -107,10 +107,21 @@ public class UserController {
 	 * @return
 	 */
 	@GetMapping("/loadUserInfo")
-	public String loadUserInfo(HttpSession session) {
+	public  String loadUserInfo(HttpSession session) {
 		User currentUser = (User) session.getAttribute("currentUser");
 		Role currentRole = (Role) session.getAttribute("currentRole");
 		return "欢迎您："+currentUser.getTrueName()+"&nbsp;[&nbsp;"+currentRole.getName()+"&nbsp;]";
+	}
+
+	/**
+	 * 获取当前登录用户的id
+	 * @param session
+	 * @return
+	 */
+	@GetMapping("/getUserId")
+	public Integer getUserId(HttpSession session){
+		User currentUser = (User) session.getAttribute("currentUser");
+		return currentUser.getId();
 	}
 	
 	

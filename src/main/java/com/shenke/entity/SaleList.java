@@ -19,7 +19,7 @@ public class SaleList {
     @Column(length = 20)
     private String hangHao;//行号
 
-    private Integer wuliaoId;//物料编号
+    private String wuliaoId;//物料编号
 
     @Column(length = 100)
     private String tuzhiName;//图纸名称
@@ -47,9 +47,26 @@ public class SaleList {
     @Column(length = 50)
     private String state;//订单状态
 
-    private String cunzai;//判断导入的订单是否已存在
+    private String cunzai;//判断导入的大图纸物料号是否已存在
 
+/*
     private Double prepareTime;//准备工时
+*/
+
+
+
+
+    //展开开始时间
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startDate;
+
+    //展开结束时间
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date stopDate;
+
+
+    //实际展开工时
+    private Double shiJiGongShi;
 
     private Integer remark;//订单备注（例如 常规单：null 加急单：1 重要订单：2  暂停：-1）
 
@@ -61,14 +78,6 @@ public class SaleList {
         this.remark = remark;
     }
 
-
-    public Double getPrepareTime() {
-        return prepareTime;
-    }
-
-    public void setPrepareTime(Double prepareTime) {
-        this.prepareTime = prepareTime;
-    }
 
     public String getCunzai() {
         return cunzai;
@@ -149,11 +158,11 @@ public class SaleList {
         this.saleNumber = saleNumber;
     }
 
-    public Integer getWuliaoId() {
+    public String getWuliaoId() {
         return wuliaoId;
     }
 
-    public void setWuliaoId(Integer wuliaoId) {
+    public void setWuliaoId(String wuliaoId) {
         this.wuliaoId = wuliaoId;
     }
 
@@ -181,13 +190,37 @@ public class SaleList {
         this.num = num;
     }
 
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getStopDate() {
+        return stopDate;
+    }
+
+    public void setStopDate(Date stopDate) {
+        this.stopDate = stopDate;
+    }
+
+    public Double getShiJiGongShi() {
+        return shiJiGongShi;
+    }
+
+    public void setShiJiGongShi(Double shiJiGongShi) {
+        this.shiJiGongShi = shiJiGongShi;
+    }
+
     @Override
     public String toString() {
         return "SaleList{" +
                 "id=" + id +
                 ", saleNumber='" + saleNumber + '\'' +
                 ", hangHao='" + hangHao + '\'' +
-                ", wuliaoId=" + wuliaoId +
+                ", wuliaoId='" + wuliaoId + '\'' +
                 ", tuzhiName='" + tuzhiName + '\'' +
                 ", tuzhiId='" + tuzhiId + '\'' +
                 ", num=" + num +
@@ -198,7 +231,9 @@ public class SaleList {
                 ", kucunzuzhi='" + kucunzuzhi + '\'' +
                 ", state='" + state + '\'' +
                 ", cunzai='" + cunzai + '\'' +
-                ", prepareTime=" + prepareTime +
+                ", startDate=" + startDate +
+                ", stopDate=" + stopDate +
+                ", shiJiGongShi=" + shiJiGongShi +
                 ", remark=" + remark +
                 '}';
     }

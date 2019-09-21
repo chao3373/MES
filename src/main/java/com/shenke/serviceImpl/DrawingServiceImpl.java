@@ -4,10 +4,12 @@ import com.shenke.entity.Drawing;
 import com.shenke.repository.DrawingRepository;
 import com.shenke.service.DrawingService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
 
+@Transactional
 @Service("drawingService")
 public class DrawingServiceImpl implements DrawingService {
     @Resource
@@ -35,8 +37,8 @@ public class DrawingServiceImpl implements DrawingService {
     }
 
     @Override
-    public Drawing findDrawingId(String DrawingId) {
-        return drawingRepository.findDrawingId(DrawingId);
+    public Drawing findByWuliaoId(String wuliaoId) {
+        return drawingRepository.findByWuliaoId(wuliaoId);
     }
 
     @Override

@@ -36,6 +36,9 @@ public class User {
 	@Transient
 	private String roles;//所有用的角色
 
+	@Transient
+	private String gongxus;//擅长的工序
+
 	@Override
 	public String toString() {
 		return "User{" +
@@ -47,7 +50,16 @@ public class User {
 				", sex='" + sex + '\'' +
 				", remarks='" + remarks + '\'' +
 				", roles='" + roles + '\'' +
+				", gongxus='" + gongxus + '\'' +
 				'}';
+	}
+
+	public String getGongxus() {
+		return gongxus;
+	}
+
+	public void setGongxus(String gongxus) {
+		this.gongxus = gongxus;
 	}
 
 	public Integer getId() {

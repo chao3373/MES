@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>工序生产加工</title>
+    <title>工序生产</title>
     <link rel="stylesheet" type="text/css"
           href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
     <link rel="stylesheet" type="text/css"
@@ -18,202 +18,126 @@
 
         $(document).ready(function() {
             load();
-            $('#dg').datagrid({
-                rowStyler: function (index, row) {
-                    if (row.saleList.remark == "2") {
-                        return 'background: #CC2222;color:white'
-                    }
-                    if (row.saleList.remark == "1") {
-                        return 'background: #a333c8;color:white'
-                    }
-                }
-            });
 
-            $("#chaKanTZ").linkbutton()
         });
 
 
         function load(){
             $("#dg").datagrid({
-                url:"/admin/drawingProcess/findProcessIssue",
+                url:"/admin/shengChan/showInProcessProduct",
                 columns:[[
                     {
-                        field: 'cb',
-                        checkbox: "true",
-                        align: "center"
+                        field: "id",
+                        width: "150",
+                        align: "center",
+                        title: "id",
+                        hidden:"true"
                     },{
                         field: "saleNumber",
+                        title:"订单号",
                         width: "150",
                         align: "center",
-                        title: "订单号"
-                    },{
-                        field: "drawingId",
-                        width: "150",
-                        align: "center",
-                        title: "小图纸编号",
-                        formatter:function (value, rows) {
-                            return rows.drawing.drawingId;
-                        }
-                    },{
-                        field: "bigDrawingId",
-                        width: "150",
-                        align: "center",
-                        title: "所属大图纸编号",
-                        formatter:function (value, rows) {
-                            if(rows.bigDrawing){
-                                return rows.bigDrawing.drawingId;
+                        formatter:function (val, row) {
+                            console.log(row);
+                            if(row.saleList){
+                                return row.saleList.saleNumber;
                             }
-                            return '';
-                        }
-                    },{
-                        field: "processId",
-                        width: "150",
-                        align: "center",
-                        title: "工序",
-                        formatter: function (value, rows) {
-                            if(rows.process){
-                                return rows.process.name;
-                            }
-                            else
+                            else {
                                 return '';
+                            }
+                        }
+                    },{
+                        field: "datu",
+                        title:"大图",
+                        width: "150",
+                        align: "center",
+                        formatter:function (val, row) {
+                            if(row.bigDrawing){
+                                return row.bigDrawing.wuliaoId;
+                            }
+                            else {
+                                return '';
+                            }
+                        }
+                    },{
+                        field: "xiaotu",
+                        title:"小图",
+                        width: "150",
+                        align: "center",
+                        formatter:function (val, row) {
+                            if(row.drawing){
+                                return row.drawing.wuliaoId;
+                            }
+                            else {
+                                return '';
+                            }
+                        }
+                    },{
+                        field: "gongxu",
+                        title:"工序",
+                        width: "150",
+                        align: "center",
+                        formatter:function (val, row) {
+                            if(row.process){
+                                return row.process.name;
+                            }
+                            else {
+                                return '';
+                            }
                         }
                     },{
                         field: "num",
+                        title:"需求量",
                         width: "150",
-                        align: "center",
-                        title: "总数量"
+                        align: "center"
                     },{
                         field: "accomplishNum",
+                        title:"已完成",
                         width: "150",
-                        align: "center",
-                        title: "完成数量"
+                        align: "center"
                     },{
-                        field: "informNum",
+                        field: "unaccomplishNum",
+                        title:"未完成",
                         width: "150",
                         align: "center",
-                        title: "通知单号",
-                        hidden: "true"
-                    }, {
-                        field: 'operate', title: '操作', align: 'center', width: $(this).width() * 0.1,
-                        formatter: function (value, row, index) {
-                            var str = '<a href="javascript:chaKanTZ()" id="chaKanTZ" name="chaKanTZ" class="easyui-linkbutton" >查看图纸</a>';
-                            return str;
+                        formatter:function (val, row) {
+                            return (row.num)-(row.accomplishNum);
+                        }
+                    },{
+                        field: "xiangmuhao",
+                        title:"项目号",
+                        width: "150",
+                        align: "center",
+                        formatter:function (val, row) {
+                            if(row.saleList){
+                                return row.saleList.xiangmuId;
+                            }
+                            else {
+                                return '';
+                            }
                         }
                     }
                 ]]
             });
         }
 
-        function reload() {
-            load();
-            $("#name").combobox("reset");
-        }
-
-        var restNum;//剩余需要生产的件数
-        var row;
-        function productProcess() {
-            if($("#name").combobox("getValue") == ''){
-                $.messager.alert("系统提示","请添加生产人员！");
-                return;
-            }
-            row = $("#dg").datagrid("getSelected");
-            if(row==null){
-                $.messager.alert("系统提示","请选择要加工的产品");
-                return;
-            }
-            $.post("/admin/drawingProcess/whetherSamllerInformNum",{
-                informNum:row.informNum,
-                processId:row.process.id
-            },function (result) {
-                if(result.success){
-                    $("#dlg").dialog("open").dialog("setTitle", "添加工作量");
-                    restNum = row.num-row.accomplishNum;
-                }
-                else {
-                    $.messager.alert("系统提示","请先完成之前的工序")
-                    return;
-                }
-            },"json");
-        }
-
-        function save() {
-            if($("#productNum").val()>restNum){
-                $.messager.alert("系统提示","输入有误");
-                return;
-            }
-            else{
-                $.post("/admin/drawingProcess/updateAccomplishNum",{
-                    accomplishNum:$("#productNum").val(),
-                    id:row.id,
-                    clerkId:$("#name").combobox("getValue")
-                },function (result) {
-                    if(result.success){
-                        $.messager.alert("系统提示","添加成功");
-                        resetVal()
-                        $("#dg").datagrid("reload");
-
-                        $.post("/admin/drawingProcess/isNoFinish",{
-                            informNum:row.informNum,
-                            saleListId:row.saleList.id
-                        },function () {
-
-                        },"json")
-
-                    }
-                    else {
-                        $.messager.alert("系统提示","添加失败");
-                        return;
-                    }
-                },"json");
-                closeDialog();
-            }
-        }
-
-        function resetVal() {
-            $("#productNum").val("");
-        }
-
-        function closeDialog() {
-            resetVal();
-            $("#dlg").dialog("close");
-        }
     </script>
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
-<table id="dg" title="工序加工" singleSelect="true"
-       fitColumns="false" rownumbers="true" fit="true"
+<table id="dg" class="easyui-datagrid"
+       fitColumns="false" rownumbers="true" fit="true" singleSelect="true"
        toolbar="#tb1" split="true">
 </table>
 
 <!-- dg顶部工具栏 -->
 <div id="tb1">
     <fieldset style="border-color: #E7F0FF">
-        生产人员：<input class="easyui-combobox" id="name" name="name" required
-                    style="width: 100px" data-options="panelHeight:'auto',
-            valueField:'id',textField:'name',url:'/admin/clerk/combobox'"/>
-        &nbsp;&nbsp;&nbsp;<a href="javascript:reload()"
-                             class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
-        &nbsp;&nbsp;&nbsp;<a href="javascript:productProcess()" class="easyui-linkbutton">生 产</a>
+        &nbsp;条形码：&nbsp; <input  type="text" id="yuGuGongShi" name="yuGuGongShi"  size="15" />
+        &nbsp;&nbsp;<a href="javascript:select()"
+                       class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+        &nbsp;&nbsp;<a href="javascript:refresh()"
+                       class="easyui-linkbutton" iconCls="icon-refresh" plain="true">刷新</a>
     </fieldset>
 </div>
-
-<!--弹出来选择数量的框-->
-<div id="dlg" class="easyui-dialog"
-     style="width: 300px; height: 140px; padding: 10px 20px" closed="true"
-     buttons="#dlg-buttons">
-    <tr>
-        <td>数量：</td>
-        <td><input type="text" id="productNum" name="productNum"
-                   class="easyui-numberbox" required="true"/></td>
-    </tr>
-</div>
-<div id="dlg-buttons">
-    <a href="javascript:save()" class="easyui-linkbutton"
-       iconCls="icon-ok">保存</a>
-    <a href="javascript:closeDialog()" class="easyui-linkbutton"
-       iconCls="icon-cancel">关闭</a>
-</div>
-
-
 </body>
 </html>

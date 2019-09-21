@@ -14,16 +14,33 @@ public class BigDrawing {
     private Integer id; //id
 
     @Column(length = 100)
-    private String drawingId; //图纸编号
+    private String wuliaoId; //物料编号
 
-    @Column(length = 100)
-    private String name;//图纸名称
 
     @Column(length = 2000)
     private String url;//图纸路径
 
     @Transient
     private MultipartFile drawingURL;//图纸
+
+    //预估展开工时
+    private Double yuGuGongShi;
+
+    public Double getYuGuGongShi() {
+        return yuGuGongShi;
+    }
+
+    public void setYuGuGongShi(Double yuGuGongShi) {
+        this.yuGuGongShi = yuGuGongShi;
+    }
+
+    public String getWuliaoId() {
+        return wuliaoId;
+    }
+
+    public void setWuliaoId(String wuliaoId) {
+        this.wuliaoId = wuliaoId;
+    }
 
     public Integer getId() {
         return id;
@@ -33,21 +50,6 @@ public class BigDrawing {
         this.id = id;
     }
 
-    public String getDrawingId() {
-        return drawingId;
-    }
-
-    public void setDrawingId(String drawingId) {
-        this.drawingId = drawingId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getUrl() {
         return url;
@@ -69,10 +71,10 @@ public class BigDrawing {
     public String toString() {
         return "BigDrawing{" +
                 "id=" + id +
-                ", drawingId='" + drawingId + '\'' +
-                ", name='" + name + '\'' +
+                ", wuliaoId='" + wuliaoId + '\'' +
                 ", url='" + url + '\'' +
                 ", drawingURL=" + drawingURL +
+                ", yuGuGongShi=" + yuGuGongShi +
                 '}';
     }
 }

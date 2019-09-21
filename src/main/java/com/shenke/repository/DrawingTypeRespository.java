@@ -13,20 +13,10 @@ public interface DrawingTypeRespository extends JpaRepository<DrawingType,Intege
 
     /**
      * 根据大图id来查询小图id
-     * @param id
      * @return
      */
-    @Query(value = "select * from t_drawing_type where sale_list_id =?1",nativeQuery = true)
-    public List<DrawingType> findBySaleListId(Integer id);
-
-    /**
-     * 根据id修改状态
-     * @param id
-     * @param state
-     */
-    @Modifying
-    @Query(value = "update t_drawing_type set state =?2 where id =?1",nativeQuery = true)
-    public void setState(Integer id,String state);
+    @Query(value = "select * from t_drawing_type where big_drawing_id =?1",nativeQuery = true)
+    public List<DrawingType> findByBigDrawingId(Integer id);
 
 
 }

@@ -36,7 +36,7 @@ public interface DrawingService {
      * 根据名称查询
      * @return
      */
-    public Drawing findDrawingId(String DrawingId);
+    public Drawing findByWuliaoId(String wuliaoId);
 
     /**
      * 根据id查询

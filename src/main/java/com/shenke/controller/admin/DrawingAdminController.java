@@ -69,6 +69,10 @@ public class DrawingAdminController {
         }
         Map<String, Object> resultMap = new HashMap<>();
         drawingService.save(drawing);
+
+        System.out.println("***************");
+        System.out.println(drawing);
+        System.out.println("***************");
         resultMap.put("success", true);
         logService.save(new Log(Log.UPDATE_ACTION, "添加或修改图纸信息"));
         return resultMap;
@@ -104,5 +108,22 @@ public class DrawingAdminController {
         }
         logService.save(new Log(Log.SEARCH_ACTION, "模糊查询图纸信息"));
         return drawingService.conboList("%" + q + "%");
+    }
+
+    /**
+     * 保存小图纸
+     * @param smallIds
+     * @return
+     */
+    @RequestMapping("/savaAboutWuliaoId")
+    public Map<String,Object> savaAboutWuliaoId(String []smallIds){
+        Map<String,Object> map = new HashMap<>();
+        for(int i =0 ;i<smallIds.length;i++) {
+            Drawing drawing = new Drawing();
+            drawing.setWuliaoId(smallIds[i]);
+            drawingService.save(drawing);
+        }
+        map.put("success",true);
+        return map;
     }
 }

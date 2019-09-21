@@ -16,23 +16,20 @@
     <script type="text/javascript">
         var url;
 
-        function searchRole() {
-            console.log(name.toString() == "");
-            console.log($("#s_roleName").val());
+        /*function searchRole() {
             $("#dg").datagrid('load', {
                 name: $("#s_roleName").val()
             });
-        }
+        }*/
 
-        function resetValue() {
-            $("#name").val("");
-            $("#help").val("");
-            $("#remark").val("");
-        }
 
         function closeRoleDialog() {
             $("#dlg").dialog("close");
             resetValue();
+        }
+
+        function resetValue() {
+            $("#wuliaoId").val();
         }
 
         function saveRole() {
@@ -42,7 +39,6 @@
                     var result = eval('(' + result + ')');
                     if (result.success) {
                         $.messager.alert("系统提示", "保存成功！");
-                        resetValue();
                         $("#dlg").dialog("close");
                         $("#dg").datagrid("reload");
                     } else {
@@ -115,8 +111,7 @@
             $("#dg").datagrid({
                 columns: [[
                     {field: 'id', hidden: "true", width: 20, aligh: "center"},
-                    {field: 'name', title: "图纸名称", width: 50, aligh: "center"},
-                    {field: 'drawingId', title: "图纸编号", width: 50, aligh: "center"},
+                    {field: 'wuliaoId', title: "物料编号", width: 50, aligh: "center"},
                     {field: 'url', title: "文件名", width: 100, aligh: "center"},
                     {
                         field: 'operate', title: '操作', align: 'center', width: $(this).width() * 0.1,
@@ -174,13 +169,8 @@
     <form id="fm" method="post" enctype="multipart/form-data">
         <table cellspacing="8px">
             <tr>
-                <td>图纸名称：</td>
-                <td><input type="text" id="name" name="name"
-                           class="easyui-validatebox" required="true"/></td>
-            </tr>
-            <tr>
-                <td>图纸编号：</td>
-                <td><input type="text" id="drawingId" name="drawingId"
+                <td>物料编号：</td>
+                <td><input type="text" id="wuliaoId" name="wuliaoId"
                            class="easyui-validatebox" required="true"/></td>
             </tr>
             <tr>
