@@ -1,15 +1,19 @@
 package com.shenke.controller.admin;
 
 import com.shenke.entity.Storage;
-import com.shenke.service.BigDrawingService;
-import com.shenke.service.DrawingService;
-import com.shenke.service.SaleListService;
-import com.shenke.service.StorageService;
+import com.shenke.service.*;
+import com.shenke.util.StringUtil;
+import javafx.scene.chart.PieChart;
+import lombok.Data;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sun.util.calendar.BaseCalendar;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,45 +36,95 @@ public class StorageAdminController {
     @Resource
     private StorageService storageService;
 
+    @Resource
+    private RuKuService ruKuService;
+
     /**
-     * 新增
-     * @param saleListId
-     * @param bigDrawingId
-     * @param drawingId
-     * @param state
-     * @param standard
-     * @param remark
+     * 新增入库
+     * @param Ids
      * @return
      */
     @RequestMapping("/save")
-    public Map<String,Object> save(Integer saleListId,String bigDrawingId,Integer drawingId,String state,String standard,String remark){
+    public Map<String,Object> save(Integer []Ids){
         Map<String,Object> map = new HashMap<>();
-        Storage storage = new Storage();
-        storage.setSaleList(saleListService.findById(saleListId));
-        storage.setBigDrawing(bigDrawingService.findBigDrawingId(bigDrawingId));
-        storage.setDrawing(drawingService.findById(drawingId));
-        storage.setState(state);
-        storage.setStandard(standard);
-        storage.setRemark(remark);
-
-        storageService.save(storage);
-        saleListService.setState(saleListId,standard+"入库");
-
-        Integer id = storageService.selectByMaxId().getId();
+        for(int i = 0 ;i<Ids.length ;i++){
+            Storage storage = new Storage();
+            storage.setRuKuDate(new Date());
+            storage.setRuKu(ruKuService.findById(Ids[i]));
+            storage.setState("入库");
+            storageService.save(storage);
+        }
         map.put("success",true);
-        map.put("id",id);
         return map;
     }
 
     /**
-     * 根据ID查找对象
-     * @param id
+     * 更新状态
+     * @param Ids
+     * @param state
      * @return
      */
-    @RequestMapping("/findById")
-    public Map<String,Object> findById(Integer id){
+    @RequestMapping("/updateState")
+    public Map<String,Object> updateState(Integer []Ids,String state){
         Map<String,Object> map = new HashMap<>();
-        map.put("data",storageService.findById(id));
+        storageService.updateState(Ids,state);
+        map.put("success",true);
         return map;
     }
+
+    /**
+     * 根据状态查找
+     * @param state
+     * @return
+     */
+    @RequestMapping("/findByState")
+    public Map<String,Object> findByState(String state){
+        Map<String,Object> map = new HashMap<>();
+        map.put("rows",storageService.findByState(state));
+        return map;
+    }
+
+    /**
+     * 产品出库
+     * @param Ids
+     * @return
+     */
+    @RequestMapping("/chuku")
+    public Map<String,Object> chuku(Integer []Ids){
+        Map<String,Object> map = new HashMap<>();
+        for (int i= 0;i<Ids.length;i++){
+            Storage storage = storageService.findById(Ids[i]);
+            storage.setState("出库");
+            storage.setChuKuDate(new Date());
+            storageService.save(storage);
+        }
+        map.put("success",true);
+        return map;
+    }
+
+    /**
+     * 按条件查询出库明细表
+     *
+     * @Description:
+     * @Param:
+     * @return:
+     * @Author: Andy
+     * @Date:
+     */
+    @RequestMapping("/detail")
+    public Map<String, Object> detail(String date) throws ParseException {
+        System.out.println(date);
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map1 = new HashMap<>();
+        if (StringUtil.isNotEmpty(date)) {
+            map1.put("date", date);
+        } else {
+            map1.put("date", null);
+        }
+        map.put("success", true);
+        List<Storage> storageList = storageService.detail(map1);
+        map.put("rows", storageList);
+        return map;
+    }
+
 }

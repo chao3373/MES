@@ -20,6 +20,36 @@ public class DrawingProcess {
     @JoinColumn
     private Process process;//工序对象
 
+    private Integer code; //工序生产顺序
+
+    private Double zbGongShi; // 准备工时
+
+    private Double czGongShi; // 操作工时
+
+    public Double getZbGongShi() {
+        return zbGongShi;
+    }
+
+    public void setZbGongShi(Double zbGongShi) {
+        this.zbGongShi = zbGongShi;
+    }
+
+    public Double getCzGongShi() {
+        return czGongShi;
+    }
+
+    public void setCzGongShi(Double czGongShi) {
+        this.czGongShi = czGongShi;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -50,6 +80,9 @@ public class DrawingProcess {
                 "id=" + id +
                 ", drawing=" + drawing +
                 ", process=" + process +
+                ", code=" + code +
+                ", zbGongShi=" + zbGongShi +
+                ", czGongShi=" + czGongShi +
                 '}';
     }
 }

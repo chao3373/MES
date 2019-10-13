@@ -4,6 +4,7 @@ package com.shenke.entity;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "t_bigDrawing")
@@ -25,6 +26,39 @@ public class BigDrawing {
 
     //预估展开工时
     private Double yuGuGongShi;
+
+    //实际展开工时
+    private Double shiJiGongShi;
+
+    //开始展开时间
+    private Date startDate;
+
+    //结束展开时间
+    private Date stopDate;
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getStopDate() {
+        return stopDate;
+    }
+
+    public void setStopDate(Date stopDate) {
+        this.stopDate = stopDate;
+    }
+
+    public Double getShiJiGongShi() {
+        return shiJiGongShi;
+    }
+
+    public void setShiJiGongShi(Double shiJiGongShi) {
+        this.shiJiGongShi = shiJiGongShi;
+    }
 
     public Double getYuGuGongShi() {
         return yuGuGongShi;
@@ -75,6 +109,9 @@ public class BigDrawing {
                 ", url='" + url + '\'' +
                 ", drawingURL=" + drawingURL +
                 ", yuGuGongShi=" + yuGuGongShi +
+                ", shiJiGongShi=" + shiJiGongShi +
+                ", startDate=" + startDate +
+                ", stopDate=" + stopDate +
                 '}';
     }
 }

@@ -41,7 +41,27 @@ public class ShengChan {
 
     private Integer num;//下单数量
 
+    private Integer allowNum; //允许生产数量（上一工序生产完成数量）
+
     private Date referDate;//需交日期
+
+    private Integer code;//工序生产顺序
+
+    public Integer getAllowNum() {
+        return allowNum;
+    }
+
+    public void setAllowNum(Integer allowNum) {
+        this.allowNum = allowNum;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
 
     public Integer getAccomplishNum() {
         return accomplishNum;
@@ -162,7 +182,9 @@ public class ShengChan {
                 ", czGongShi=" + czGongShi +
                 ", accomplishNum=" + accomplishNum +
                 ", num=" + num +
+                ", allowNum=" + allowNum +
                 ", referDate=" + referDate +
+                ", code=" + code +
                 '}';
     }
 }

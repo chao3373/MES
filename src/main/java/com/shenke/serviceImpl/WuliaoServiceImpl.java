@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service("wuliaoService")
 @Transactional
@@ -16,13 +17,26 @@ public class WuliaoServiceImpl implements WuliaoService {
     private WuliaoRepository wuliaoRepository;
 
     @Override
-    public void save(Wuliao wuliao) {
-        wuliaoRepository.save(wuliao);
+    public void save(List<Wuliao> list) {
+        for(Wuliao wuliao: list){
+            wuliaoRepository.save(wuliao);
+        }
     }
 
     @Override
-    public Wuliao findByBigDrawingId(Integer id) {
+    public List<Wuliao> findByBigDrawingId(Integer id) {
         return wuliaoRepository.findByBigDrawingId(id);
     }
+
+    @Override
+    public List<Wuliao> findBySaleListId(Integer saleListId) {
+        return wuliaoRepository.findBySaleListId(saleListId);
+    }
+
+    @Override
+    public void saveOld(Wuliao wuliao1) {
+        wuliaoRepository.save(wuliao1);
+    }
+
 
 }

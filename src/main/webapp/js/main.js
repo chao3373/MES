@@ -60,26 +60,22 @@ function dgToFm(dg, fm, dlg) {
 
 //删除选中的信息
 function deleteDg(dg, url) {
-    var ids = [];
-    var rows = $(dg).datagrid("getSelections");
-    if (rows.length < 1) {
+    var row = $(dg).datagrid("getSelected");
+    if (row.length < 1) {
         alert("请选择要删除的数据！");
         return;
     }
     $.messager.confirm("系统提示", "<span style='color: red;'>确定要删除选中的信息吗！</span>", function (r) {
         if (r) {
-            for (var i = 0; i < rows.length; i++) {
-                ids.push(rows[i].id);
-            }
-            var idsArr = ids.join(",");
+
             $.ajax({
                 type: "POST",
                 url: url,
-                data: {ids: idsArr},
+                data: {id: row.id},
                 success: function (result) {
                     if (result) {
                         $(dg).datagrid("reload");
-                        alert(result);
+                        alert("删除成功");
                         return;
                     }
                     alert("删除失败！");

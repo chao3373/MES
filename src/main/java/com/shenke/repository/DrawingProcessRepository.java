@@ -28,6 +28,6 @@ public interface DrawingProcessRepository extends JpaRepository<DrawingProcess,I
     public List<DrawingProcess> findByDrawingId(Integer id);
 
 
-    @Query(value = "select * from  t_drawing_process where  drawing_id in ?1 group by drawing_id",nativeQuery = true)
+    @Query(value = "select * from  t_drawing_process where  drawing_id in ?1 order by drawing_id",nativeQuery = true)
     public List<DrawingProcess> findByArr(Integer[] a);
 }

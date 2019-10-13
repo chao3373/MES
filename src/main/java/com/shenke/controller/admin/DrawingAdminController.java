@@ -119,9 +119,13 @@ public class DrawingAdminController {
     public Map<String,Object> savaAboutWuliaoId(String []smallIds){
         Map<String,Object> map = new HashMap<>();
         for(int i =0 ;i<smallIds.length;i++) {
-            Drawing drawing = new Drawing();
-            drawing.setWuliaoId(smallIds[i]);
-            drawingService.save(drawing);
+            System.out.println(drawingService.findByWuliaoId(smallIds[i]));
+            if(drawingService.findByWuliaoId(smallIds[i]) == null){
+                System.out.println("到这了");
+                Drawing drawing = new Drawing();
+                drawing.setWuliaoId(smallIds[i]);
+                drawingService.save(drawing);
+            }
         }
         map.put("success",true);
         return map;

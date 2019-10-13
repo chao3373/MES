@@ -30,4 +30,39 @@ public class ShengChanServiceImpl implements ShengChanService {
     public List<ShengChan> showInProcessProduct(Integer[] arr) {
         return shengChanRepository.showInProcessProduct(arr);
     }
+
+    @Override
+    public Integer selectBeforeProcess(String xiaotuCode, int i) {
+        return shengChanRepository.selectBeforeProcess(xiaotuCode,i);
+    }
+
+    @Override
+    public ShengChan findOne(Integer id) {
+        return shengChanRepository.findById(id).get();
+    }
+
+    @Override
+    public void updateAccomplishNum(Integer id, Integer num) {
+        shengChanRepository.updateAccomplishNum(id,num);
+    }
+
+    @Override
+    public List<ShengChan> selectByWuliao(String code) {
+        return shengChanRepository.selectByWuliao(code);
+    }
+
+    @Override
+    public List<ShengChan> selectByTuzhi(String code) {
+        return shengChanRepository.selectByTuzhi(code);
+    }
+
+    @Override
+    public Integer findMaxCode(String xiaotuCode) {
+        return shengChanRepository.findMaxCode(xiaotuCode);
+    }
+
+    @Override
+    public void updatState(Integer id) {
+        shengChanRepository.updatState(id);
+    }
 }

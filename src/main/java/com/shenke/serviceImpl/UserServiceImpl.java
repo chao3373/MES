@@ -98,4 +98,9 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findByuserNameAndPwd(name, psw);
 	}
 
+    @Override
+    public List<User> combobox(String s) {
+		return userRepository.combobox(s);
+    }
+
 }

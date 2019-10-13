@@ -18,7 +18,7 @@
 
         $(document).ready(function() {
             load();
-
+            $("#tiaoma").select();
         });
 
 
@@ -35,10 +35,9 @@
                     },{
                         field: "saleNumber",
                         title:"订单号",
-                        width: "150",
+                        width: "140",
                         align: "center",
                         formatter:function (val, row) {
-                            console.log(row);
                             if(row.saleList){
                                 return row.saleList.saleNumber;
                             }
@@ -49,7 +48,7 @@
                     },{
                         field: "datu",
                         title:"大图",
-                        width: "150",
+                        width: "110",
                         align: "center",
                         formatter:function (val, row) {
                             if(row.bigDrawing){
@@ -62,7 +61,7 @@
                     },{
                         field: "xiaotu",
                         title:"小图",
-                        width: "150",
+                        width: "110",
                         align: "center",
                         formatter:function (val, row) {
                             if(row.drawing){
@@ -75,7 +74,7 @@
                     },{
                         field: "gongxu",
                         title:"工序",
-                        width: "150",
+                        width: "90",
                         align: "center",
                         formatter:function (val, row) {
                             if(row.process){
@@ -88,25 +87,30 @@
                     },{
                         field: "num",
                         title:"需求量",
-                        width: "150",
+                        width: "80",
                         align: "center"
                     },{
                         field: "accomplishNum",
                         title:"已完成",
-                        width: "150",
+                        width: "80",
                         align: "center"
                     },{
                         field: "unaccomplishNum",
                         title:"未完成",
-                        width: "150",
+                        width: "80",
                         align: "center",
                         formatter:function (val, row) {
                             return (row.num)-(row.accomplishNum);
                         }
                     },{
+                        field: "allowNum",
+                        title:"可生产数量",
+                        width: "80",
+                        align: "center"
+                    },{
                         field: "xiangmuhao",
                         title:"项目号",
-                        width: "150",
+                        width: "100",
                         align: "center",
                         formatter:function (val, row) {
                             if(row.saleList){
@@ -117,27 +121,120 @@
                             }
                         }
                     }
-                ]]
+
+                ]],onClickRow: function (rowIndex, rowData) {
+                        $(this).datagrid('unselectRow', rowIndex);
+                }
+
+                /*,onLoadSuccess: function (data) {
+                    $("#dg").datagrid("selectRow", 0);
+                },
+                onClickRow: function (rowIndex, rowData) {
+                    $(this).datagrid('unselectRow', rowIndex);
+                }*/
             });
         }
+
+        //提交生产数量
+        function save() {
+            var row = $("#dg").datagrid("getSelected");
+            $.post("/admin/shengChan/updateAccomplishNum",{
+                num:$("#num").val(),
+                id:row.id
+            },function (result) {
+               if(result.success){
+                   close();
+                   $("#dg").datagrid("reload");
+                   $.messager.alert("系统提示","提交成功！");
+                   $.post("/admin/ruKu/save",{
+                       id:result.id
+                   },function (result) {
+                       if(result.success){
+                       }
+                   },"json")
+               }
+               else {
+                   $.messager.alert("系统提示",result.errorInfo);
+               }
+            },"json")
+        }
+
+        //关闭dlg
+        function close() {
+            $("#num").val("");
+            $("#dlg").dialog("close");
+        }
+
+        //点击搜索按钮
+        function sousuo() {
+            var tiaoma = $("#tiaoma").val();
+            var row = $("#dg").datagrid("getRows")[0];
+            $("#dg").datagrid('unselectRow', $("#dg").datagrid("getRowIndex",row));
+            if(tiaoma != row.xiaotuCode){
+                $.messager.alert("系统提示","请按照顺序进行生产！");
+                return;
+            }
+            $("#dg").datagrid("selectRow",0);
+
+        }
+
+        //点击提交按钮
+        function tijiao() {
+            if ($("#dg").datagrid("getSelected") == null){
+                $.messager.alert("系统提示","请扫描条形码再点击提交按钮！");
+                return;
+            }
+            $("#dlg").dialog("open").dialog("setTitle","添加生产数量");
+        }
+
+        //点击刷新按钮
+        function refresh() {
+            window.location,reload();
+        }
+
+
+
 
     </script>
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
 <table id="dg" class="easyui-datagrid"
-       fitColumns="false" rownumbers="true" fit="true" singleSelect="true"
+       fitColumns="false" rownumbers="true" fit="true" singleSelect="false" data-options="checkOnSelect:false"
        toolbar="#tb1" split="true">
 </table>
 
 <!-- dg顶部工具栏 -->
 <div id="tb1">
     <fieldset style="border-color: #E7F0FF">
-        &nbsp;条形码：&nbsp; <input  type="text" id="yuGuGongShi" name="yuGuGongShi"  size="15" />
-        &nbsp;&nbsp;<a href="javascript:select()"
+        &nbsp;条形码：&nbsp; <input  type="text" id="tiaoma"  name="tiaoma"  size="15"
+                                 onkeydown="if(event.keyCode==13) sousuo()" />
+        &nbsp;&nbsp;<a href="javascript:sousuo()"
                        class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
         &nbsp;&nbsp;<a href="javascript:refresh()"
                        class="easyui-linkbutton" iconCls="icon-refresh" plain="true">刷新</a>
+        &nbsp;&nbsp;<a href="javascript:tijiao()"
+                       class="easyui-linkbutton" iconCls="icon-refresh" plain="true">提交</a>
     </fieldset>
+</div>
+
+<!--添加完成数量对话框-->
+<div id="dlg" class="easyui-dialog" style="width: 300px;height: 150px;"
+     closed="true" buttons="#dlg-buttons">
+    <input type="hidden" id="drawingId" name="drawingId"/>
+    <form id="fm" method="post" enctype="multipart/form-data">
+        <table cellspacing="8px">
+            <tr>
+                <td>生产数量：</td>
+                <td><input type="text" id="num" name="num"
+                           class="easyui-Numberbox" required="true"/></td>
+            </tr>
+        </table>
+    </form>
+</div>
+<!-- 对话框按钮 -->
+<div id="dlg-buttons">
+    <a href="javascript:save()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+    <a href="javascript:close()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
 </div>
 </body>
 </html>

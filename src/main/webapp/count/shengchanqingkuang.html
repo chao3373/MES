@@ -53,73 +53,92 @@
 
         function load() {
             $("#dg").datagrid({
-                url:"/admin/clerkProduct/findAll",
+                url:"/admin/userProduct/list",
                 columns: [[
                     {
-                        field: 'id',
-                        title: '编号',
-                        width: 100,
-                        align: 'center',
-                        hidden:'true'
-                    }, {
-                        field: 'saleNumber',
-                        title: '订单号',
-                        width: 120,
-                        align: 'center',
-                        formatter: function (value, rows) {
-                            if (rows.drawingProcess.saleList) {
-                                return rows.drawingProcess.saleList.saleNumber;
-                            } else {
-                                return '';
-                            }
-                        }
-                    }, {
-                        field: 'informNum',
-                        title: '生产通知单号',
-                        width: 120,
-                        align: 'center',
-                        formatter: function (value, rows) {
-                            if (rows.drawingProcess) {
-                                return rows.drawingProcess.informNum;
-                            } else {
-                                return '';
-                            }
-                        }
-                    }, {
-                        field: 'process_id',
-                        title: '工序',
-                        width: 120,
-                        align: 'center',
-                        formatter:function (value,rows) {
-                            if(rows.drawingProcess.process){
-                                return rows.drawingProcess.process.name;
-                            }
-                            else {
-                                return '';
-                            }
-                        }
-                    }, {
-                        field: 'clerk_id',
-                        title: '生产人员',
-                        width: 120,
-                        align: 'center',
-                        formatter:function (value,rows) {
-                            if(rows.clerk){
-                                return rows.clerk.name;
+                        field: "saleNumber",
+                        title:"订单号",
+                        width: "140",
+                        align: "center",
+                        formatter:function (val, row) {
+                            if(row.saleList){
+                                return row.saleList.saleNumber;
                             }
                             else {
                                 return '';
                             }
                         }
                     },{
-                        field:'num',
-                        title:'工作数量',
-                        width:120,
-                        align:'center'
+                        field: "datu",
+                        title:"大图",
+                        width: "110",
+                        align: "center",
+                        formatter:function (val, row) {
+                            if(row.bigDrawing){
+                                return row.bigDrawing.wuliaoId;
+                            }
+                            else {
+                                return '';
+                            }
+                        }
+                    },{
+                        field: "xiaotu",
+                        title:"小图",
+                        width: "110",
+                        align: "center",
+                        formatter:function (val, row) {
+                            if(row.drawing){
+                                return row.drawing.wuliaoId;
+                            }
+                            else {
+                                return '';
+                            }
+                        }
+                    },{
+                        field: "gongxu",
+                        title:"工序",
+                        width: "90",
+                        align: "center",
+                        formatter:function (val, row) {
+                            if(row.process){
+                                return row.process.name;
+                            }
+                            else {
+                                return '';
+                            }
+                        }
+                    },{
+                        field: "num",
+                        title:"数量",
+                        width: "80",
+                        align: "center"
+                    },{
+                        field: "zbGongShi",
+                        title:"准备工时",
+                        width: "80",
+                        align: "center"
+                    },{
+                        field: "czGongShi",
+                        title:"操作工时",
+                        width: "80",
+                        align: "center"
+                    },{
+                        field: "xiangmuhao",
+                        title:"项目号",
+                        width: "100",
+                        align: "center",
+                        formatter:function (val, row) {
+                            if(row.saleList){
+                                return row.saleList.xiangmuId;
+                            }
+                            else {
+                                return '';
+                            }
+                        }
                     },{
                         field:'dateInProduct',
                         title:'生产日期',
-                        width:120,
+                        width:140,
                         align:'center',
                         formatter: function (value, row, index) {
                             if (value) {
@@ -147,68 +166,14 @@
             });
         }
 
-
-        //
-        function daochu(dg) {
-            var fields = $("#dg").datagrid('getColumnFields');
-            var datagridTitle = new Array();
-            for (var i = 0; i < fields.length; i++) {
-                var option = $("#dg").datagrid('getColumnOption', fields[i]);
-                if (option.field != "checkItem" && option.hidden != "true") { //过滤勾选框和隐藏列
-                    var obj = {};
-                    obj.title = option.title;
-                    obj.field = option.field;
-                    if (option.formatter) {
-                        obj.formatter = option.formatter;
-                    }
-                    datagridTitle.push(obj);
-                }
-            }
-            console.log(datagridTitle);
-
-            var jsonarr = [];
-            var rows = $(dg).datagrid("getRows");
-            for (var i = 0; i < rows.length; i++) {
-                var json = {};
-                console.log(rows[i]);
-                for (var j = 0; j < datagridTitle.length; j++) {
-                    var st = datagridTitle[j].title;
-                    if (datagridTitle[j].formatter) {
-                        json[datagridTitle[j].title] = datagridTitle[j].formatter(rows[datagridTitle[j].field], rows[i]);
-                    } else {
-                        json[datagridTitle[j].title] = rows[i][datagridTitle[j].field];
-                    }
-                }
-                console.log(JSON.stringify(json));
-                jsonarr.push(JSON.stringify(json));
-            }
-
-            jsonarr = "[" + jsonarr.join(",") + "]";
-            console.log(jsonarr);
-            alert(jsonarr);
-
-            $.ajax({
-                type: "POST",
-                url: "/admin/daochu?title=订单追踪",
-                data: {a: jsonarr},
-                success: function (result) {
-                    if (result.success) {
-                        $.messager.alert("系统提示", "导出成功");
-                    }
-                    return;
-                }
-            });
-
-        }
-
         function refresh() {
             location.reload();
         }
 
         //按照条件查询
         function search() {
-            $("#fm").form('submit', {
-                url: "/admin/clerkProduct/findShengchan",
+           /* $("#fm").form('submit', {
+                url: "/admin/userProduct/findShengchan",
                 success: function (result) {
                     if (result != null) {
                         var obj = eval('(' + result + ')');
@@ -216,6 +181,16 @@
                             $("#dg").datagrid("loadData", obj.rows);
                         }
                     }
+                }
+            });*/
+
+            $("#dg").datagrid({
+                url: '/admin/userProduct/list',
+                queryParams: {
+                    "process_id": $("#s_process").combobox("getValue"),
+                    "user_trueName": $("#s_trueName").val(),
+                    "btime": $("#s_btime").datetimebox("getValue"),
+                    "etime": $("#s_etime").datetimebox("getValue")
                 }
             });
 
@@ -235,20 +210,20 @@
         <form id="fm">
             <table>
                 <tr>
-                    <td>
-                        &nbsp;&nbsp;&nbsp;&nbsp;通知单号： <input id="informNum" name="drawingProcess.informNum" style="width: 130px"/>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;员工： <input type="text"  id="s_trueName" style="width: 130px"/>
                     </td>
-                    <td>
-                        &nbsp;&nbsp;&nbsp;&nbsp;生产人员：<input class="easyui-combobox" id="clerk" name="clerk"
-                                    style="width: 100px" data-options="panelHeight:'auto',
-            valueField:'id',textField:'name',url:'/admin/clerk/combobox'"/>
-                    </td>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;工序： <input class="easyui-combobox" id="process" name="drawingProcess.process"
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;工序： <input class="easyui-combobox" id="s_process"
                     style="width: 100px;" data-options="panelHeight:'auto',
                 valueField:'id',textField:'name',url:'/admin/process/processCombobox'"/>
                     </td>
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;生产日期：&nbsp;<input
-                            type="text" id="dateInProducedd" name="dateInProducedd" class="easyui-datebox"
+                            type="text" id="s_btime"  class="easyui-datebox"
+                            demandd="true" size="15"/></td>
+                    <td>
+                        到
+                    </td>
+                    <td>
+                        <input type="text" id="s_etime"  class="easyui-datebox"
                             demandd="true" size="15"/></td>
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:search()"
                                                    class="easyui-linkbutton" iconCls="icon-search">查询</a>

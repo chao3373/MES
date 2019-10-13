@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 /**
  * 用户Repository接口
  * @author Administrator
@@ -28,4 +30,12 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
 	 */
 	@Query(value = "select * from t_user where user_name = ?1 and password = ?2", nativeQuery = true)
 	public User findByuserNameAndPwd(String userName, String pwd);
+
+	/**
+	 * 下拉框模糊查询
+	 * @param s
+	 * @return
+	 */
+	@Query(value = "select * from  t_user where user_name like ?1",nativeQuery = true)
+    public List<User> combobox(String s);
 }

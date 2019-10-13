@@ -1,6 +1,7 @@
 package com.shenke.controller.admin;
 
 
+import com.shenke.entity.BigDrawing;
 import com.shenke.entity.Drawing;
 import com.shenke.entity.DrawingType;
 import com.shenke.entity.Log;
@@ -38,10 +39,20 @@ public class DrawingTypeAdminController {
     @Resource
     private LogService logService;
 
+    @Resource
+    private WuliaoService wuliaoService;
+
 
     @RequestMapping("/addSonDrawing")
     public Map<String,Object> addSonDrawing(String wuliaoId,String []smallIds,Integer id) throws Exception {
         Map<String,Object> map = new HashMap<>();
+        BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(wuliaoId);
+        //判断是否已添加物料信息
+        if(wuliaoService.findByBigDrawingId(bigDrawing.getId()) == null){
+            map.put("success",false);
+            map.put("errorInfo","请先添加生产物料！");
+            return map;
+        }
 
         for (int i = 0 ;i < smallIds.length; i++){
             DrawingType drawingType = new DrawingType();

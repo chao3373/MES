@@ -36,4 +36,14 @@ public class ProcessServiceImpl implements ProcessService {
     public List<Process> findProcessCombobox(String string) {
         return processRepository.findProcessCombobox(string);
     }
+
+    @Override
+    public void save(Process process) {
+        processRepository.save(process);
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        processRepository.deleteById(id);
+    }
 }

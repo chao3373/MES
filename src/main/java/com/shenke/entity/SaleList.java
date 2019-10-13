@@ -30,7 +30,7 @@ public class SaleList {
     private Integer num ; //数量
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date saleDate;//销售日期
+    private Date saleDate;//接单日期
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date referDate;//需要提交的日期
@@ -52,9 +52,6 @@ public class SaleList {
 /*
     private Double prepareTime;//准备工时
 */
-
-
-
 
     //展开开始时间
     @Temporal(TemporalType.TIMESTAMP)

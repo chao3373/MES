@@ -12,6 +12,7 @@
 	src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
 <script type="text/javascript"
 	src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="../js/main.js"></script>
 <script type="text/javascript">
 </script>
 </head>
@@ -19,27 +20,17 @@
 	<table id="dg" title="工序设置" class="easyui-datagrid" fitColumns="true"
 		 rownumbers="true" singleSelect="true"
 		url="/admin/process/list" fit="true" toolbar="#tb">
-		<thead>
-			<th field="id" width="20" align="center">编号</th>
-			<th field="name" width="50" align="center">工序名称</th>
-			<th field="pNum" width="50" align="center">理论工序序号</th>
-		</thead>
+
 	</table>
 
 	<div id="tb">
 		<div>
-			<a href="javascript:openRoleAddDialog()"
-				class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a> <a
-				href="javascript:openRoleModifyDialog()" class="easyui-linkbutton"
+			<a href="javascript:openDlg('#dlg')"
+			   class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a> <a
+				href="javascript:dgToFm('#dg', '#fm', '#dlg')" class="easyui-linkbutton"
 				iconCls="icon-edit" plain="true">修改</a> <a
-				href="javascript:deleteRole()" class="easyui-linkbutton"
+				href="javascript:deleteDg('#dg', '/admin/process/deleteById')" class="easyui-linkbutton"
 				iconCls="icon-remove" plain="true">删除</a>
-		</div>
-		<div>
-			&nbsp;工序名称：&nbsp;<input type="text" id="s_roleName" size="20"
-				onkeydown="if(event.keyCode==13) searchRole()" /> <a
-				href="javascript:searchRole()" class="easyui-linkbutton"
-				iconCls="icon-search" plain="true">搜索</a>
 		</div>
 	</div>
 
@@ -47,30 +38,34 @@
 	<div id="dlg" class="easyui-dialog"
 		style="width: 450px; height: 250px; padding: 10px 20px" closed="true"
 		buttons="#dlg-buttons" data-options="onClose:function(){resetValue()}">
-		<form id="fm" method="post" enctype="multipart/form-data">
+		<form id="fm" method="post">
+			<input type="hidden" id="id" name="id"/>
 			<table cellspacing="8px">
 				<tr>
-					<td>图纸名称：</td>
+					<td>工序名称：</td>
 					<td><input type="text" id="name" name="name"
-						class="easyui-validatebox" required="true" /></td>
-				</tr>
-				<tr>
-					<td>图纸编号：</td>
-					<td><input type="text" id="drawingId" name="drawingId"
-						class="easyui-validatebox" required="true" /></td>
-				</tr>
-				<tr>
-					<td>图纸：</td>
-					<td><input id="drawingURL"  type="file" name="drawingURL"/></td>
+							   class="easyui-validatebox" required="true"/></td>
 				</tr>
 			</table>
 		</form>
 	</div>
 
 	<div id="dlg-buttons">
-		<a href="javascript:saveRole()" class="easyui-linkbutton"
-			iconCls="icon-ok">保存</a> <a href="javascript:closeRoleDialog()"
-			class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+		<a href="javascript:subimtFm('#fm','/admin/process/save', '#dlg', '#dg')" class="easyui-linkbutton"
+		   iconCls="icon-ok">保存</a> <a href="javascript:closeDlg('#dlg')"
+									   class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 	</div>
 </body>
+
+<script>
+	$(function () {
+		$("#dg").datagrid({
+			columns: [[
+				{field: 'cb', checkbox:'true', align: 'center'},
+				{field: 'id', title: 'id', hidden: 'true', width: 100, align: 'center'},
+				{field: 'name', title: '名称', width: 100, align: 'center'},
+			]],
+		})
+	});
+</script>
 </html>

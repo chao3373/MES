@@ -24,4 +24,8 @@ public interface ProcessService {
 
 
     public List<Process> findProcessCombobox(String name);
+
+    public void save(Process process);
+
+    public void deleteById(Integer id);
 }

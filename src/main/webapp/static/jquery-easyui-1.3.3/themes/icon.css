@@ -1,3 +1,15 @@
+.icon-xia{
+	background:url('icons/xia.png') no-repeat center center;
+}
+.icon-shang{
+	background:url('icons/shang.png') no-repeat center center;
+}
+.icon-zuo{
+	background:url('icons/zuo.png') no-repeat center center;
+}
+.icon-you{
+	background:url('icons/you.png') no-repeat center center;
+}
 .icon-blank{
 	background:url('icons/blank.gif') no-repeat center center;
 }
@@ -73,17 +85,12 @@
 	background:url('usericons/submit.png') no-repeat center center;
 }
 
-.icon-exit{
-	background:url('usericons/exit.png') no-repeat center center;
-}
 
 .icon-navigation{
 	background:url('usericons/navigation.gif') no-repeat center center;
 }
 
-.icon-modifyPassword{
-	background:url('usericons/modifyPassword.png') no-repeat center center;
-}
+
 
 .icon-folderOpen{
 	background:url('usericons/folder-open.gif') no-repeat center center;

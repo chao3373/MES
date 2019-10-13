@@ -42,6 +42,9 @@ public class UserAdminController {
 
 	@Resource
 	private UserProcessService userProcessService;
+
+	@Resource
+	private UserProductService userProductService;
 	
 	
 	/**
@@ -146,6 +149,8 @@ public class UserAdminController {
 		logService.save(new Log(Log.DELETE_ACTION, "删除用户信息"+userService.findById(id)));
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		userRoleService.deleteByUserId(id);
+		userProductService.delectByUserId(id);
+		userProcessService.deleteByUserId(id);
 		userService.delete(id);
 		resultMap.put("success", true);
 		return resultMap;
@@ -183,6 +188,25 @@ public class UserAdminController {
 		logService.save(new Log(Log.LOGOUT_ACTION,"用户注销"));
 		SecurityUtils.getSubject().logout();
 		return "redirect:/login.html";
+	}
+
+	/**
+	 * 下拉框模糊查询用户
+	 *
+	 * @param q
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping("/combobox")
+	public List<User> combobox(String q) throws Exception {
+		System.out.println("123456789");
+		if (q == null) {
+			q = "";
+		}
+		System.out.println("***************************************");
+		System.out.println(userService.combobox("%" + q + "%"));
+		System.out.println("***************************************");
+		return userService.combobox("%" + q + "%");
 	}
 	
 }

@@ -64,8 +64,17 @@ public class ToLeadController {
             maps.get(i).put("num", maps.get(i).remove("数量"));
             maps.get(i).put("xiangmuId", maps.get(i).remove("项目号"));
             maps.get(i).put("shenqingNumber", maps.get(i).remove("申请单号"));
+            maps.get(i).put("referDate",maps.get(i).remove("需交日期"));
+            maps.get(i).put("saleDate",maps.get(i).remove("接单日期"));
+            maps.get(i).put("saleNumber",maps.get(i).remove("订单号"));
+            maps.get(i).put("name",maps.get(i).remove("名称"));
+            maps.get(i).put("guiGe",maps.get(i).remove("规格"));
+            maps.get(i).put("changJia",maps.get(i).remove("厂家"));
         }
         map.put("success", true);
+        System.out.println("*****************************");
+        System.out.println(maps);
+        System.out.println("*****************************");
         map.put("rows", maps);
         logService.save(new Log(Log.SEARCH_ACTION, "导入订单表格"));
         return map;

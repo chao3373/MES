@@ -17,8 +17,7 @@
     <script type="text/javascript">
         var url;
         $(document).ready(function () {
-            $("#saleDate").datebox("setValue", genTodayStr());
-            $("#dh").load("/admin/saleList/genCode");
+
         });
 
 
@@ -80,12 +79,7 @@
 
         function saveSaleGoods() {
             var row = $("#dg").datagrid("getRows");
-            for (var i = 0; i < row.length; i++) {
-                row[i].num = 100;
-                row[i].saleDate = $("#saleDate").combobox("getText");
-                row[i].referDate = $("#referDate").combobox("getText");
-                row[i].saleNumber = $("#dh").text();
-            }
+            /*console.log(row);
             $("#goodsJson").val(JSON.stringify(row));
             $("#fm").form("submit", {
                 url: "/admin/saleList/save",
@@ -106,7 +100,25 @@
                         }
                     }
                 }
-            });
+            });*/
+
+            $.ajax({
+                type:"post",
+                url:"/admin/saleList/save",
+                data:{
+                    data: JSON.stringify(row)
+                },
+                dataType:"json",
+                success:function (result) {
+                    if (result.success) {
+                        alert("保存成功");
+                        window.location.reload();
+                    } else {
+                        $.messager.alert("系统提示", "保存失败！");
+                        return;
+                    }
+                }
+            })
         }
 
         //修改订单信息
@@ -134,12 +146,15 @@
                 row: {
                     kucunzuzhi: $("#kucunzuzhi-change").val(),
                     hangHao: $("#hangHao-change").val(),
+                    saleDate: $("#saleDate-change").datebox("getText"),
                     wuliaoId: $("#wuliaoId-change").val(),
                     tuzhiName: $("#tuzhiName-change").val(),
                     tuzhiId: $("#tuzhiId-change").val(),
                     num: $("#num-change").val(),
                     xiangmuId: $("#xiangmuId-change").val(),
-                    shenqingNumber: $("#shenqingNumber-change").val()
+                    shenqingNumber: $("#shenqingNumber-change").val(),
+                    referDate:$("#referDate-change").datebox("getText"),
+                    saleNumber:$("#saleNumber-change").val()
                 }
             });
             closechangeDialog();
@@ -157,15 +172,19 @@
 
         //新增保存订单信息
         function saveadd() {
+
             $('#dg').datagrid('appendRow', {
                 kucunzuzhi: $("#kucunzuzhi-add").val(),
                 hangHao: $("#hangHao-add").val(),
+                saleDate: $("#saleDate-add").datebox("getText"),
                 wuliaoId: $("#wuliaoId-add").val(),
                 tuzhiName: $("#tuzhiName-add").val(),
                 tuzhiId: $("#tuzhiId-add").val(),
                 num: $("#num-add").val(),
                 xiangmuId: $("#xiangmuId-add").val(),
-                shenqingNumber: $("#shenqingNumber-add").val()
+                shenqingNumber: $("#shenqingNumber-add").val(),
+                referDate:$("#referDate-add").datebox("getValue"),
+                saleNumber:$("#saleNumber-add").val()
             });
             closeaddDialog();
             $.messager.alert("系统提示", "保存成功");
@@ -177,39 +196,29 @@
     </script>
 </head>
 <body class="easyui-layout">
-<div data-options="region:'north'"
+<!--<div data-options="region:'north'"
      style="height: 135px; padding: 10px; border: 0px; padding-top: 20px">
     <fieldset style="border-color: #E7F0FF">
-        <legend>
-            单号：<span id="dh"></span>
-        </legend>
         <form id="fm" method="post">
             <table cellspacing="8px">
                 <tr>
-                    <td>日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;期：<input
-                            type="text" id="saleDate" name="saleDate" class="easyui-datebox"
-                            demandd="true" data-options="editable:false" size="15"/>
-                    </td>
-                    <td>需交日期：<input
-                            type="text" id="referDate" name="referDate" class="easyui-datebox" required
-                            demandd="true" data-options="editable:false" size="15"/>
-                    </td>
-                    <td><input type="hidden" id="saleNumber" name="saleNumber"/>
+                    <td>
                         <input type="hidden" id="goodsJson" name="goodsJson"/> <a
                                 href="javascript:saveSaleGoods()" class="easyui-linkbutton"
                                 iconCls="icon-ok">保存</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
                                 href="javascript:toLead()" class="easyui-linkbutton"
-                                iconCls="icon-add">导入</a></td>
+                                iconCls="icon-add">导入</a>
+                    </td>
                 </tr>
             </table>
         </form>
     </fieldset>
-</div>
+</div>-->
 <div data-options="region:'center'" style="padding: 10px; border: 1px">
     <table id="dg" class="easyui-datagrid" style="" rownumbers="true"
            singleSelect="true" fit="true" toolbar="#tb">
         <thead>
-        <th id="kucunzuzhi" field="kucunzuzhi" width="200" align="center">库存组织</th>
+        <th id="kucunzuzhi" field="kucunzuzhi" width="100" align="center">库存组织</th>
         <th id="hangHao" field="hangHao" width="100" align="center">行号</th>
         <th id="wuliaoId" field="wuliaoId" width="100" align="center">物料编号</th>
         <th id="tuzhiName" field="tuzhiName" width="100" align="center">图纸名称</th>
@@ -217,17 +226,25 @@
         <th id="num" field="num" width="100" align="center">数量</th>
         <th id="xiangmuId" field="xiangmuId" width="100" align="center">项目号</th>
         <th id="shenqingNumber" field="shenqingNumber" width="100" align="center">申请单号</th>
+        <th id="saleNumber" field="saleNumber" width="100" align="center">订单号</th>
+        <th id="referDate" field="referDate" width="150" align="center">需交日期</th>
+        <th id="saleDate" field="saleDate" width="150" align="center">接单日期</th>
         </thead>
     </table>
 
     <div id="tb">
         <div style="padding: 2px">
+            <input type="hidden" id="goodsJson" name="goodsJson"/>
+            <a href="javascript:toLead()" class="easyui-linkbutton"
+                iconCls="icon-add" plain="true">导入</a>
             <a href="javascript:openSaleListGoodsAddDialog()"
-               class="easyui-linkbutton" iconCls="icon-add" plain="true">手动添加订单</a> <a
-                href="javascript:openSaleListGoodsModifyDialog()"
-                class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a> <a
-                href="javascript:deleteSaleListGoods()" class="easyui-linkbutton"
+               class="easyui-linkbutton" iconCls="icon-add" plain="true">手动添加订单</a>
+            <a href="javascript:openSaleListGoodsModifyDialog()"
+                class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a>
+            <a href="javascript:deleteSaleListGoods()" class="easyui-linkbutton"
                 iconCls="icon-remove" plain="true">删除</a>
+            <a href="javascript:saveSaleGoods()" class="easyui-linkbutton"
+                iconCls="icon-ok" plain="true">保存</a>
         </div>
     </div>
 </div>
@@ -252,19 +269,18 @@
 
 <!--修改订单信息-->
 <div id="dlg" class="easyui-dialog"
-     style="width: 450px; height: 250px; padding: 10px 20px" closed="true"
+     style="width: 520px; height: 250px; padding: 10px 20px" closed="true"
      buttons="#dlg-buttons">
     <form id="fm2" method="post">
         <table>
             <tr>
-
                 <td>库存组织：</td>
                 <td><input type="text" id="kucunzuzhi-change" name="kucunzuzhi"
                            class="easyui-validatebox" style="width: 120px"/></td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>行&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：</td>
-                <td><input type="text" id="hangHao-change" name="hangHao"
-                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td>下单日期：</td>
+                <td><input type="text" id="saleDate-change" name="saleDate"
+                           class="easyui-datebox" demandd="true" size="14"/></td>
             </tr>
             <tr>
                 <td>物料编号：</td>
@@ -293,6 +309,20 @@
                 <td><input type="text" id="shenqingNumber-change" name="shenqingNumber"
                            class="easyui-validatebox" style="width: 120px"/></td>
             </tr>
+            <tr>
+                <td>需交日期：</td>
+                <td><input type="text" id="referDate-change" name="referDate"
+                           class="easyui-datebox" demandd="true" size="14"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>订单编号：</td>
+                <td><input type="text" id="saleNumber-change" name="saleNumber"
+                           class="easyui-validatebox" demandd="true" style="width: 120px"/></td>
+            </tr>
+            <tr>
+                <td>行&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：</td>
+                <td><input type="text" id="hangHao-change" name="hangHao"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+            </tr>
         </table>
     </form>
 </div>
@@ -306,7 +336,7 @@
 
 <!--新增订单信息-->
 <div id="dlg2" class="easyui-dialog"
-     style="width: 450px; height: 250px; padding: 10px 20px" closed="true"
+     style="width: 500px; height: 250px; padding: 10px 20px" closed="true"
      buttons="#dlg2-buttons">
     <form id="fm-add" method="post">
         <table>
@@ -316,9 +346,9 @@
                 <td><input type="text" id="kucunzuzhi-add" name="kucunzuzhi"
                            class="easyui-validatebox" style="width: 120px"/></td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>行&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：</td>
-                <td><input type="text" id="hangHao-add" name="hangHao"
-                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td>下单日期：</td>
+                <td><input type="text" id="saleDate-add" name="saleDate"
+                           class="easyui-datebox" demandd="true" size="14"/></td>
             </tr>
             <tr>
                 <td>物料编号：</td>
@@ -345,6 +375,20 @@
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                 <td>申请单号：</td>
                 <td><input type="text" id="shenqingNumber-add" name="shenqingNumber"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+            </tr>
+            <tr>
+                <td>需交日期：</td>
+                <td><input type="text" id="referDate-add" name="referDate"
+                           class="easyui-datebox" demandd="true" size="14"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>订单编号：</td>
+                <td><input type="text" id="saleNumber-add" name="saleNumber"
+                          class="easyui-validatebox" style="width: 120px"/></td>
+            </tr>
+            <tr>
+                <td>行&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：</td>
+                <td><input type="text" id="hangHao-add" name="hangHao"
                            class="easyui-validatebox" style="width: 120px"/></td>
             </tr>
         </table>

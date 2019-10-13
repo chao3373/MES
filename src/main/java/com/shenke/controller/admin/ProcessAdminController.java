@@ -63,4 +63,18 @@ public class ProcessAdminController {
         logService.save(new Log(Log.SEARCH_ACTION,"模糊查询工时"));
         return processService.findProcessCombobox("%" + q + "%");
     }
+
+    @RequestMapping("/save")
+    public Map<String,Object> save(Process process){
+        Map<String,Object> map = new HashMap<>();
+        processService.save(process);
+        return map;
+    }
+
+    @RequestMapping("/deleteById")
+    public Map<String,Object> deleteById(Integer id){
+        Map<String,Object> map = new HashMap<>();
+        processService.deleteById(id);
+        return map;
+    }
 }

@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /***
  * 销售订单Controller
@@ -38,16 +35,23 @@ public class SaleListAdminController {
     @Resource
     private DrawingProcessService drawingProcessService;
 
+    @Resource
+    private WuliaoService wuliaoService;
+
     /**
      * 保存添加订单
      * @return
      */
     @RequestMapping("/save")
-    public Map<String, Object> save(String goodsJson) throws Exception {
+    public Map<String, Object> save(String data) throws Exception {
         Map<String,Object> map = new HashMap<>();
         Gson gson = new Gson();
-        List<SaleList> plgList = gson.fromJson(goodsJson, new TypeToken<List<SaleList>>() {
+        List<SaleList> plgList = gson.fromJson(data, new TypeToken<List<SaleList>>() {
         }.getType());
+
+        System.out.println("***********************");
+        System.out.println(plgList);
+        System.out.println("***********************");
 
        for(SaleList saleList : plgList){
            saleList.setState("下单");
@@ -64,6 +68,7 @@ public class SaleListAdminController {
     }
 
     /**
+     *
      * 查询状态为下单的产品信息
      * @return
      */
@@ -141,23 +146,6 @@ public class SaleListAdminController {
         return map;
     }
 
-    /**
-     * 获取销售单号
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping("/genCode")
-    public String genCode() throws Exception {
-        StringBuffer code = new StringBuffer("XS");
-        code.append(DateUtil.getCurrentDateStr());
-        String saleNumber = saleListService.getTodayMaxSaleNumber();
-        if (saleNumber != null) {
-            code.append(StringUtil.formatCode(saleNumber));
-        } else {
-            code.append("0001");
-        }
-        return code.toString();
-    }
 
     /**
      * 显示可以被加急的订单

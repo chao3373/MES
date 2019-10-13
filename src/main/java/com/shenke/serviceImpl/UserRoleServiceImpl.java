@@ -24,7 +24,7 @@ public class UserRoleServiceImpl implements UserRoleService{
 
 	@Override
 	public void deleteByUserId(Integer userId) {
-		userRoleRepository.deleteById(userId);
+		userRoleRepository.deleteByUserId(userId);
 	}
 
 	@Override

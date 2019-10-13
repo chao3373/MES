@@ -18,6 +18,13 @@
 
         $(document).ready(function() {
             load();
+            $('#dg').datagrid({
+                onClickCell: function(index,field){
+                    if(field == "tiaoma"){
+                        tiaoma(index);
+                    }
+                }
+            });
         });
 
 
@@ -71,19 +78,6 @@
                             }
                         }
                     },{
-                        field: "gongxu",
-                        title:"工序",
-                        width: "150",
-                        align: "center",
-                        formatter:function (val, row) {
-                            if(row.process){
-                                return row.process.name;
-                            }
-                            else {
-                                return '';
-                            }
-                        }
-                    },{
                         field: "xiangmuhao",
                         title:"项目号",
                         width: "150",
@@ -100,14 +94,12 @@
                         field: 'tiaoma',
                         title: '条码',
                         align: 'center',
-                        //width: $(this).width() * 0.1,
                         width: "150",
-                        formatter: function (value, row, index) {
-
-                            console.log(row[index])
-                            /*var str = "<a href='javascript:void(0)' onclick='tiaoma('" + row + ")>"+"打印"+"</a>";
-                            //var str = '<a href="#123" id="tiaoma" onclick="tiaoma();return false;" name="tiaoma" class="easyui-linkbutton" >打印</a>';
-                            return str;*/
+                        styler:function(){
+                            return 'background-color:red;color:white;';
+                        },
+                        formatter:function (val, row) {
+                            return '点击打印';
                         }
                     }
                 ]]
@@ -115,18 +107,18 @@
         }
 
 
-        function tiaoma(row) {
-            console.log(row);
+        function tiaoma(index) {
             //$('#dg').datagrid("selectRow", 0);
-           /* var row = $("#dg").datagrid("getSelected");
+            var row = $("#dg").datagrid("getRows")[index];
             console.log(row.datuCode)
             $.post("/admin/shengChan/tiaoma",{
                 code:row.xiaotuCode
             },function (result) {
                 if(result.success){
                     print(result.url);
+                    $("#dg").datagrid("reload");
                 }
-            },"json");*/
+            },"json");
         }
 
         //打印
@@ -188,6 +180,26 @@
 
         }
 
+        //点击搜索
+        function sousuo() {
+            console.log($("#xuanze").combobox("getText"))
+          /*  $.post("/admin/shengChan/selectRenwu",{
+                xuanze:$("#xuanze").combobox("getValue"),
+                code:$("#bianma").val()
+            },function (result) {
+
+            },"json")*/
+
+            $('#dg').datagrid({
+                url: '/admin/shengChan/selectRenwu',
+                queryParams: {
+                    xuanze: $("#xuanze").combobox("getValue"),
+                    code: $("#bianma").val()
+                }
+            });
+
+        }
+
 
     </script>
 </head>    <!--上面的dg  下面的addSon-->
@@ -201,10 +213,14 @@
     <div id="tb1">
         <fieldset style="border-color: #E7F0FF">
             <legend></legend>
-            &nbsp;图纸所用展开工时：&nbsp; <input class="easyui-numberbox" type="text" id="yuGuGongShi" name="yuGuGongShi"
-                                         autocomplete="off"  size="15" />
-                &nbsp;&nbsp;<a href="javascript:auditPass()"
-                           class="easyui-linkbutton" iconCls="icon-ok" plain="true">添加并保存大图信息</a>
+            <select class="easyui-combobox" id = "xuanze" style="width: 100px" data-options="panelHeight:'auto'" >
+                <option value="1">物料编码</option>
+                <option value="2">图纸编码</option>
+            </select>
+            &nbsp;&nbsp;<input  type="text" id="bianma"  name="bianma"  size="15"
+                    onkeydown="if(event.keyCode==13) sousuo()" />
+            &nbsp;&nbsp;<a href="javascript:sousuo()"
+                           class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
         </fieldset>
     </div>
 </body>

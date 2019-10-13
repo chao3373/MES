@@ -93,12 +93,8 @@
 	}
 	
 	function deleteUser(){
-		var selectedRows=$("#dg").datagrid("getSelections");
-		if(selectedRows.length!=1){
-			$.messager.alert("系统提示","请选择一条要删除的数据！");
-			return;
-		}
-		var id=selectedRows[0].id;
+		var selectedRows=$("#dg").datagrid("getSelected");
+		var id=selectedRows.id;
 		$.messager.confirm("系统提示","您确定要删除这条数据吗?",function(r){
 			if(r){
 				$.post("/admin/user/delete",{id:id},function(result){

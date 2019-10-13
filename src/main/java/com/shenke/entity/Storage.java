@@ -2,6 +2,7 @@ package com.shenke.entity;
 
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * 商品入库
@@ -16,28 +17,20 @@ public class Storage {
 
     @JoinColumn
     @ManyToOne
-    private SaleList saleList; //订单Id
+    private RuKu ruKu; // 入库 对象
 
-    @JoinColumn
-    @ManyToOne
-    private BigDrawing bigDrawing; //大图纸
+    private Date ruKuDate; // 入库时间
 
-    @JoinColumn
-    @ManyToOne
-    private Drawing drawing; //小图纸
+    private Date chuKuDate; //  出库时间
 
-    private String state;//状态
+    private String state; //状态
 
-    private String standard; //产品标准
-
-    private String remark;//备注
-
-    public String getStandard() {
-        return standard;
+    public String getState() {
+        return state;
     }
 
-    public void setStandard(String standard) {
-        this.standard = standard;
+    public void setState(String state) {
+        this.state = state;
     }
 
     public Integer getId() {
@@ -48,56 +41,38 @@ public class Storage {
         this.id = id;
     }
 
-    public SaleList getSaleList() {
-        return saleList;
+    public RuKu getRuKu() {
+        return ruKu;
     }
 
-    public void setSaleList(SaleList saleList) {
-        this.saleList = saleList;
+    public void setRuKu(RuKu ruKu) {
+        this.ruKu = ruKu;
     }
 
-    public BigDrawing getBigDrawing() {
-        return bigDrawing;
+    public Date getRuKuDate() {
+        return ruKuDate;
     }
 
-    public void setBigDrawing(BigDrawing bigDrawing) {
-        this.bigDrawing = bigDrawing;
+    public void setRuKuDate(Date ruKuDate) {
+        this.ruKuDate = ruKuDate;
     }
 
-    public Drawing getDrawing() {
-        return drawing;
+    public Date getChuKuDate() {
+        return chuKuDate;
     }
 
-    public void setDrawing(Drawing drawing) {
-        this.drawing = drawing;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setChuKuDate(Date chuKuDate) {
+        this.chuKuDate = chuKuDate;
     }
 
     @Override
     public String toString() {
         return "Storage{" +
                 "id=" + id +
-                ", saleList=" + saleList +
-                ", bigDrawing=" + bigDrawing +
-                ", drawing=" + drawing +
+                ", ruKu=" + ruKu +
+                ", ruKuDate=" + ruKuDate +
+                ", chuKuDate=" + chuKuDate +
                 ", state='" + state + '\'' +
-                ", standard='" + standard + '\'' +
-                ", remark='" + remark + '\'' +
                 '}';
     }
 }

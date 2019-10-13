@@ -1,6 +1,7 @@
 package com.shenke.controller;
 
 import com.shenke.service.RoleMenuService;
+import com.shenke.util.DaochuUtil;
 import com.shenke.util.QRCode;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +47,24 @@ public class IndexController {
         map.put("success", true);
         map.put("url", urlInfo);
         System.out.println(map);
+        return map;
+    }
+
+    /**
+     * 导出
+     * @param a
+     * @param title
+     * @return
+     * @throws Exception
+     */
+    @ResponseBody
+    @RequestMapping("/admin/daochu")
+    public Map<String, Object> daochu(String a, String title) throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        System.out.println(a);
+        System.out.println(title);
+        DaochuUtil.daochuExcel(a, title);
+        map.put("success", true);
         return map;
     }
 }

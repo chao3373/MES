@@ -62,5 +62,11 @@ public interface UserService {
 	 * @return
 	 */
 	public Object findNamePsw(String name, String psw);
-	
+
+	/**
+	 * 下拉框模糊查询
+	 * @param s
+	 * @return
+	 */
+    public List<User> combobox(String s);
 }

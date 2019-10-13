@@ -5,6 +5,12 @@ spring:
     url: jdbc:mysql://localhost:3306/db_mes?characterEncoding=utf8&serverTimezone=GMT%2B8
     username: root
     password: root
+
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+
+
   jpa:
     hibernate.ddl-auto: update
     show-sql: true
@@ -22,5 +28,6 @@ server:
       timeout: -1
     context-path: /
   port: 80
+
 
 

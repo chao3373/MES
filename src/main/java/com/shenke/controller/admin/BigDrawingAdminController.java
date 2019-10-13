@@ -8,11 +8,13 @@ import com.shenke.service.LogService;
 import com.shenke.util.GetFileName;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sun.util.calendar.BaseCalendar;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +69,7 @@ public class BigDrawingAdminController {
                 e.printStackTrace();
             }
         }
+        bigDrawingService.delete(bigDrawingService.findByWuLiaoId(bigDrawing.getWuliaoId()).getId());
         Map<String, Object> resultMap = new HashMap<>();
         bigDrawingService.save(bigDrawing);
         resultMap.put("success", true);
@@ -158,4 +161,37 @@ public class BigDrawingAdminController {
         }
         return "下载失败";
     }
+
+    /**
+     * 保存图纸展开的开始 结束时间
+     * @param code
+     * @param wuliaoId
+     * @return
+     */
+    @RequestMapping("/jiShi")
+    public Map<String,Object> jiShi(Integer code,String wuliaoId){
+        Map<String,Object> map = new HashMap<>();
+
+        BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(wuliaoId);
+
+        if(code == 1){
+            bigDrawing.setStartDate(new Date());
+            bigDrawingService.save(bigDrawing);
+        }else if(code == 2){
+            if(bigDrawing.getStartDate() != null){
+                bigDrawing.setStopDate(new Date());
+                //计算实际展开工时
+                Long between = bigDrawing.getStopDate().getTime() - bigDrawing.getStartDate().getTime();
+                Double d= between.doubleValue();
+                bigDrawing.setShiJiGongShi((d/60000));
+
+                bigDrawingService.save(bigDrawing);
+            }
+        }
+        map.put("success",true);
+        return map;
+    }
+
+
+
 }

@@ -97,14 +97,15 @@
                     wuliaoId:$("#dg").datagrid("getSelected").wuliaoId
                 },function (result) {
                     if(result.success){
-                        $.messager.alert("系统提示","添加成功！")
+                        $.messager.alert("系统提示","添加成功！");
+                        $("#yuGuGongShi").val('');
                         $("#dg").datagrid("reload");
                     }
                     else {
                         $.messager.alert("系统提示","添加失败!")
                     }
                 },"json");
-            $("#yuGuGongShi").val('');
+            //$("#yuGuGongShi").val('');
 
 
         }
@@ -133,8 +134,8 @@
     <div id="tb1">
         <fieldset style="border-color: #E7F0FF">
             <legend></legend>
-            &nbsp;图纸所用展开工时：&nbsp; <input class="easyui-numberbox" type="text" id="yuGuGongShi" name="yuGuGongShi"
-                                         autocomplete="off"  size="15" />
+            &nbsp;图纸所用展开工时：&nbsp; <input type="text" id="yuGuGongShi" name="yuGuGongShi"
+                                           size="15" />
                 &nbsp;&nbsp;<a href="javascript:auditPass()"
                            class="easyui-linkbutton" iconCls="icon-ok" plain="true">添加并保存大图信息</a>
         </fieldset>
