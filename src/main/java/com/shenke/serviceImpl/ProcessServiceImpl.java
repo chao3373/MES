@@ -42,8 +42,26 @@ public class ProcessServiceImpl implements ProcessService {
         processRepository.save(process);
     }
 
+
     @Override
-    public void deleteById(Integer id) {
-        processRepository.deleteById(id);
+    public List<Process> findByPGId(Integer id) {
+        return processRepository.findByPGId(id);
+    }
+
+    @Override
+    public void deleteByPGId(Integer id) {
+        processRepository.deleteByPGId(id);
+    }
+
+    @Override
+    public void deleteByIds(Integer[] ids) {
+        for(int i = 0;i<ids.length;i++){
+            processRepository.deleteById(ids[i]);
+        }
+    }
+
+    @Override
+    public List<Process> selectByName(String s) {
+        return processRepository.selectByName(s);
     }
 }

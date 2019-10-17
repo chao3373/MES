@@ -92,7 +92,7 @@ public interface SaleListRepository  extends JpaRepository<SaleList, Integer>, J
      * @param saleNumber
      * @return
      */
-    @Query(value = "select * from t_sale_list where sale_number =?1",nativeQuery = true)
+    @Query(value = "select * from t_sale_list where sale_number like ?1",nativeQuery = true)
     public List<SaleList> findBySaleNumber(String saleNumber);
 
     /**
@@ -114,6 +114,22 @@ public interface SaleListRepository  extends JpaRepository<SaleList, Integer>, J
      * 图纸展开界面的显示信息
      * @return
      */
-    @Query(value = "select * from t_sale_list where cunzai = '分配工时' and state = '下单'",nativeQuery = true)
+    @Query(value = "select * from t_sale_list where cunzai = '分配工时' and state = '下单' order by sale_date ASC",nativeQuery = true)
     public List<SaleList> showTuZhiOpen();
+
+    /**
+     * 通过物料号 和 存在状态模糊查询
+     * @param wuliaoId
+     * @return
+     */
+    @Query(value = "select * from t_sale_list where wuliao_id like ?1 and cunzai = ?2 order by sale_date ASC ",nativeQuery = true)
+    List<SaleList> selectLikeWuliaoId(String wuliaoId,String state);
+
+    /**
+     * 通过物料号和存在状态为空查询
+     * @param wuliaoId
+     * @return
+     */
+    @Query(value = "select * from t_sale_list where wuliao_id like ?1 and cunzai is null",nativeQuery = true)
+    List<SaleList> selectLikeWuliaoId(String wuliaoId);
 }

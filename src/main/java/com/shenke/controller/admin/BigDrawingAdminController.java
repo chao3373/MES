@@ -8,7 +8,6 @@ import com.shenke.service.LogService;
 import com.shenke.util.GetFileName;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sun.util.calendar.BaseCalendar;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -184,7 +183,7 @@ public class BigDrawingAdminController {
                 Long between = bigDrawing.getStopDate().getTime() - bigDrawing.getStartDate().getTime();
                 Double d= between.doubleValue();
                 bigDrawing.setShiJiGongShi((d/60000));
-
+                map.put("jishi",(d/60000));
                 bigDrawingService.save(bigDrawing);
             }
         }

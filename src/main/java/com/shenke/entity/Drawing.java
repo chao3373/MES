@@ -16,6 +16,11 @@ public class Drawing {
     @Column(length = 100)
     private String wuliaoId;//物料编号
 
+    private String tuZhiName;//图纸名称
+
+    @Transient
+    private Integer num; // 数量(查询用)
+
     @Column(length = 2000)
     private String url;//图纸路径
 
@@ -27,9 +32,27 @@ public class Drawing {
         return "Drawing{" +
                 "id=" + id +
                 ", wuliaoId='" + wuliaoId + '\'' +
+                ", tuZhiName='" + tuZhiName + '\'' +
+                ", num=" + num +
                 ", url='" + url + '\'' +
                 ", drawingURL=" + drawingURL +
                 '}';
+    }
+
+    public Integer getNum() {
+        return num;
+    }
+
+    public void setNum(Integer num) {
+        this.num = num;
+    }
+
+    public String getTuZhiName() {
+        return tuZhiName;
+    }
+
+    public void setTuZhiName(String tuZhiName) {
+        this.tuZhiName = tuZhiName;
     }
 
     public String getWuliaoId() {

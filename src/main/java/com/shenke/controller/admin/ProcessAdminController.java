@@ -3,10 +3,8 @@ package com.shenke.controller.admin;
 import com.shenke.entity.DrawingProcess;
 import com.shenke.entity.Log;
 import com.shenke.entity.Process;
-import com.shenke.service.BigDrawingService;
-import com.shenke.service.DrawingService;
-import com.shenke.service.LogService;
-import com.shenke.service.ProcessService;
+import com.shenke.service.*;
+import com.shenke.util.StringUtil;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +32,9 @@ public class ProcessAdminController {
 
     @Resource
     private LogService logService;
+
+    @Resource
+    private ProcessGroupService processGroupService;
 
     /**
      *  查询全部工时信息
@@ -65,16 +66,46 @@ public class ProcessAdminController {
     }
 
     @RequestMapping("/save")
-    public Map<String,Object> save(Process process){
+    public Map<String,Object> save(Integer id,String name){
         Map<String,Object> map = new HashMap<>();
+        Process process = new Process();
+        process.setName(name);
+        process.setProcessGroup(processGroupService.findById(id));
+
+        System.out.println("*************");
+        System.out.println(process);
+        System.out.println("*************");
         processService.save(process);
         return map;
     }
 
-    @RequestMapping("/deleteById")
-    public Map<String,Object> deleteById(Integer id){
+    @RequestMapping("/deleteByIds")
+    public void deleteByIds(Integer[] ids){
+        processService.deleteByIds(ids);
+        logService.save(new Log(Log.SEARCH_ACTION, "删除员工信息"));
+    }
+
+    @RequestMapping("/findByPGId")
+    public Map<String,Object> findByPGId(Integer id){
         Map<String,Object> map = new HashMap<>();
-        processService.deleteById(id);
+        map.put("rows",processService.findByPGId(id));
+        return map;
+    }
+
+    /***
+     * 根据姓名模糊查询员工信息
+     * @param
+     * @return
+     */
+    @RequestMapping("/selectByName")
+    public Map<String, Object> selectByName(String name){
+        Map<String, Object> map = new HashMap<>();
+        if (StringUtil.isEmpty(name)){
+            name = "";
+        }
+        map.put("rows", processService.selectByName("%" + name + "%"));
+        logService.save(new Log(Log.SEARCH_ACTION, "根据员工姓名模糊查询员工信息"));
+        map.put("success", true);
         return map;
     }
 }

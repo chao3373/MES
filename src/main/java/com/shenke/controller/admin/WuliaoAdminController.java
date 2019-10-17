@@ -38,7 +38,7 @@ public class WuliaoAdminController {
     private SaleListService saleListService;
 
     @RequestMapping("/save")
-    public Map<String,Object> save(String data, Integer saleListId, String bigDrawing, HttpSession session){
+    public Map<String,Object> save(String data, Integer saleListId, String bigDrawing){
         Map<String,Object> map = new HashMap<>();
 
         Gson gson = new Gson();
@@ -47,10 +47,6 @@ public class WuliaoAdminController {
 
         for(Wuliao wuliao : plgList){
             wuliao.setBigDrawing(bigDrawingService.findByWuLiaoId(bigDrawing));
-            wuliao.setSaleList(saleListService.findById(saleListId));
-            wuliao.setUser((User) session.getAttribute("currentUser"));
-            wuliao.setShenQingDate(new Date());
-
         }
         System.out.println("**********************");
         System.out.println(plgList);
@@ -65,7 +61,7 @@ public class WuliaoAdminController {
      * @param id
      * @param wuliaoId
      */
-    @RequestMapping("/saveOld")
+    /*@RequestMapping("/saveOld")
     public void saveOld(Integer id,String wuliaoId){
         List<Wuliao> list = wuliaoService.findBySaleListId(id);
 
@@ -78,9 +74,9 @@ public class WuliaoAdminController {
         if(list.size() == 0){
             List<Wuliao> list2 = wuliaoService.findByBigDrawingId(bigDrawingService.findByWuLiaoId(wuliaoId).getId());
             for(Wuliao wuliao : list2){
-                /*wuliao.setId(null);
+                *//*wuliao.setId(null);
                 wuliao.setSaleList(saleListService.findById(id));
-                wuliao.setShenQingDate(new Date());*/
+                wuliao.setShenQingDate(new Date());*//*
 
                 Wuliao wuliao1 = new Wuliao();
                 wuliao1.setUser(wuliao.getUser());
@@ -95,5 +91,5 @@ public class WuliaoAdminController {
             }
            // wuliaoService.save(list2);
         }
-    }
+    }*/
 }

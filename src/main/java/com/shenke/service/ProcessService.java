@@ -27,5 +27,11 @@ public interface ProcessService {
 
     public void save(Process process);
 
-    public void deleteById(Integer id);
+    public List<Process> findByPGId(Integer id);
+
+    void deleteByPGId(Integer id);
+
+    void deleteByIds(Integer[] ids);
+
+    public List<Process> selectByName(String s);
 }

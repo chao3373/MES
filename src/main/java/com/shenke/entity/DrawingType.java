@@ -1,5 +1,7 @@
 package com.shenke.entity;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.*;
 
 
@@ -24,8 +26,18 @@ public class DrawingType {
     @JoinColumn
     private BigDrawing bigDrawing; //大图纸id
 
+    private Integer num; // 数量
+
     @Transient
-    private String gongxus; //所属工序
+    private String gongxus; //所属工序 (临时接收数据用)
+
+    public Integer getNum() {
+        return num;
+    }
+
+    public void setNum(Integer num) {
+        this.num = num;
+    }
 
     public String getGongxus() {
         return gongxus;
@@ -65,6 +77,7 @@ public class DrawingType {
                 "id=" + id +
                 ", drawing=" + drawing +
                 ", bigDrawing=" + bigDrawing +
+                ", num=" + num +
                 ", gongxus='" + gongxus + '\'' +
                 '}';
     }

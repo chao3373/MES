@@ -17,6 +17,7 @@ public class BigDrawing {
     @Column(length = 100)
     private String wuliaoId; //物料编号
 
+    private String tuZhiName;//图纸名称
 
     @Column(length = 2000)
     private String url;//图纸路径
@@ -35,6 +36,14 @@ public class BigDrawing {
 
     //结束展开时间
     private Date stopDate;
+
+    public String getTuZhiName() {
+        return tuZhiName;
+    }
+
+    public void setTuZhiName(String tuZhiName) {
+        this.tuZhiName = tuZhiName;
+    }
 
     public Date getStartDate() {
         return startDate;
@@ -106,6 +115,7 @@ public class BigDrawing {
         return "BigDrawing{" +
                 "id=" + id +
                 ", wuliaoId='" + wuliaoId + '\'' +
+                ", tuZhiName='" + tuZhiName + '\'' +
                 ", url='" + url + '\'' +
                 ", drawingURL=" + drawingURL +
                 ", yuGuGongShi=" + yuGuGongShi +

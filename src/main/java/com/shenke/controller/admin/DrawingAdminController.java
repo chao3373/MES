@@ -1,7 +1,11 @@
 package com.shenke.controller.admin;
 
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.shenke.entity.Drawing;
+import com.shenke.entity.DrawingProcess;
+import com.shenke.entity.DrawingType;
 import com.shenke.entity.Log;
 import com.shenke.service.DrawingService;
 import com.shenke.service.LogService;
@@ -112,22 +116,39 @@ public class DrawingAdminController {
 
     /**
      * 保存小图纸
-     * @param smallIds
+     * @param
      * @return
      */
     @RequestMapping("/savaAboutWuliaoId")
-    public Map<String,Object> savaAboutWuliaoId(String []smallIds){
+    public Map<String,Object> savaAboutWuliaoId(String data){
         Map<String,Object> map = new HashMap<>();
-        for(int i =0 ;i<smallIds.length;i++) {
-            System.out.println(drawingService.findByWuliaoId(smallIds[i]));
-            if(drawingService.findByWuliaoId(smallIds[i]) == null){
-                System.out.println("到这了");
-                Drawing drawing = new Drawing();
-                drawing.setWuliaoId(smallIds[i]);
+        Gson gson = new Gson();
+        List<Drawing> plgList = gson.fromJson(data, new TypeToken<List<Drawing>>() {
+        }.getType());
+
+        for(Drawing drawing : plgList){
+            if(drawingService.findByWuliaoId(drawing.getWuliaoId()) == null && drawing.getId() == null){
                 drawingService.save(drawing);
             }
         }
         map.put("success",true);
+        return map;
+    }
+
+    /**
+     * 通过id查找对象
+     * @param id
+     * @return
+     */
+    @RequestMapping("/findById")
+    public Map<String,Object> findById(Integer id){
+        Map<String,Object> map = new HashMap<>();
+        map.put("rows",drawingService.findById(id));
+
+        System.out.println("***********************");
+        System.out.println(map);
+        System.out.println("***********************");
+
         return map;
     }
 }

@@ -65,4 +65,9 @@ public class ShengChanServiceImpl implements ShengChanService {
     public void updatState(Integer id) {
         shengChanRepository.updatState(id);
     }
+
+    @Override
+    public List<ShengChan> findBySaleListId(Integer id) {
+        return shengChanRepository.findBySaleListId(id);
+    }
 }

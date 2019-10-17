@@ -1,12 +1,9 @@
 package com.shenke.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
- * 工序设置实体类
+ * 工序实体类
  */
 
 @Entity
@@ -17,9 +14,19 @@ public class Process {
     @GeneratedValue
     private Integer id;
 
-    private Integer pNum;//工序代码
-
     private String name;//工序名称
+
+    @ManyToOne
+    @JoinColumn
+    private ProcessGroup processGroup;
+
+    public ProcessGroup getProcessGroup() {
+        return processGroup;
+    }
+
+    public void setProcessGroup(ProcessGroup processGroup) {
+        this.processGroup = processGroup;
+    }
 
     public Integer getId() {
         return id;
@@ -27,14 +34,6 @@ public class Process {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getpNum() {
-        return pNum;
-    }
-
-    public void setpNum(Integer pNum) {
-        this.pNum = pNum;
     }
 
     public String getName() {
@@ -49,8 +48,8 @@ public class Process {
     public String toString() {
         return "Process{" +
                 "id=" + id +
-                ", pNum=" + pNum +
                 ", name='" + name + '\'' +
+                ", processGroup=" + processGroup +
                 '}';
     }
 }

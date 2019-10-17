@@ -26,6 +26,10 @@ public class DrawingTypeServiceImpl implements DrawingTypeService {
         return drawingTypeRespository.findByBigDrawingId(id);
     }
 
+    @Override
+    public void deleteByBigDrawingId(Integer id) {
+        drawingTypeRespository.deleteByBigDrawingId(id);
+    }
 
 
 }

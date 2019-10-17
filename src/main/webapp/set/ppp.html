@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>部门职员</title>
+    <title>工序</title>
     <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
     <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
     <script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
@@ -10,7 +10,7 @@
     <script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
 </head>
 <body class="easyui-layout" style="padding-top: 2px">
-<div data-options="region:'west',collapsible:false" style="width: 200px" title="部门管理" split=true>
+<div data-options="region:'west',collapsible:false" style="width: 200px" title="工序组管理" split=true>
     <ul id="tree" class="easyui-tree" style="padding: 10px"></ul>
     <div style="position: absolute;bottom: 10px;left: 15px">
         <a href="javascript:openGoodsTypeAddDialog()" class="easyui-linkbutton" iconCls="icon-add">新增</a>
@@ -19,7 +19,7 @@
     </div>
 </div>
 <div data-options="region:'center'">
-    <table id="dg" title="员工管理" class="easyui-datagrid"
+    <table id="dg" title="工序管理" class="easyui-datagrid"
            fitColumns="true" rownumbers="true" fit="true" toolbar="#tb">
     </table>
 
@@ -31,7 +31,7 @@
             <a href="javascript:deleteGoods()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
         </div>
         <div>
-            &nbsp;员工名称：&nbsp;<input type="text" id="clerkName" size="20"
+            &nbsp;工序名称：&nbsp;<input type="text" id="name" size="20"
                                     onkeydown="if(event.keyCode==13) searchGoods()"/>
             <a href="javascript:searchGoods()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
         </div>
@@ -39,10 +39,10 @@
 </div>
 
 <div id="dlg" class="easyui-dialog" style="width: 300px;height: 120px;padding: 10px 20px"
-     closed="true" title="添加部门" buttons="#dlg-buttons" data-options="onClose:function(){$('#goodsTypeName').val('');}">
+     closed="true" title="添加工序组" buttons="#dlg-buttons" data-options="onClose:function(){$('#goodsTypeName').val('');}">
     <form id="fm" method="post">
         <div>
-            部门名称：&nbsp;<input type="text" id="goodsTypeName" name="goodsTypeName" class="easyui-validatebox"
+            工序组名称：&nbsp;<input type="text" id="goodsTypeName" name="goodsTypeName" class="easyui-validatebox"
                               required="true"/>
         </div>
     </form>
@@ -54,39 +54,22 @@
 </div>
 
 <div id="dlg2" class="easyui-dialog" style="width: 500px;height: 200px;padding: 10px 20px"
-     closed="true" buttons="#dlg-buttons2" title="添加员工信息">
+     closed="true" buttons="#dlg-buttons2" title="添加工序信息">
     <form id="fm2" method="post">
         <table>
             <tr>
                 <input type="hidden" id="id" name="id"/>
-                <td>选择部门：</td>
+                <td>选择工序组：</td>
                 <td>
-                    <input type="text" id="typeName" name="dep" class="easyui-combobox" style="width: 90px"
+                    <input type="text" id="processGroup" name="processGroup" class="easyui-combobox" style="width: 90px"
                            valueField="id"
-                           textField="text" url="/admin/dep/down" panelHeight="auto" required="required"/>
+                           textField="processGroup" url="/admin/processGroup/down" panelHeight="auto" required="required"/>
                 </td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>姓名：</td>
+                <td>工序名称：</td>
                 <td>
-                    <input type="text" id="name" name="name" class="easyui-validatebox" style="width: 120px"
+                    <input type="text" id="processName" name="name" class="easyui-validatebox" style="width: 120px"
                            required="required"/>
-                </td>
-            </tr>
-            <tr>
-                <td>性别：</td>
-                <td>
-                    <input type="text" id="sex" name="sex" class="easyui-validatebox" style="width: 120px"/>
-                </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>职务：</td>
-                <td>
-                    <input type="text" id="duty" name="duty" class="easyui-validatebox" style="width: 120px"/>
-                </td>
-            </tr>
-            <tr>
-                <td>年龄：</td>
-                <td>
-                    <input type="text" id="age" name="age" class="easyui-validatebox" style="width: 120px"/>
                 </td>
             </tr>
         </table>
@@ -114,27 +97,26 @@
     $(function () {
         loadDep();
         $("#dg").datagrid({
-            url: "/admin/clerk/list",
+            url: "/admin/process/list",
             columns: [[
                 {field: 'cb', title: 'id', width: 20, checkbox: "true", align: 'center'},
                 {field: 'id', title: 'id', width: 100, align: 'center', hidden: "true"},
-                {field: 'name', title: '姓名', width: 100, align: 'center'},
-                {field: 'sex', title: '性别', width: 100, align: 'center'},
-                {field: 'age', title: '年龄', width: 100, align: 'center'},
-                {field: 'duty', title: '职务', width: 100, align: 'center'},
+                {field: 'name', title: '工序名称', width: 100, align: 'center'},
                 {
-                    field: 'dep', title: '所属部门', width: 100, align: 'center',
+                    field: 'processGroup', title: '所属工序组', width: 100, align: 'center',
                     formatter: function (value, row, index) {
-                        if (value) {
-                            return value.text;
+                        if (row.processGroup) {
+                            console.log(row)
+                            return row.processGroup.processGroup;
                         }
                         return "";
                     }
-                },
+                }
             ]]
         });
         $("#tree").tree({
             onClick: function (node) {
+                console.log(node)
                 $("#del").linkbutton("enable");
                 loadDg(node.id);
             }
@@ -145,9 +127,15 @@
     function loadDep() {
         $.ajax({
             type: "POST",
-            url: "/admin/dep/findAll",
+            url: "/admin/processGroup/findAll",
             success: function (result) {
-                console.log(result)
+                var a= result.data;
+
+                for(var i = 0;i<a.length;i++){
+                    a[i].text = a[i].processGroup;
+                }
+                console.log(result);
+
                 if (result.success) {
                     $("#tree").tree("loadData", result.data);
                 }
@@ -164,8 +152,8 @@
     function saveGoodsType() {
         $.ajax({
             type: "POST",
-            url: "/admin/dep/add",
-            data: {text: $("#goodsTypeName").val()},
+            url: "/admin/processGroup/add",
+            data: {processGroup: $("#goodsTypeName").val()},
             success: function (result) {
                 if (result.success) {
                     loadDep();
@@ -182,11 +170,11 @@
 
     //删除部门按钮
     function deleteGoodsType() {
-        $.messager.confirm('系统提示', '<span style="color: red;">确定删除该部门以及该部门下的所有员工信息？</span>', function (r) {
+        $.messager.confirm('系统提示', '<span style="color: red;">确定删除该工序组及该工序组下的所有工序吗？</span>', function (r) {
             if (r) {
                 $.ajax({
                     type: "POST",
-                    url: "/admin/dep/delete",
+                    url: "/admin/processGroup/delete",
                     data: {id: $("#tree").tree("getSelected").id},
                     success: function (result) {
                         if (result.success) {
@@ -201,12 +189,17 @@
 
     //加载所选部门的员工信息
     function loadDg(id) {
+        console.log(id)
         $.ajax({
-            url: "/admin/clerk/findByDepId",
+            url: "/admin/process/findByPGId",
             data: {id: id},
             success: function (result) {
+
+                console.log(result)
+
                 if (result.success) {
                     $("#dg").datagrid("loadData", result.rows);
+                    $("#dg").datagrid("reload")
                 }
             }
         });
@@ -215,7 +208,7 @@
     //打开添加员工面板
     function openGoodsAddDialog() {
         if ($("#tree").tree("getSelected")) {
-            $("#typeName").combobox("setValue", $("#tree").tree("getSelected").id);
+            $("#processGroup").combobox("setValue", $("#tree").tree("getSelected").id);
         }
         $("#dlg2").dialog("open");
     }
@@ -227,8 +220,8 @@
 
     //保存员工信息
     function saveGoods() {
-        $("#fm2").form("submit", {
-            url: "/admin/clerk/add",
+       /* $("#fm2").form("submit", {
+            url: "/admin/process/save",
             success: function (result) {
                 if (result) {
                     initDlg2();
@@ -240,7 +233,22 @@
                     $("#dg").datagrid("reload");
                 }
             }
-        });
+        });*/
+
+        $.post("/admin/process/save",{
+            id:$("#processGroup").combobox("getValue"),
+            name : $("#processName").val()
+        },function (result) {
+            if (result) {
+                initDlg2();
+                closeGoodsDialog();
+                if ($("#tree").tree("getSelected")) {
+                    loadDg($("#tree").tree("getSelected").id);
+                    return;
+                }
+                $("#dg").datagrid("reload");
+            }
+        },"json");
     }
 
     //删除选中的员工信息
@@ -256,8 +264,8 @@
                     var idArr = ids.join(",");
 
                     $.ajax({
-                        url: "/admin/clerk/deleteByIds",
-                        data: {clerks: idArr},
+                        url: "/admin/process/deleteByIds",
+                        data: {ids: idArr},
                         success: function (result) {
                             loadDg($("#tree").tree("getSelected").id);
                         }
@@ -271,8 +279,8 @@
     //根据员工名称查询员工信息
     function searchGoods() {
         $.ajax({
-            url: "/admin/clerk/selectByName",
-            data: {clerkName: $("#clerkName").val()},
+            url: "/admin/process/selectByName",
+            data: {name: $("#name").val()},
             success: function (result) {
                 if (result.success) {
                     $("#dg").datagrid("loadData", result.rows);
@@ -288,16 +296,13 @@
             $.messager.alert("系统提示", "请选择一条要修改的信息");
         }
         $("#fm2").form("load", row);
-        $("#typeName").combobox("setValue", row.dep.id);
+        $("#processGroup").combobox("setValue", row.processGroup.id);
         $("#dlg2").dialog("open");
     }
 
     //初始化dig2窗口数据
     function initDlg2(){
-        $("#typeName").combobox("reset");
         $("#name").val("");
-        $("#sex").val("");
-        $("#age").val("");
     }
 </script>
 </html>

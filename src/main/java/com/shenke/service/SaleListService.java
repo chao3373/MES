@@ -98,4 +98,8 @@ public interface SaleListService {
     public List<SaleList> showTuZhiOpen();
 
     public void setCunZai(Integer id,String cunzai);
+
+    public List<SaleList> selectLikeWuliaoId(String wuliaoId,String state);
+
+    public List<SaleList> selectWuliaoId(String wuliaoId);
 }

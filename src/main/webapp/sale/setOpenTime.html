@@ -26,6 +26,10 @@
                 url:"/admin/saleList/setOpenTime",
                 columns:[[
                     {
+                        field: 'cb',
+                        checkbox: "true",
+                        align: "center"
+                    },{
                         field: "id",
                         width: "150",
                         align: "center",
@@ -80,21 +84,35 @@
          * 审核通过
          */
         function auditPass() {
+            var rows = $("#dg").datagrid("getSelections");
+
             if($("#yuGuGongShi").val() == ""){
                 $.messager.alert("系统提示","请添加展开工时")
                 return;
             }
 
-            if($("#dg").datagrid("getSelected") == null){
+            if(rows == null){
                 $.messager.alert("系统提示","请选择要添加工时的信息");
                 return;
             }
 
+            var arr1 = [];
+            var arr2 = [];
+            for(var i=0;i<rows.length;i++){
+                arr1.push(rows[i].id);
+                arr2.push(rows[i].wuliaoId)
+            }
+
+            var ids = arr1.join(",");
+            var wuliaoIds = arr2.join(",");
+
+
+
             $.post("/admin/saleList/baoCunOpenTime",
                 {
-                    id:$("#dg").datagrid("getSelected").id,
+                    ids:ids,
                     yuGuGongShi:$("#yuGuGongShi").val(),
-                    wuliaoId:$("#dg").datagrid("getSelected").wuliaoId
+                    wuliaoIds:wuliaoIds
                 },function (result) {
                     if(result.success){
                         $.messager.alert("系统提示","添加成功！");
@@ -110,12 +128,21 @@
 
         }
 
+        function sousuo() {
+            $.post("/admin/saleList/selectLikeWuliaoId",{
+                wuliaoId:$("#wuliaoSearch").val(),
+                state:null
+            },function (result) {
+                $("#dg").datagrid("loadData",result.rows)
+            },"json")
+        }
+
 
     </script>
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
     <table id="dg" class="easyui-datagrid"
-           fitColumns="false" rownumbers="true" fit="true" singleSelect="true"
+           fitColumns="false" rownumbers="true" fit="true" singleSelect="false"
            toolbar="#tb1" split="true">
         <thead>
         <th id="id" width="200" hidden="true" align="center">id</th>
@@ -134,7 +161,11 @@
     <div id="tb1">
         <fieldset style="border-color: #E7F0FF">
             <legend></legend>
-            &nbsp;图纸所用展开工时：&nbsp; <input type="text" id="yuGuGongShi" name="yuGuGongShi"
+            &nbsp;&nbsp;物料编号:&nbsp;<input type="text" id="wuliaoSearch" name="wuliaoId"
+                                     size="15" onkeydown="if(event.keyCode==13) sousuo()"/>
+            &nbsp;&nbsp;<a href="javascript:sousuo()"
+                           class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;图纸所用展开工时：&nbsp; <input type="text" id="yuGuGongShi" name="yuGuGongShi"
                                            size="15" />
                 &nbsp;&nbsp;<a href="javascript:auditPass()"
                            class="easyui-linkbutton" iconCls="icon-ok" plain="true">添加并保存大图信息</a>

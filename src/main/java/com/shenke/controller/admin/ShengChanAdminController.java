@@ -231,6 +231,13 @@ public class ShengChanAdminController {
         return map;
     }
 
+    @RequestMapping("/findBySaleListId")
+    public Map<String,Object> findBySaleListId(Integer id){
+        Map<String,Object> map = new HashMap<>();
+        map.put("rows",shengChanService.findBySaleListId(id));
+        return map;
+    }
+
 
 
 }

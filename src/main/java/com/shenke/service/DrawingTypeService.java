@@ -20,5 +20,5 @@ public interface DrawingTypeService {
     public List<DrawingType> findByBigDrawingId(Integer id);
 
 
-
+    void deleteByBigDrawingId(Integer id);
 }

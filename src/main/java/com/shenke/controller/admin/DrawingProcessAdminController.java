@@ -55,7 +55,7 @@ public class DrawingProcessAdminController {
     @RequestMapping("/addProcess")
     public Map<String,Object> addProcess(String data,Integer drawingId){
         Map<String,Object> map = new HashMap<>();
-
+        drawingProcessService.deleteByDrawingId(drawingId);
         Gson gson = new Gson();
         List<DrawingProcess> plgList = gson.fromJson(data, new TypeToken<List<DrawingProcess>>() {
         }.getType());

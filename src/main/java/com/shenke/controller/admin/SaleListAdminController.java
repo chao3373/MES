@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.persistence.ManyToOne;
 import java.util.*;
 
 /***
@@ -236,7 +237,7 @@ public class SaleListAdminController {
     @RequestMapping("/findBySaleNumber")
     public Map<String,Object> findBySaleNumber(String saleNumber){
         Map<String,Object> map = new HashMap<>();
-        map.put("rows",saleListService.findBySaleNumber(saleNumber));
+        map.put("rows",saleListService.findBySaleNumber("%"+saleNumber+"%"));
         return map;
     }
 
@@ -253,15 +254,20 @@ public class SaleListAdminController {
 
     /**
      * 保存展开工时
-     * @param id
      * @param yuGuGongShi
      * @return
      */
     @RequestMapping("/baoCunOpenTime")
-    public Map<String,Object> baoCunOpenTime(Integer id,Double yuGuGongShi,String wuliaoId){
+    public Map<String,Object> baoCunOpenTime(Integer []ids,Double yuGuGongShi,String []wuliaoIds){
         Map<String,Object> map = new HashMap<>();
-        saleListService.baoCunOpenTime(yuGuGongShi,wuliaoId);
-        saleListService.setCunZai(id,"分配工时");
+
+        for (int i=0;i<wuliaoIds.length;i++){
+            saleListService.baoCunOpenTime(yuGuGongShi,wuliaoIds[i]);
+        }
+
+        for (int i= 0;i<ids.length;i++){
+            saleListService.setCunZai(ids[i],"分配工时");
+        }
         map.put("success",true);
         return map;
     }
@@ -275,6 +281,40 @@ public class SaleListAdminController {
     public Map<String,Object> showTuZhiOpen(){
         Map<String,Object> map = new HashMap<>();
         map.put("rows",saleListService.showTuZhiOpen());
+        return map;
+    }
+
+    /**
+     * 通过物料编号模糊查询
+     * @param wuliaoId
+     * @param state
+     * @return
+     */
+    @RequestMapping("/selectLikeWuliaoId")
+    public Map<String,Object> selectLikeWuliaoId(String wuliaoId,String state){
+        Map<String,Object> map = new HashMap<>();
+        if (StringUtil.isEmpty(wuliaoId)){
+            wuliaoId = "";
+        }
+        if (StringUtil.isEmpty(state)){
+            map.put("rows",saleListService.selectWuliaoId("%"+wuliaoId+"%"));
+        }else {
+            map.put("rows",saleListService.selectLikeWuliaoId("%"+wuliaoId+"%",state));
+        }
+        return map;
+    }
+
+    @RequestMapping("/finishOpen")
+    public Map<String,Object> finishOpen(String wuliaoId,Integer id){
+        Map<String,Object> map = new HashMap<>();
+        BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(wuliaoId);
+        if(wuliaoService.findByBigDrawingId(bigDrawing.getId()) == null){
+            map.put("success",false);
+            map.put("errorInfo","请先添加生产物料！");
+            return map;
+        }
+        saleListService.setCunZai(id,"存在");
+        map.put("success",true);
         return map;
     }
 }

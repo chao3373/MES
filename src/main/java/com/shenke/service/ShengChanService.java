@@ -2,6 +2,7 @@ package com.shenke.service;
 
 import com.shenke.entity.ShengChan;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 public interface ShengChanService {
@@ -72,4 +73,6 @@ public interface ShengChanService {
      * @param id
      */
     public void updatState(Integer id);
+
+    public  List<ShengChan> findBySaleListId(Integer id);
 }

@@ -1,7 +1,6 @@
 package com.shenke.entity;
 
 
-import com.sun.org.glassfish.gmbal.ManagedAttribute;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -21,14 +20,6 @@ public class Wuliao {
     @ManyToOne
     private BigDrawing bigDrawing; //大图 对象
 
-    @JoinColumn
-    @ManyToOne
-    private SaleList saleList; //订单 对象
-
-    @JoinColumn
-    @ManyToOne
-    private User user; //用户 对象 （申请人）
-
     private String name; // 名称
 
     private String guiGe; //规格
@@ -37,15 +28,6 @@ public class Wuliao {
 
     private String changJia; //厂家
 
-    private Date shenQingDate;//申请日期
-
-    public Date getShenQingDate() {
-        return shenQingDate;
-    }
-
-    public void setShenQingDate(Date shenQingDate) {
-        this.shenQingDate = shenQingDate;
-    }
 
     public Integer getId() {
         return id;
@@ -61,22 +43,6 @@ public class Wuliao {
 
     public void setBigDrawing(BigDrawing bigDrawing) {
         this.bigDrawing = bigDrawing;
-    }
-
-    public SaleList getSaleList() {
-        return saleList;
-    }
-
-    public void setSaleList(SaleList saleList) {
-        this.saleList = saleList;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public String getName() {
@@ -116,13 +82,10 @@ public class Wuliao {
         return "Wuliao{" +
                 "id=" + id +
                 ", bigDrawing=" + bigDrawing +
-                ", saleList=" + saleList +
-                ", user=" + user +
                 ", name='" + name + '\'' +
                 ", guiGe='" + guiGe + '\'' +
                 ", num=" + num +
                 ", changJia='" + changJia + '\'' +
-                ", shenQingDate=" + shenQingDate +
                 '}';
     }
 }

@@ -148,6 +148,7 @@ public class SaleListServiceImpl implements SaleListService {
         BigDrawing bigDrawing = new BigDrawing();
         bigDrawing.setWuliaoId(wuliaoId);
         bigDrawing.setYuGuGongShi(yuGuGongShi);
+
         bigDrawingRepository.save(bigDrawing);
     }
 
@@ -159,5 +160,15 @@ public class SaleListServiceImpl implements SaleListService {
     @Override
     public void setCunZai(Integer id,String cunzai) {
         saleListRepository.setCunZai(id,cunzai);
+    }
+
+    @Override
+    public List<SaleList> selectLikeWuliaoId(String wuliaoId,String state) {
+        return saleListRepository.selectLikeWuliaoId(wuliaoId,state);
+    }
+
+    @Override
+    public List<SaleList> selectWuliaoId(String wuliaoId) {
+        return saleListRepository.selectLikeWuliaoId(wuliaoId);
     }
 }

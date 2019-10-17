@@ -189,32 +189,6 @@
 
         //弹出的对话框中的值
         function load(){
-            $("#son").datagrid({
-                columns:[[
-                    {
-                        field: 'cb',
-                        checkbox: "true",
-                        align: "center"
-                    },{
-                        field:'id',
-                        title:'id',
-                        width:100,
-                        hidden:'true',
-                        align:'center'
-                    },{
-                        field:'drawingId',
-                        title:'图纸编号',
-                        width:100,
-                        align:'center'
-                    },{
-                        field:'name',
-                        title:'图纸名称',
-                        width:100,
-                        align:'center'
-                    }
-                ]]
-            });
-
             //下方子图部分的列
             $("#addSon").datagrid({
                 columns:[[
@@ -535,23 +509,6 @@
     <table id="dg" class="easyui-datagrid"
            fitColumns="false" rownumbers="true" singleSelect="true" fit="true"
            toolbar="#tb1" split="true">
-        <thead>
-        <th field="saleNumber" width="150" align="center">销售单号
-        </th>
-        <th field="saleDate" width="100" align="center"
-            formatter="formatDate">销售日期
-        </th>
-        <th field="kucunzuzhi" width="100" align="center">库存组织
-        </th>
-        <th field="hangHao" width="100" align="center">行号
-        </th>
-        <th field="wuliaoId" width="150" align="center">物料编号</th>
-        <th field="tuzhiName" width="100" align="center">图纸名称</th>
-        <th field="tuzhiId" width="100" align="center">图纸编号</th>
-        <th field="num" width="200" align="center">数量</th>
-        <th field="xiangmuId" width="100" align="center">项目号</th>
-        <th field="shenqingNumber" width="100" align="center">申请单号</th>
-        </thead>
     </table>
 
     <!-- dg顶部工具栏 -->
@@ -574,12 +531,6 @@
     <table id="addSon" class="easyui-datagrid" fitColumns="false" singleSelect="true"
            rownumbers="true" fit="true" split="true" toolbar="#tb2">
     </table>
-    <thead>
-    <th field="id" width="150" align="center">id
-    </th>
-    <th field="wuliaoId" width="100" align="center">小图物料号
-    </th>
-    </thead>
 </div>
 
 

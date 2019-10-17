@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import javax.persistence.ManyToOne;
 import java.util.List;
 
 public interface ShengChanRepository extends JpaRepository<ShengChan,Integer> , JpaSpecificationExecutor<ShengChan> {
@@ -15,7 +14,7 @@ public interface ShengChanRepository extends JpaRepository<ShengChan,Integer> , 
      * "任务下发"界面显示的信息
      * @return
      */
-    @Query(value = "select * from  t_sheng_chan where state = '任务下发' group by drawing_id",nativeQuery = true)
+    @Query(value = "select * from  t_sheng_chan where state = '任务下发' group by datu_code",nativeQuery = true)
     public List<ShengChan> listProduct();
 
     /**
@@ -77,4 +76,12 @@ public interface ShengChanRepository extends JpaRepository<ShengChan,Integer> , 
     @Modifying
     @Query(value = "update t_sheng_chan set state = '生产完成' where id = ?1",nativeQuery = true)
     public void updatState(Integer id);
+
+    /**
+     * 按照订单编号查找
+     * @param
+     * @return
+     */
+    @Query(value = "select * from t_sheng_chan where sale_list_id =?1 GROUP BY xiaotu_code",nativeQuery = true)
+    List<ShengChan> findBySaleListId(Integer id);
 }

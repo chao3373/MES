@@ -1,6 +1,8 @@
 package com.shenke.controller.admin;
 
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.shenke.entity.BigDrawing;
 import com.shenke.entity.Drawing;
 import com.shenke.entity.DrawingType;
@@ -44,7 +46,26 @@ public class DrawingTypeAdminController {
 
 
     @RequestMapping("/addSonDrawing")
-    public Map<String,Object> addSonDrawing(String wuliaoId,String []smallIds,Integer id) throws Exception {
+    public Map<String,Object> addSonDrawing(String data,String wuliaoId){
+        Map<String,Object> map = new HashMap<>();
+        BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(wuliaoId);
+        //drawingTypeService.deleteByBigDrawingId(bigDrawing.getId());
+        Gson gson = new Gson();
+        List<Drawing> plgList = gson.fromJson(data, new TypeToken<List<Drawing>>() {
+        }.getType());
+        for (Drawing drawing : plgList){
+            if (drawing.getId() == null) {
+                DrawingType drawingType = new DrawingType();
+                drawingType.setBigDrawing(bigDrawing);
+                drawingType.setNum(drawing.getNum());
+                drawingType.setDrawing(drawingService.findByWuliaoId(drawing.getWuliaoId()));
+                drawingTypeService.addSonDrawing(drawingType);
+            }
+        }
+        map.put("success",true);
+        return map;
+    }
+    /*public Map<String,Object> addSonDrawing(String wuliaoId,String []smallIds,Integer id) throws Exception {
         Map<String,Object> map = new HashMap<>();
         BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(wuliaoId);
         //判断是否已添加物料信息
@@ -63,7 +84,7 @@ public class DrawingTypeAdminController {
         saleListService.setCunZai(id,"存在");
         map.put("success",true);
         return map;
-    }
+    }*/
 
 
 }
