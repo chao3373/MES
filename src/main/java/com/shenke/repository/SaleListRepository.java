@@ -132,4 +132,12 @@ public interface SaleListRepository  extends JpaRepository<SaleList, Integer>, J
      */
     @Query(value = "select * from t_sale_list where wuliao_id like ?1 and cunzai is null",nativeQuery = true)
     List<SaleList> selectLikeWuliaoId(String wuliaoId);
+
+    /**
+     * 通过物料信息查找存在状态
+     * @param wuliaoId
+     * @return
+     */
+    @Query(value = "select cunzai from t_sale_list where wuliao_id = ?1",nativeQuery = true)
+    String[] findCunZaiByWuliaoId(String wuliaoId);
 }

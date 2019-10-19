@@ -82,6 +82,6 @@ public interface ShengChanRepository extends JpaRepository<ShengChan,Integer> , 
      * @param
      * @return
      */
-    @Query(value = "select * from t_sheng_chan where sale_list_id =?1 GROUP BY xiaotu_code",nativeQuery = true)
+    @Query(value = "select * from t_sheng_chan where sale_list_id =?1 and is_datu = 1 GROUP BY xiaotu_code",nativeQuery = true)
     List<ShengChan> findBySaleListId(Integer id);
 }

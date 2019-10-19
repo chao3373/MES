@@ -86,6 +86,7 @@ public interface SaleListService {
 
     List<SaleList> findAll();
 
+
     public List<SaleList> dingDanZhuiZong(SaleList saleList,String saleDated,Integer yaoqiu);
 
     public List<SaleList> findBySaleNumber(String saleNumber);
@@ -93,13 +94,25 @@ public interface SaleListService {
     //setOpenTime界面显的列（状态为下单，物料编号在数据库中不存在的）
     public List<SaleList> setOpenTime();
 
+    //保存展开工时
     public void baoCunOpenTime(Double yuGuGongShi,String wuliaoId);
 
+    /**
+     * 图纸展开界面显示
+     * @return
+     */
     public List<SaleList> showTuZhiOpen();
 
+    //设置存在状态
     public void setCunZai(Integer id,String cunzai);
 
+    //通过物料号 状态模糊查询
     public List<SaleList> selectLikeWuliaoId(String wuliaoId,String state);
 
+    //通过物料号模糊查询
     public List<SaleList> selectWuliaoId(String wuliaoId);
+
+
+    //通过物料号查找存在状态
+    String findCunZaiByWuliaoId(String wuliaoId);
 }

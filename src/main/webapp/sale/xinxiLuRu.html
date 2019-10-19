@@ -76,6 +76,18 @@
         }
 
         $(document).ready(function () {
+
+
+            $("#dg2").datagrid({
+                onClickRow:function (index,row) {
+                    console.log(1111)
+                    $("#dg3").datagrid("appendRow",row);
+                    $("#dg2").datagrid("unselectRow",index);
+                    //$("#dg2").datagrid("reload");
+                    //$("#dg2").datagrid("onUnselectAll")
+                }
+            });
+
             loaddg3();
             $('#dg3').datagrid({
                 onClickCell: function(index,field){
@@ -135,6 +147,19 @@
                         width: "150",
                         align: "center",
                         title: "图纸编号"
+                    },{
+                        field: 'gongxus',
+                        title: '所含工序',
+                        width: 200,
+                        align: 'center'
+                    },{
+                        field:'choose',
+                        title:'选择工序',
+                        width:100,
+                        align:'center',
+                        formatter:function (val,row) {
+                            return "<a href=\"javascript:openProcessChooseDialog('"+row.gongxus+"',"+row.drawingId+")\"><img style='margin-top:4px' src='/static/images/edit.gif'/></a>";
+                        }
                     }
                 ]],
                 onClickRow:function (index,row) {
@@ -214,7 +239,7 @@
                         width:100,
                         align:'center',
                         formatter:function (val,row) {
-                            return "<a href=\"javascript:openProcessChooseDialog('"+row.gongxus+"',"+row.drawing.id+")\"><img style='margin-top:4px' src='/static/images/edit.gif'/></a>";
+                            return "<a href=\"javascript:openProcessChooseDialog('"+row.gongxus+"','')\"><img style='margin-top:4px' src='/static/images/edit.gif'/></a>";
                         }
                     }
                 ]]
@@ -304,53 +329,50 @@
         function saveProcess(){
             accept();
             var drawingId=$("#drawingId").val();
-            console.log("小图"+drawingId);
-
-           $.ajax({
-               type:"post",
-               url:"/admin/drawingProcess/addProcess",
-               data:{
-                   data: JSON.stringify($('#dg3').datagrid("getRows")),
-                   drawingId:drawingId
-               },
-               dataType:"json",
-               success:function (result) {
-                   if(result.success) {
-                       closesaveProcessDialog();
-                       $.messager.alert("系统提示","添加成功");
-                       $("#addSon").datagrid("reload");
-                   }else{
-                       $.messager.alert("系统提示","添加失败");
-                   }
-               }
-           })
-
-           /* var selectedRows=$("#dg3").datagrid("getRows");
-            var str=[];
-            for(var i=0;i<selectedRows.length;i++){
-                str.push(selectedRows[i].id);
-            }
-            var processIds=str.join(",");
-            $.post("/admin/drawingProcess/addProcess",{
-                processIds:processIds,
-                drawingId:drawingId
-            },function(result){
-                if(result.success) {
-                    closesaveProcessDialog();
-                    $.messager.alert("系统提示","添加成功");
-                    $("#addSon").datagrid("reload");
-                    /!*var row = $("#addSon").datagrid("getRows");
-                    var m=0;
-                    for (var i = 0; i < row.length; i++){
-                        if(row[i].gongxus != null){
-                            m+=1;
+            if(drawingId == ''){
+                $.ajax({
+                    type:"post",
+                    url:"/admin/bigDrawingProcess/addProcess",
+                    data:{
+                        data: JSON.stringify($('#dg3').datagrid("getRows")),
+                        wuliaoId:$("#dg").datagrid("getSelected").wuliaoId
+                    },
+                    dataType:"json",
+                    success:function (result) {
+                        if(result.success) {
+                            closesaveProcessDialog();
+                            $.messager.alert("系统提示","添加成功");
+                            $("#addSon").datagrid("reload");
+                        }else{
+                            $.messager.alert("系统提示","添加失败");
+                            return;
                         }
                     }
-                    console.log(m)*!/
-                }else{
-                    $.messager.alert("系统提示","添加失败");
-                }
-            },"json");*/
+                })
+            }else {
+                $.ajax({
+                    type:"post",
+                    url:"/admin/drawingProcess/addProcess",
+                    data:{
+                        data: JSON.stringify($('#dg3').datagrid("getRows")),
+                        drawingId:drawingId
+                    },
+                    dataType:"json",
+                    success:function (result) {
+                        if(result.success) {
+                            $("#dg").datagrid("reload");
+                            closesaveProcessDialog();
+                            $.messager.alert("系统提示","添加成功");
+                        }else{
+                            $.messager.alert("系统提示","添加失败");
+                            return;
+                        }
+                    }
+                })
+            }
+
+
+
         }
 
         //关闭选择工序
@@ -371,12 +393,12 @@
             var wuliaoId = $("#dg").datagrid("getSelected").wuliaoId;
             var id = $("#dg").datagrid("getSelected").id
 
-            $.post("/admin/wuliao/saveOld",{
+            /*$.post("/admin/wuliao/saveOld",{
                 wuliaoId:wuliaoId,
                 id:id
             },function (result) {
 
-            },"json")
+            },"json")*/
 
 
             $.post("/admin/shengChan/save",{

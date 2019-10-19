@@ -1,71 +1,308 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>工序设置</title>
-<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
-<link rel="stylesheet" type="text/css"
-	href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
-<script type="text/javascript"
-	src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
-<script type="text/javascript"
-	src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
-<script type="text/javascript"
-	src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
-<script type="text/javascript" src="../js/main.js"></script>
-<script type="text/javascript">
-</script>
+    <meta charset="UTF-8">
+    <title>工序</title>
+    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
+    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+    <script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
 </head>
-<body style="margin: 1px">
-	<table id="dg" title="工序设置" class="easyui-datagrid" fitColumns="true"
-		 rownumbers="true" singleSelect="true"
-		url="/admin/process/list" fit="true" toolbar="#tb">
+<body class="easyui-layout" style="padding-top: 2px">
+<div data-options="region:'west',collapsible:false" style="width: 200px" title="工序组管理" split=true>
+    <ul id="tree" class="easyui-tree" style="padding: 10px"></ul>
+    <div style="position: absolute;bottom: 10px;left: 15px">
+        <a href="javascript:openGoodsTypeAddDialog()" class="easyui-linkbutton" iconCls="icon-add">新增</a>
+        <a id="del" href="javascript:deleteGoodsType()" class="easyui-linkbutton" disabled=true
+           iconCls="icon-remove">删除</a>
+    </div>
+</div>
+<div data-options="region:'center'">
+    <table id="dg" title="工序管理" class="easyui-datagrid"
+           fitColumns="true" rownumbers="true" fit="true" toolbar="#tb">
+    </table>
 
-	</table>
+    <div id="tb">
+        <div>
+            <a href="javascript:openGoodsAddDialog()" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a>
+            <a href="javascript:openGoodsModifyDialog()" class="easyui-linkbutton" iconCls="icon-edit"
+               plain="true">修改</a>
+            <a href="javascript:deleteGoods()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+        </div>
+        <div>
+            &nbsp;工序名称：&nbsp;<input type="text" id="name" size="20"
+                                    onkeydown="if(event.keyCode==13) searchGoods()"/>
+            <a href="javascript:searchGoods()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+        </div>
+    </div>
+</div>
 
-	<div id="tb">
-		<div>
-			<a href="javascript:openDlg('#dlg')"
-			   class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a> <a
-				href="javascript:dgToFm('#dg', '#fm', '#dlg')" class="easyui-linkbutton"
-				iconCls="icon-edit" plain="true">修改</a> <a
-				href="javascript:deleteDg('#dg', '/admin/process/deleteById')" class="easyui-linkbutton"
-				iconCls="icon-remove" plain="true">删除</a>
-		</div>
-	</div>
+<div id="dlg" class="easyui-dialog" style="width: 300px;height: 120px;padding: 10px 20px"
+     closed="true" title="添加工序组" buttons="#dlg-buttons" data-options="onClose:function(){$('#goodsTypeName').val('');}">
+    <form id="fm" method="post">
+        <div>
+            工序组名称：&nbsp;<input type="text" id="goodsTypeName" name="goodsTypeName" class="easyui-validatebox"
+                              required="true"/>
+        </div>
+    </form>
+</div>
 
+<div id="dlg-buttons">
+    <a href="javascript:saveGoodsType()" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+    <a href="javascript:closeGoodsTypeDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+</div>
 
-	<div id="dlg" class="easyui-dialog"
-		style="width: 450px; height: 250px; padding: 10px 20px" closed="true"
-		buttons="#dlg-buttons" data-options="onClose:function(){resetValue()}">
-		<form id="fm" method="post">
-			<input type="hidden" id="id" name="id"/>
-			<table cellspacing="8px">
-				<tr>
-					<td>工序名称：</td>
-					<td><input type="text" id="name" name="name"
-							   class="easyui-validatebox" required="true"/></td>
-				</tr>
-			</table>
-		</form>
-	</div>
+<div id="dlg2" class="easyui-dialog" style="width: 500px;height: 200px;padding: 10px 20px"
+     closed="true" buttons="#dlg-buttons2" title="添加工序信息">
+    <form id="fm2" method="post">
+        <table>
+            <tr>
+                <input type="hidden" id="id" name="id"/>
+                <td>选择工序组：</td>
+                <td>
+                    <input type="text" id="processGroup" name="processGroup" class="easyui-combobox" style="width: 90px"
+                           valueField="id"
+                           textField="processGroup" url="/admin/processGroup/down" panelHeight="auto" required="required"/>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>工序名称：</td>
+                <td>
+                    <input type="text" id="processName" name="name" class="easyui-validatebox" style="width: 120px"
+                           required="required"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
 
-	<div id="dlg-buttons">
-		<a href="javascript:subimtFm('#fm','/admin/process/save', '#dlg', '#dg')" class="easyui-linkbutton"
-		   iconCls="icon-ok">保存</a> <a href="javascript:closeDlg('#dlg')"
-									   class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
-	</div>
+<div id="dlg-buttons2">
+    <a href="javascript:saveGoods()" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+    <a href="javascript:closeGoodsDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+</div>
+
+<div id="dlg3" class="easyui-dialog" style="width: 180px;height: 300px;padding: 10px 10px"
+     closed="true" buttons="#dlg-buttons3">
+    <ul id="typeTree" class="easyui-tree"></ul>
+</div>
+
+<div id="dlg-buttons3">
+    <a href="javascript:saveGoodsTypeChoose()" class="easyui-linkbutton" iconCls="icon-ok" plain="true">选择</a>
+    <a href="javascript:closeGoodsTypeChooseDialog()" class="easyui-linkbutton" iconCls="icon-cancel"
+       plain="true">关闭</a>
+</div>
+
 </body>
-
 <script>
-	$(function () {
-		$("#dg").datagrid({
-			columns: [[
-				{field: 'cb', checkbox:'true', align: 'center'},
-				{field: 'id', title: 'id', hidden: 'true', width: 100, align: 'center'},
-				{field: 'name', title: '名称', width: 100, align: 'center'},
-			]],
-		})
-	});
+    $(function () {
+        loadDep();
+        $("#dg").datagrid({
+            url: "/admin/process/list",
+            columns: [[
+                {field: 'cb', title: 'id', width: 20, checkbox: "true", align: 'center'},
+                {field: 'id', title: 'id', width: 100, align: 'center', hidden: "true"},
+                {field: 'name', title: '工序名称', width: 100, align: 'center'},
+                {
+                    field: 'processGroup', title: '所属工序组', width: 100, align: 'center',
+                    formatter: function (value, row, index) {
+                        if (row.processGroup) {
+                            console.log(row)
+                            return row.processGroup.processGroup;
+                        }
+                        return "";
+                    }
+                }
+            ]]
+        });
+        $("#tree").tree({
+            onClick: function (node) {
+                console.log(node)
+                $("#del").linkbutton("enable");
+                loadDg(node.id);
+            }
+        });
+    });
+
+    //加载部门信息
+    function loadDep() {
+        $.ajax({
+            type: "POST",
+            url: "/admin/processGroup/findAll",
+            success: function (result) {
+                var a= result.data;
+
+                for(var i = 0;i<a.length;i++){
+                    a[i].text = a[i].processGroup;
+                }
+                console.log(result);
+
+                if (result.success) {
+                    $("#tree").tree("loadData", result.data);
+                }
+            }
+        })
+    }
+
+    //点击添加部门按钮
+    function openGoodsTypeAddDialog() {
+        $("#dlg").dialog("open");
+    }
+
+    //添加部门保存
+    function saveGoodsType() {
+        $.ajax({
+            type: "POST",
+            url: "/admin/processGroup/add",
+            data: {processGroup: $("#goodsTypeName").val()},
+            success: function (result) {
+                if (result.success) {
+                    loadDep();
+                    closeGoodsTypeDialog();
+                }
+            }
+        })
+    }
+
+    //关闭添加部门信息
+    function closeGoodsTypeDialog() {
+        $("#dlg").dialog("close");
+    }
+
+    //删除部门按钮
+    function deleteGoodsType() {
+        $.messager.confirm('系统提示', '<span style="color: red;">确定删除该工序组及该工序组下的所有工序吗？</span>', function (r) {
+            if (r) {
+                $.ajax({
+                    type: "POST",
+                    url: "/admin/processGroup/delete",
+                    data: {id: $("#tree").tree("getSelected").id},
+                    success: function (result) {
+                        if (result.success) {
+                            loadDep();
+                            $("#dg").datagrid("reload");
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    //加载所选部门的员工信息
+    function loadDg(id) {
+        console.log(id)
+        $.ajax({
+            url: "/admin/process/findByPGId",
+            data: {id: id},
+            success: function (result) {
+
+                console.log(result)
+
+                if (result.success) {
+                    $("#dg").datagrid("loadData", result.rows);
+                    $("#dg").datagrid("reload")
+                }
+            }
+        });
+    }
+
+    //打开添加员工面板
+    function openGoodsAddDialog() {
+        if ($("#tree").tree("getSelected")) {
+            $("#processGroup").combobox("setValue", $("#tree").tree("getSelected").id);
+        }
+        $("#dlg2").dialog("open");
+    }
+
+    //关闭添加员工面板
+    function closeGoodsDialog() {
+        $("#dlg2").dialog("close");
+    }
+
+    //保存员工信息
+    function saveGoods() {
+       /* $("#fm2").form("submit", {
+            url: "/admin/process/save",
+            success: function (result) {
+                if (result) {
+                    initDlg2();
+                    closeGoodsDialog();
+                    if ($("#tree").tree("getSelected")) {
+                        loadDg($("#tree").tree("getSelected").id);
+                        return;
+                    }
+                    $("#dg").datagrid("reload");
+                }
+            }
+        });*/
+
+        $.post("/admin/process/save",{
+            id:$("#processGroup").combobox("getValue"),
+            name : $("#processName").val()
+        },function (result) {
+            if (result) {
+                initDlg2();
+                closeGoodsDialog();
+                if ($("#tree").tree("getSelected")) {
+                    loadDg($("#tree").tree("getSelected").id);
+                    return;
+                }
+                $("#dg").datagrid("reload");
+            }
+        },"json");
+    }
+
+    //删除选中的员工信息
+    function deleteGoods() {
+        var rows = $("#dg").datagrid("getSelections");
+        var ids = [];
+        if (rows.length > 0) {
+            $.messager.confirm("系统提示", "<span style='color: red;'>确定要删除选中的信息吗？</span>", function (r) {
+                if (r) {
+                    for (var i = 0; i < rows.length; i++) {
+                        ids.push(rows[i].id);
+                    }
+                    var idArr = ids.join(",");
+
+                    $.ajax({
+                        url: "/admin/process/deleteByIds",
+                        data: {ids: idArr},
+                        success: function (result) {
+                            loadDg($("#tree").tree("getSelected").id);
+                        }
+                    })
+
+                }
+            })
+        }
+    }
+
+    //根据员工名称查询员工信息
+    function searchGoods() {
+        $.ajax({
+            url: "/admin/process/selectByName",
+            data: {name: $("#name").val()},
+            success: function (result) {
+                if (result.success) {
+                    $("#dg").datagrid("loadData", result.rows);
+                }
+            }
+        })
+    }
+
+    //点击修改按钮
+    function openGoodsModifyDialog() {
+        var row = $("#dg").datagrid("getSelected");
+        if (!row) {
+            $.messager.alert("系统提示", "请选择一条要修改的信息");
+        }
+        $("#fm2").form("load", row);
+        $("#processGroup").combobox("setValue", row.processGroup.id);
+        $("#dlg2").dialog("open");
+    }
+
+    //初始化dig2窗口数据
+    function initDlg2(){
+        $("#name").val("");
+    }
 </script>
 </html>

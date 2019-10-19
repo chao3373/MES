@@ -171,4 +171,10 @@ public class SaleListServiceImpl implements SaleListService {
     public List<SaleList> selectWuliaoId(String wuliaoId) {
         return saleListRepository.selectLikeWuliaoId(wuliaoId);
     }
+
+    @Override
+    public String findCunZaiByWuliaoId(String wuliaoId) {
+        String []cunzai = saleListRepository.findCunZaiByWuliaoId(wuliaoId);
+        return cunzai[0];
+    }
 }

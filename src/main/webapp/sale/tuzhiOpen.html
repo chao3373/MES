@@ -336,7 +336,7 @@
 
         //刷新
         function reload() {
-            window.location.reload();
+            $("#wuliaoSearch").val("");
         }
 
         //删除选中的小图纸
@@ -554,7 +554,7 @@
             $('#dg').datagrid({
                 rowStyler:function(index,row){
                     if (index == $("#dg").datagrid("getRowIndex",$("#dg").datagrid("getSelected"))){
-                        return 'background-color:pink;color:blue;font-weight:bold;';
+                        return 'background-color:red;color:white;font-weight:bold;';
                     }
                 },
                 onClickRow:function (index, data) {
@@ -596,8 +596,6 @@
          * 隐藏按钮
          */
         function display(){
-
-
 
             $("#start").linkbutton("enable");
             $("#finish").linkbutton("enable");

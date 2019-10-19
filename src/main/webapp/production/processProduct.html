@@ -137,19 +137,20 @@
 
         //提交生产数量
         function save() {
-            var row = $("#dg").datagrid("getSelected");
+            var row = $("#dg").datagrid("getRows")[0];
             $.post("/admin/shengChan/updateAccomplishNum",{
                 num:$("#num").val(),
                 id:row.id
             },function (result) {
                if(result.success){
                    close();
-                   $("#dg").datagrid("reload");
-                   $.messager.alert("系统提示","提交成功！");
+
                    $.post("/admin/ruKu/save",{
                        id:result.id
                    },function (result) {
                        if(result.success){
+                           alert("提交成功！");
+                           refresh();
                        }
                    },"json")
                }
@@ -166,21 +167,47 @@
         }
 
         //点击搜索按钮
+        var ok;
         function sousuo() {
             var tiaoma = $("#tiaoma").val();
             var row = $("#dg").datagrid("getRows")[0];
-            $("#dg").datagrid('unselectRow', $("#dg").datagrid("getRowIndex",row));
-            if(tiaoma != row.xiaotuCode){
-                $.messager.alert("系统提示","请按照顺序进行生产！");
-                return;
-            }
-            $("#dg").datagrid("selectRow",0);
 
+            if(tiaoma.substring(0,2) == "TZ"){
+                if(tiaoma != row.xiaotuCode){
+                    $.messager.alert("系统提示","请按照顺序进行生产！");
+                    return;
+                }
+                ok=1;
+                $('#dg').datagrid({
+                    rowStyler:function(index,row){
+                        if (index == 0){
+                            return 'background-color:green;color:white;font-weight:bold;';
+                        }
+                    }
+                });
+            }else {
+                if(tiaoma != row.datuCode){
+                    $.messager.alert("系统提示","请按照顺序进行生产！");
+                    return;
+                }
+                if(row.isDatu == 1){
+                    $.messager.alert("系统提示","小图工序请扫描小图条码进行生产！")
+                    return;
+                }
+                ok=1;
+                $('#dg').datagrid({
+                    rowStyler:function(index,row){
+                        if (index == 0){
+                            return 'background-color:green;color:white;font-weight:bold;';
+                        }
+                    }
+                });
+            }
         }
 
         //点击提交按钮
         function tijiao() {
-            if ($("#dg").datagrid("getSelected") == null){
+            if (ok != 1){
                 $.messager.alert("系统提示","请扫描条形码再点击提交按钮！");
                 return;
             }
@@ -189,7 +216,7 @@
 
         //点击刷新按钮
         function refresh() {
-            window.location,reload();
+            window.location.reload();
         }
 
 

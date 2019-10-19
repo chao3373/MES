@@ -40,51 +40,100 @@ public class ShengChanAdminController {
     @Resource
     private RuKuService ruKuService;
 
+    @Resource
+    private BigDrawingProcessService bigDrawingProcessService;
+
 
     @RequestMapping("/save")
     public Map<String, Object> save(String wuliaoId, Integer id) {
         Map<String, Object> map = new HashMap<>();
-
+        //大图对象
         BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(wuliaoId);
+        //订单对象
         SaleList saleList = saleListService.findById(id);
-
+        //大图所对应的小图集合
         List<DrawingType> list = drawingTypeService.findByBigDrawingId(bigDrawing.getId());
-        List list1 = new ArrayList();
-
-        for (DrawingType drawingType : list) {
-            list1.add(drawingType.getDrawing().getId());
-        }
-        Integer[] a = new Integer[list1.size()];
-        list1.toArray(a);
-        List<DrawingProcess> list2 = drawingProcessService.findByArr(a);
-
+        //大图对应的工序集合
+        List<BigDrawingProcess> list3 = bigDrawingProcessService.findByBigDrawingId(bigDrawing.getId());
+        //生成物料编码
         String wlCode = "WL" + new Date().getTime();
+        //生成图纸编码
         String str = "TZ" + new Date().getTime();
-        Integer xid = list2.get(0).getDrawing().getId();
-        for (DrawingProcess drawingProcess : list2) {
-            ShengChan shengChan = new ShengChan();
-            if (drawingProcess.getDrawing().getId() == xid) {
-                shengChan.setXiaotuCode(str);
-            } else {
-                str = "TZ" + new Date().getTime();
-                shengChan.setXiaotuCode(str);
-                xid = drawingProcess.getDrawing().getId();
+        if(list.size() != 0){
+            List list1 = new ArrayList();
+            for (DrawingType drawingType : list) {
+                list1.add(drawingType.getDrawing().getId());
             }
-            shengChan.setSaleList(saleList);
-            shengChan.setBigDrawing(bigDrawing);
-            shengChan.setDrawing(drawingProcess.getDrawing());
-            shengChan.setProcess(drawingProcess.getProcess());
-            shengChan.setCode(drawingProcess.getCode());
-            shengChan.setDatuCode(wlCode);
+            Integer[] a = new Integer[list1.size()];
+            list1.toArray(a);
+            //小图对应的工序集合
+            List<DrawingProcess> list2 = drawingProcessService.findByArr(a);
+            Integer xid = list2.get(0).getDrawing().getId();
+            //生成小图生产任务
+            for (DrawingProcess drawingProcess : list2) {
+                ShengChan shengChan = new ShengChan();
+                if (drawingProcess.getDrawing().getId() == xid) {
+                    shengChan.setXiaotuCode(str);
+                } else {
+                    str = "TZ" + new Date().getTime();
+                    shengChan.setXiaotuCode(str);
+                    xid = drawingProcess.getDrawing().getId();
+                }
+                shengChan.setSaleList(saleList);
+                shengChan.setBigDrawing(bigDrawing);
+                shengChan.setDrawing(drawingProcess.getDrawing());
+                shengChan.setProcess(drawingProcess.getProcess());
+                shengChan.setCode(drawingProcess.getCode());
+                shengChan.setDatuCode(wlCode);
 //            shengChan.setXiaotuCode("TZ" + new SimpleDateFormat("yyyyMMddHHMMss").format(new Date()) + drawingProcess.getDrawing().getId());
-            shengChan.setState("任务下发");
-            shengChan.setAccomplishNum(0);
-            shengChan.setNum(saleList.getNum());
-            shengChan.setReferDate(saleList.getReferDate());
-            shengChan.setZbGongShi(drawingProcess.getZbGongShi());
-            shengChan.setCzGongShi(drawingProcess.getCzGongShi());
-            shengChanService.save(shengChan);
+                shengChan.setState("任务下发");
+                shengChan.setAccomplishNum(0);
+                shengChan.setNum(saleList.getNum());
+                shengChan.setReferDate(saleList.getReferDate());
+                shengChan.setZbGongShi(drawingProcess.getZbGongShi());
+                shengChan.setCzGongShi(drawingProcess.getCzGongShi());
+                shengChan.setIsDatu(1);
+                shengChanService.save(shengChan);
+            }
+            //生成大图生产任务
+            for (BigDrawingProcess bigDrawingProcess: list3) {
+                ShengChan shengChan = new ShengChan();
+                shengChan.setSaleList(saleList);
+                shengChan.setBigDrawing(bigDrawing);
+                shengChan.setProcess(bigDrawingProcess.getProcess());
+                shengChan.setCode(bigDrawingProcess.getCode());
+                shengChan.setDatuCode(wlCode);
+                shengChan.setState("任务下发");
+                shengChan.setAccomplishNum(0);
+                shengChan.setNum(saleList.getNum());
+                shengChan.setReferDate(saleList.getReferDate());
+                shengChan.setZbGongShi(bigDrawingProcess.getZbGongShi());
+                shengChan.setCzGongShi(bigDrawingProcess.getCzGongShi());
+                shengChan.setIsDatu(0);
+                shengChanService.save(shengChan);
+            }
+        }else {
+            //生成大图生产任务
+            for (BigDrawingProcess bigDrawingProcess: list3) {
+                ShengChan shengChan = new ShengChan();
+                shengChan.setSaleList(saleList);
+                shengChan.setBigDrawing(bigDrawing);
+                shengChan.setProcess(bigDrawingProcess.getProcess());
+                shengChan.setCode(bigDrawingProcess.getCode());
+                shengChan.setDatuCode(wlCode);
+                shengChan.setState("任务下发");
+                shengChan.setAccomplishNum(0);
+                shengChan.setNum(saleList.getNum());
+                shengChan.setReferDate(saleList.getReferDate());
+                shengChan.setZbGongShi(bigDrawingProcess.getZbGongShi());
+                shengChan.setCzGongShi(bigDrawingProcess.getCzGongShi());
+                shengChan.setIsDatu(0);
+                shengChanService.save(shengChan);
+            }
         }
+
+
+
         map.put("success", true);
         return map;
     }

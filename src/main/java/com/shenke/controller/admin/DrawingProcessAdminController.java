@@ -64,8 +64,8 @@ public class DrawingProcessAdminController {
         for (DrawingProcess drawingProcess : plgList){
             drawingProcess.setProcess(processService.findById(drawingProcess.getId()));
             drawingProcess.setId(null);
-            drawingProcess.setCzGongShi(drawingProcess.getCzGongShi());
-            drawingProcess.setZbGongShi(drawingProcess.getZbGongShi());
+            /*drawingProcess.setCzGongShi(drawingProcess.getCzGongShi());
+            drawingProcess.setZbGongShi(drawingProcess.getZbGongShi());*/
             drawingProcess.setDrawing(drawingService.findById(drawingId));
             drawingProcess.setCode(i);
             i+=1;
@@ -74,20 +74,4 @@ public class DrawingProcessAdminController {
         map.put("success",true);
         return map;
     }
-    /*@RequestMapping("/addProcess")
-    public Map<String,Object> addProcess(Integer []processIds,Integer drawingId){
-        Map<String,Object> map = new HashMap<>();
-        drawingProcessService.deleteByDrawingId(drawingId);
-        if (processIds!=null) {
-            for (int i = 0; i < processIds.length; i++) {
-                DrawingProcess drawingProcess = new DrawingProcess();
-                drawingProcess.setCode(i+1);
-                drawingProcess.setProcess(processService.findById(processIds[i]));
-                drawingProcess.setDrawing(drawingService.findById(drawingId));
-                drawingProcessService.save(drawingProcess);
-            }
-        }
-        map.put("success",true);
-        return map;
-    }*/
 }

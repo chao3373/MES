@@ -73,19 +73,6 @@
                             }
                         }
                     },{
-                        field: "xiaotu",
-                        title:"图纸编号",
-                        width: "150",
-                        align: "center",
-                        formatter:function (val, row) {
-                            if(row.drawing){
-                                return row.drawing.wuliaoId;
-                            }
-                            else {
-                                return '';
-                            }
-                        }
-                    },{
                         field: "xiangmuhao",
                         title:"项目号",
                         width: "150",
@@ -96,6 +83,60 @@
                             }
                             else {
                                 return '';
+                            }
+                        }
+                    },{
+                        field: "saleDate",
+                        width: "150",
+                        align: "center",
+                        title: "下单日期",
+                        formatter: function (value, row, index) {
+                            if (row.saleList) {
+                                var date = new Date(row.saleList.saleDate);
+                                var o = {
+                                    "M+": date.getMonth() + 1,                 //月份
+                                    "d+": date.getDate(),                    //日
+                                    "h+": date.getHours(),                   //小时
+                                    "m+": date.getMinutes(),                 //分
+                                    "s+": date.getSeconds(),                 //秒
+                                    "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+                                    "S": date.getMilliseconds()             //毫秒
+                                };
+                                if (/(y+)/.test("yyyy-MM-dd hh:mm:ss"))
+                                    var fmt = "yyyy-MM-dd hh:mm:ss".replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+                                for (var k in o)
+                                    if (new RegExp("(" + k + ")").test(fmt))
+                                        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                                return fmt;
+                            } else {
+                                return "";
+                            }
+                        }
+                    },{
+                        field: "referDate",
+                        width: "150",
+                        align: "center",
+                        title: "需交日期",
+                        formatter: function (value, row, index) {
+                            if (row) {
+                                var date = new Date(row.referDate);
+                                var o = {
+                                    "M+": date.getMonth() + 1,                 //月份
+                                    "d+": date.getDate(),                    //日
+                                    "h+": date.getHours(),                   //小时
+                                    "m+": date.getMinutes(),                 //分
+                                    "s+": date.getSeconds(),                 //秒
+                                    "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+                                    "S": date.getMilliseconds()             //毫秒
+                                };
+                                if (/(y+)/.test("yyyy-MM-dd hh:mm:ss"))
+                                    var fmt = "yyyy-MM-dd hh:mm:ss".replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+                                for (var k in o)
+                                    if (new RegExp("(" + k + ")").test(fmt))
+                                        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                                return fmt;
+                            } else {
+                                return "";
                             }
                         }
                     },{
@@ -189,18 +230,29 @@
         }
 
         function tiaoma(index) {
-            //$('#dg').datagrid("selectRow", 0);
             var row = $("#dg").datagrid("getRows")[index];
-            console.log(row.datuCode)
-            $.post("/admin/shengChan/tiaoma",{
-                code:row.xiaotuCode
-            },function (result) {
-                console.log(result);
-                if(result.success){
-                    print(result.url,row);
-                    $("#dg").datagrid("reload");
-                }
-            },"json");
+            if( row.isDatu == 0){
+                $.post("/admin/shengChan/tiaoma",{
+                    code:row.datuCode
+                },function (result) {
+                    console.log(result);
+                    if(result.success){
+                        print(result.url,row);
+                        $("#dg").datagrid("reload");
+                    }
+                },"json");
+            }else {
+                $.post("/admin/shengChan/tiaoma",{
+                    code:row.xiaotuCode
+                },function (result) {
+                    console.log(result);
+                    if(result.success){
+                        print(result.url,row);
+                        $("#dg").datagrid("reload");
+                    }
+                },"json");
+            }
+
         }
 
         //打印
@@ -245,25 +297,6 @@
     </script>
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
-   <!-- <table id="dg" class="easyui-datagrid"
-           fitColumns="false" rownumbers="true" fit="true" singleSelect="false"
-           toolbar="#tb1" split="true">
-    </table>
-
-    &lt;!&ndash; dg顶部工具栏 &ndash;&gt;
-    <div id="tb1">
-        <fieldset style="border-color: #E7F0FF">
-            <legend></legend>
-            <select class="easyui-combobox" id = "xuanze" style="width: 100px" data-options="panelHeight:'auto'" >
-                <option value="1">物料编码</option>
-                <option value="2">图纸编码</option>
-            </select>
-            &nbsp;&nbsp;<input  type="text" id="bianma"  name="bianma"  size="15"
-                    onkeydown="if(event.keyCode==13) sousuo()" />
-            &nbsp;&nbsp;<a href="javascript:sousuo()"
-                           class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
-        </fieldset>
-    </div>-->
    <div region="north" style="height: 300px">
        <table id="dg" class="easyui-datagrid"
               fitColumns="false" rownumbers="true" singleSelect="true" fit="true"

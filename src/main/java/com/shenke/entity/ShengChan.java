@@ -47,6 +47,16 @@ public class ShengChan {
 
     private Integer code;//工序生产顺序
 
+    private Integer isDatu; //判断是否为大图工序的标志（0 ：是  1：不是）
+
+    public Integer getIsDatu() {
+        return isDatu;
+    }
+
+    public void setIsDatu(Integer isDatu) {
+        this.isDatu = isDatu;
+    }
+
     public Integer getAllowNum() {
         return allowNum;
     }
@@ -185,6 +195,7 @@ public class ShengChan {
                 ", allowNum=" + allowNum +
                 ", referDate=" + referDate +
                 ", code=" + code +
+                ", isDatu=" + isDatu +
                 '}';
     }
 }

@@ -39,6 +39,9 @@ public class SaleListAdminController {
     @Resource
     private WuliaoService wuliaoService;
 
+    @Resource
+    private BigDrawingProcessService bigDrawingProcessService;
+
     /**
      * 保存添加订单
      * @return
@@ -57,8 +60,7 @@ public class SaleListAdminController {
        for(SaleList saleList : plgList){
            saleList.setState("下单");
            if(bigDrawingService.findByWuLiaoId(saleList.getWuliaoId())!=null){
-               saleList.setCunzai("存在");
-               saleList.setRemark(0);
+               saleList.setCunzai(saleListService.findCunZaiByWuliaoId(saleList.getWuliaoId()));
            }
            saleList.setRemark(0);
         }
@@ -77,6 +79,19 @@ public class SaleListAdminController {
     public Map<String,Object> xiadanSuccess(){
         Map<String,Object> map = new HashMap<>();
         List<SaleList> list = saleListService.xiadan();
+
+        //显示大图所对应的工序集合
+        for (SaleList saleList : list){
+            BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(saleList.getWuliaoId());
+            List<BigDrawingProcess> bdpList = bigDrawingProcessService.findByBigDrawingId(bigDrawing.getId());
+            StringBuffer sb = new StringBuffer();
+
+            for (BigDrawingProcess bigDrawingProcess : bdpList){
+                sb.append(","+bigDrawingProcess.getProcess().getName());
+            }
+            saleList.setGongxus(sb.toString().replaceFirst(",",""));
+        }
+
         map.put("rows",list);
         logService.save(new Log(Log.SEARCH_ACTION, "查询状态为下单的商品"));
         return map;
@@ -105,6 +120,7 @@ public class SaleListAdminController {
         Map<String,Object> map = new HashMap<>();
         List<DrawingType> list = drawingTypeService.findByBigDrawingId(bigDrawingService.findByWuLiaoId(wuliaoId).getId());
 
+        //显示小图所含的工序集合
         for (DrawingType d : list){
             List<DrawingProcess> dpList = drawingProcessService.findByDrawingId(d.getDrawing().getId());
             StringBuffer sb = new StringBuffer();
@@ -308,7 +324,17 @@ public class SaleListAdminController {
     public Map<String,Object> finishOpen(String wuliaoId,Integer id){
         Map<String,Object> map = new HashMap<>();
         BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(wuliaoId);
-        if(wuliaoService.findByBigDrawingId(bigDrawing.getId()) == null){
+
+        System.out.println("***********************");
+        System.out.println(wuliaoService.findByBigDrawingId(bigDrawing.getId()));
+        System.out.println("***********************");
+
+        if(wuliaoService.findByBigDrawingId(bigDrawing.getId()).size() == 0){
+
+            System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&");
+            System.out.println("进来了进来了进来了");
+            System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&");
+
             map.put("success",false);
             map.put("errorInfo","请先添加生产物料！");
             return map;

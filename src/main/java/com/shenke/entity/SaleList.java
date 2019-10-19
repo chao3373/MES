@@ -61,14 +61,24 @@ public class SaleList {
     @Temporal(TemporalType.TIMESTAMP)
     private Date stopDate;
 
-
     //实际展开工时
     private Double shiJiGongShi;
 
     private Integer remark;//订单备注（例如 常规单：null 加急单：1 重要订单：2  暂停：-1）
 
+    @Transient
+    private String gongxus; //所属工序 (临时接收数据用)
+
     public Integer getRemark() {
         return remark;
+    }
+
+    public String getGongxus() {
+        return gongxus;
+    }
+
+    public void setGongxus(String gongxus) {
+        this.gongxus = gongxus;
     }
 
     public void setRemark(Integer remark) {
@@ -232,6 +242,7 @@ public class SaleList {
                 ", stopDate=" + stopDate +
                 ", shiJiGongShi=" + shiJiGongShi +
                 ", remark=" + remark +
+                ", gongxus='" + gongxus + '\'' +
                 '}';
     }
 }
