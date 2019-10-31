@@ -67,6 +67,7 @@
             return val.trueName + "&nbsp;(" + val.userName + ")&nbsp;";
         }
 
+        var i;
         $(document).ready(function () {
 
             load();
@@ -272,12 +273,34 @@
                                         }
                                     }
                                 }
-                            ]]
+                            ]],
+                            onDblClickRow:function (index, data) {
+                                console.log(data);
+                                $("#dlg").dialog("open").dialog("setTitle","修改进货数量");
+                                i=index;
+                            }
                         });
                 }  }
             });
 
         });
+
+        //修改订货总数量
+        function save() {
+            $('#addSon').datagrid('updateRow',{
+                index:i,
+                row: {
+                    sumNum:$("#num").val()
+                }
+            });
+            close();
+        }
+
+        //关闭窗口
+        function close() {
+            $("#num").val("");
+            $("#dlg").dialog("close");
+        }
 
         function load() {
             $("#addSon").datagrid({
@@ -347,6 +370,148 @@
             window.location.reload();
         }
 
+        //打印
+        function printdg() {
+            CreateFormPage("datagrid", $("#addSon"));
+        }
+
+        var tableString;
+        function CreateFormPage(strPrintName, printDatagrid) {
+            tableString = "";
+            tableString += "<div style='text-align: center;'><h1>物料采购明细表</h1>";
+            tableString += '<table cellspacing="0" class="pb">';
+            var frozenColumns = printDatagrid.datagrid("options").frozenColumns; // 得到frozenColumns对象
+            var columns = printDatagrid.datagrid("options").columns; // 得到columns对象
+            var nameList = '';
+
+            // 载入title
+            if (typeof columns != 'undefined' && columns != '') {
+                $(columns)
+                    .each(
+                        function(index) {
+                            tableString += '\n<tr>';
+                            if (typeof frozenColumns != 'undefined'
+                                && typeof frozenColumns[index] != 'undefined') {
+                                for (var i = 0; i < frozenColumns[index].length; ++i) {
+                                    if (!frozenColumns[index][i].hidden) {
+                                        tableString += '\n<th width="'
+                                            + frozenColumns[index][i].width
+                                            + '"';
+                                        if (typeof frozenColumns[index][i].rowspan != 'undefined'
+                                            && frozenColumns[index][i].rowspan > 1) {
+                                            tableString += ' rowspan="'
+                                                + frozenColumns[index][i].rowspan
+                                                + '"';
+                                        }
+                                        if (typeof frozenColumns[index][i].colspan != 'undefined'
+                                            && frozenColumns[index][i].colspan > 1) {
+                                            tableString += ' colspan="'
+                                                + frozenColumns[index][i].colspan
+                                                + '"';
+                                        }
+                                        if (typeof frozenColumns[index][i].field != 'undefined'
+                                            && frozenColumns[index][i].field != '') {
+                                            nameList += ',{"f":"'
+                                                + frozenColumns[index][i].field
+                                                + '", "a":"'
+                                                + frozenColumns[index][i].align
+                                                + '"}';
+                                        }
+                                        tableString += '>'
+                                            + frozenColumns[0][i].title
+                                            + '</th>';
+                                    }
+                                }
+                            }
+                            for (var i = 1; i < columns[index].length; ++i) {
+                                if (!columns[index][i].hidden) {
+                                    tableString += '\n<th width="'
+                                        + columns[index][i].width + '"';
+                                    if (typeof columns[index][i].rowspan != 'undefined'
+                                        && columns[index][i].rowspan > 1) {
+                                        tableString += ' rowspan="'
+                                            + columns[index][i].rowspan
+                                            + '"';
+                                    }
+                                    if (typeof columns[index][i].colspan != 'undefined'
+                                        && columns[index][i].colspan > 1) {
+                                        tableString += ' colspan="'
+                                            + columns[index][i].colspan
+                                            + '"';
+                                    }
+                                    if (typeof columns[index][i].field != 'undefined'
+                                        && columns[index][i].field != '') {
+                                        nameList += ',{"f":"'
+                                            + columns[index][i].field
+                                            + '", "a":"'
+                                            + columns[index][i].align
+                                            + '"}';
+                                    }
+                                    tableString += '>'
+                                        + columns[index][i].title
+                                        + '</th>';
+                                }
+                            }
+                            tableString += '\n</tr>';
+                        });
+            }
+            // 载入内容
+            var rows = printDatagrid.datagrid("getRows"); // 这段代码是获取当前页的所有行
+            var nl = eval('([' + nameList.substring(1) + '])');
+            for (var i = 0; i < rows.length; ++i) {
+                tableString += '\n<tr>';
+                $(nl).each(function(j) {
+                    var e = nl[j].f.lastIndexOf('_0');
+                    tableString += '\n<td';
+                    if (nl[j].a != 'undefined' && nl[j].a != '') {
+                        tableString += ' style="text-align:' + nl[j].a + ';"';
+                    }
+                    tableString += '>';
+                    if (e + 2 == nl[j].f.length) {
+                        tableString += rows[i][nl[j].f.substring(0, e)];
+                    } else {
+                        var tdStr = rows[i][nl[j].f];
+                        console.log()
+                        if (tdStr == null && tdStr != "undefined") {
+                            tdStr = "";
+                        }
+                        if ([nl[j].f] == 'name') {
+                            tdStr = rows[i]["wuliao"].name;
+                        }
+                        if ([nl[j].f] == 'guiGe') {
+                            tdStr = rows[i]["wuliao"].guiGe;
+                        }
+                        if ([nl[j].f] == 'changJia') {
+                            tdStr = rows[i]["wuliao"].changJia;
+                        }
+                        if ([nl[j].f] == 'num') {
+                            tdStr = rows[i]["wuliao"].num;
+                        }
+                        if([nl[j].f] == "user"){
+                            tdStr = rows[i][nl[j].f].trueName;
+                        }
+                        tableString += tdStr;
+                    }
+                    tableString += '</td>';
+                });
+                tableString += '\n</tr>';
+            }
+            tableString += '\n</table>';
+            if (window.showModalDialog) {
+                window
+                    .showModalDialog(
+                        "..\\print.html",
+                        tableString,
+                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+            } else {
+                window
+                    .open(
+                        "..\\print.html",
+                        tableString,
+                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+            }
+        }
+
 
     </script>
 </head>    <!--上面的dg  下面的addSon-->
@@ -367,6 +532,8 @@
                            class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
             &nbsp;&nbsp;<a href="javascript:reload()"
                                  class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+            &nbsp;&nbsp;<a href="javascript:printdg()"
+                           class="easyui-linkbutton" iconCls="icon-print" plain="true">打印采购单</a>
         </fieldset>
     </div>
 </div>
@@ -375,6 +542,26 @@
     <table id="addSon" class="easyui-datagrid" fitColumns="false" singleSelect="true"
            rownumbers="true" fit="true" split="true" toolbar="#tb2">
     </table>
+</div>
+
+<!--修改数量-->
+<div id="dlg" class="easyui-dialog" style="width: 300px;height: 150px;"
+     closed="true" buttons="#dlg-buttons">
+    <input type="hidden" id="drawingId" name="drawingId"/>
+    <form id="fm" method="post" enctype="multipart/form-data">
+        <table cellspacing="8px">
+            <tr>
+                <td>数量：</td>
+                <td><input type="text" id="num" name="num"
+                           class="easyui-Numberbox" required="true"/></td>
+            </tr>
+        </table>
+    </form>
+</div>
+<!-- 对话框按钮 -->
+<div id="dlg-buttons">
+    <a href="javascript:save()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+    <a href="javascript:close()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
 </div>
 </body>
 </html>
