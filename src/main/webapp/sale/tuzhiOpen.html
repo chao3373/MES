@@ -163,6 +163,11 @@
                                 return "";
                             }
                         }
+                    },{
+                        field: "openState",
+                        width: "150",
+                        align: "center",
+                        title: "展开状态"
                     }
                 ]],
                 onClickRow:function (index,row) {
@@ -337,12 +342,13 @@
         //刷新
         function reload() {
             $("#wuliaoSearch").val("");
+            $("#dg").datagrid("reload");
         }
 
         //删除选中的小图纸
         function shanchu() {
             var row = $("#addSon").datagrid("getSelected");
-            console.log($("#addSon").datagrid("getRowIndex", row[0]))
+            console.log($("#addSon").datagrid("getRowIndex", row[0]));
 
             console.log(row);
             if(row == null){
@@ -400,7 +406,8 @@
                                     name: resultt.rows[i].name,
                                     guiGe:resultt.rows[i].guiGe,
                                     num:resultt.rows[i].num,
-                                    changJia:resultt.rows[i].changJia
+                                    changJia:resultt.rows[i].changJia,
+                                    remark:resultt.rows[i].remark
                                 });
                            }
                         }else {
@@ -514,7 +521,8 @@
                 name: $("#name-add").val(),
                 guiGe: $("#guiGe-add").val(),
                 num: $("#num-add").val(),
-                changJia: $("#changJia-add").val()
+                changJia: $("#changJia-add").val(),
+                remark:$("#remark-add").val()
             });
             closeaddDialog();
         }
@@ -525,6 +533,7 @@
             $("#guiGe-add").val("");
             $("#num-add").val("");
             $("#changJia-add").val("")
+            $("#remark-add").val("")
             $("#dlg2").dialog("close");
         }
 
@@ -543,53 +552,92 @@
             });
         }
 
+        //开始计时
         var Row;
         function start() {
             show();
+            //获取当前用户
+            var user = "";
+            $.ajax({
+                type:"post",
+                async:false,
+                url:"/admin/saleList/dangqianUser",
+                dataType:"json",
+                success:function (result) {
+                    user = result.user;
+                }
+            });
+
             Row = $("#dg").datagrid("getSelected");
+
             if(Row == null){
-                $.messager.alert("系统提示","请选择一条信息")
+                $.messager.alert("系统提示","请选择一条信息");
+                return;
             }
 
+           // var openUser = Row.openState.substring(4);
+
+            /*if(Row.openState != "" && Row.openState != "展开中："+user){
+                $.messager.alert("系统提示","该图纸"+openUser+"正在展开，请选择别的图纸展开！");
+                display();
+                return;
+            }*/
+
+            console.log(Row.openState);
+            if(Row.openState == "" || Row.openState == null){
+
+            }else if(Row.openState != "展开中："+user){
+                $.messager.alert("系统提示","该图纸"+Row.openState.substring(4)+"正在展开，请选择别的图纸展开！");
+                display();
+                return;
+            }
             $('#dg').datagrid({
                 rowStyler:function(index,row){
                     if (index == $("#dg").datagrid("getRowIndex",$("#dg").datagrid("getSelected"))){
-                        return 'background-color:red;color:white;font-weight:bold;';
+                        return 'background-color:green;color:white;font-weight:bold;';
                     }
                 },
                 onClickRow:function (index, data) {
                     $("#dg").datagrid("unselectRow",index);
                 }
             });
-            $.post("/admin/bigdrawing/jiShi",{
-                code:1,
-                wuliaoId:Row.wuliaoId
+
+            $.post("/admin/saleList/setOpenState",{
+                id:Row.id,
+                state:"展开中"
             },function (result) {
                 if(result.success){
-                    $.messager.alert("系统提示","计时开始");
+                    $.post("/admin/bigdrawing/jiShi",{
+                        code:1,
+                        wuliaoId:Row.wuliaoId
+                    },function (result) {
+                        if(result.success){
+                            $.messager.alert("系统提示","图纸展开开始");
+                        }
+                    },"json")
                 }
-            },"json")
+            },"json");
         }
 
+        //结束计时
         function stop() {
             display();
-
-            /*$('#dg').datagrid({
-                onClickRow:function (index, data) {
-                    console.log(222);
-                    $("#dg").datagrid("unselectRow",-1);
-                }
-            });*/
-            $.post("/admin/bigdrawing/jiShi",{
-                code:2,
-                wuliaoId:Row.wuliaoId
+            $.post("/admin/saleList/setOpenState",{
+                id:Row.id,
+                state:""
             },function (result) {
                 if(result.success){
-                    alert("计时结束，耗时"+result.jishi+"分钟");
-                    window.location.reload();
+                    $.post("/admin/bigdrawing/jiShi",{
+                        code:2,
+                        wuliaoId:Row.wuliaoId
+                    },function (result) {
+                        if(result.success){
+                            alert("图纸展开结束");
+                            window.location.reload();
+                        }
+                    },"json")
                 }
             },"json")
-
         }
 
         /**
@@ -630,18 +678,72 @@
                 $.messager.alert("系统提示","请选择一条订单信息");
                 return;
             }
-            $.post("/admin/saleList/finishOpen",{
-                id:row.id,
+
+            $.post("/admin/wuliao/findByBigDrawingId",{
                 wuliaoId:row.wuliaoId
             },function (result) {
-                if(result.success){
-                    alert("保存成功！");
-                    window.location.reload();
-                }
-                else {
-                    alert(result.errorInfo);
-                }
-            })
+               if(result.size == 0){
+                   $.messager.confirm("系统提示","<span style='color:red'>"+"系统检测到未添加物料明细，是否继续添加物料明细？"+"</span>", function(r){
+                       if (r){
+                           return;
+                       }else {
+                           $.post("/admin/drawingType/findByBigDrawingId",{
+                               wuliaoId:row.wuliaoId
+                           },function (result) {
+                               if(result.size == 0){
+                                   $.messager.confirm("系统提示","<span style='color:red'>"+"系统检测到未添加分图，是否继续添加分图？"+"</span>", function(r){
+                                       if (r){
+                                           return;
+                                       }else {
+                                           $.post("/admin/saleList/finishOpen",{
+                                               id:row.id,
+                                               wuliaoId:row.wuliaoId
+                                           },function (result) {
+                                               if(result.success){
+                                                   alert("保存成功！");
+                                                   window.location.reload();
+                                               }
+                                               else {
+                                                   alert(result.errorInfo);
+                                               }
+                                           })
+
+                                       }
+                                   });
+                               }else {
+                                   $.post("/admin/saleList/finishOpen",{
+                                       id:row.id,
+                                       wuliaoId:row.wuliaoId
+                                   },function (result) {
+                                       if(result.success){
+                                           alert("保存成功！");
+                                           window.location.reload();
+                                       }
+                                       else {
+                                           alert(result.errorInfo);
+                                       }
+                                   })
+                               }
+                           });
+                       }
+                   });
+               }else {
+                   $.post("/admin/saleList/finishOpen",{
+                       id:row.id,
+                       wuliaoId:row.wuliaoId
+                   },function (result) {
+                       if(result.success){
+                           alert("保存成功！");
+                           window.location.reload();
+                       }
+                       else {
+                           alert(result.errorInfo);
+                       }
+                   })
+               }
+            });
+
+
         }
 
 
@@ -667,11 +769,11 @@
             &nbsp;&nbsp;<a href="javascript:addWuliao()" id="addWuliao"
                                              class="easyui-linkbutton" iconCls="icon-add" plain="true">添加生产物料</a>
             &nbsp;&nbsp;<a href="javascript:start()" id="start"
-                                             class="easyui-linkbutton" iconCls="icon-add" plain="true">开始计时</a>
+                                             class="easyui-linkbutton" iconCls="icon-add" plain="true">开始展开</a>
             &nbsp;&nbsp;<a href="javascript:stop()" id="stop"
-                                             class="easyui-linkbutton" iconCls="icon-add" plain="true">结束计时</a>
+                                             class="easyui-linkbutton" iconCls="icon-add" plain="true">展开结束</a>
             &nbsp;&nbsp;<a href="javascript:finish()" id="finish"
-                                             class="easyui-linkbutton" iconCls="icon-add" plain="true">展开完成</a>
+                                             class="easyui-linkbutton" iconCls="icon-ok" plain="true">展开完成</a>
         </fieldset>
     </div>
 </div>
@@ -695,7 +797,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:toLead()" id="toLead"
                                          class="easyui-linkbutton" iconCls="icon-add" plain="true">EXCEL导入子图</a>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:OK()" id="OK"
-                                         class="easyui-linkbutton" iconCls="icon-ok" plain="true">保存</a>
+                                         class="easyui-linkbutton" iconCls="icon-save" plain="true">保存</a>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:shanchu()" id="shanchu"
                                          class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
     </div>
@@ -749,17 +851,18 @@
 </div>
 
 <!--添加物料对话框-->
-<div id="dlg" class="easyui-dialog" style="width: 500px;height: 350px;"
+<div id="dlg" class="easyui-dialog" style="width: 650px;height: 350px;"
      closed="true" buttons="#dlg-buttons" toolbar="#tb3">
-    <input type="hidden" id="drawingId" name="drawingId"/>
-    <table id="dg2"  class="easyui-datagrid" fitColumns="true" fit="true">
-        <thead>
-            <th field="id" width="20" align="left" hidden="true">编号</th>
-            <th field="name" width="100" align="center">名称</th>
-            <th field="guiGe" width="100" align="center">规格</th>
-            <th field="num" width="100" align="center">数量</th>
-            <th field="changJia" width="100" align="center">厂家</th>
-        </thead>
+    <!--<input type="hidden" id="drawingId" name="drawingId"/>-->
+        <table id="dg2"  class="easyui-datagrid"  fit="true" fitColumns="false" >
+            <thead>
+                <th field="id" width="20" align="left" hidden="true">编号</th>
+                <th field="name" width="140" align="center">名称</th>
+                <th field="guiGe" width="120" align="center">规格</th>
+                <th field="num" width="100" align="center">数量</th>
+                <th field="changJia" width="100" align="center">厂家</th>
+                <th field="remark" width="150" align="center">备注</th>
+            </thead>
     </table>
 </div>
 
@@ -771,6 +874,7 @@
            class="easyui-linkbutton" iconCls="icon-add" plain="true">手动添加</a>
         <a href="javascript:deleteWuLiao()" class="easyui-linkbutton"
            iconCls="icon-remove" plain="true">删除</a>
+        <span style='color:red'>注意：此处添加的物料数量为一套的数量！</span>
     </div>
 </div>
 </div>
@@ -782,9 +886,9 @@
 </div>
 
 
-<!--新增订单信息-->
+<!--手动添加物料信息-->
 <div id="dlg2" class="easyui-dialog"
-     style="width: 400px; height: 150px; padding: 10px 20px" closed="true"
+     style="width: 400px; height: 180px; padding: 10px 20px" closed="true"
      buttons="#dlg2-buttons">
     <form id="fm-add" method="post">
         <table>
@@ -806,6 +910,12 @@
                 <td>厂家：</td>
                 <td><input type="text" id="changJia-add" name="changJia"
                            class="easyui-validatebox" style="width: 120px"/></td>
+            </tr>
+            <tr>
+                <td>备注：</td>
+                <td><input type="text" id="remark-add" name="num"
+                           class="easyui-validatebox" style="width: 120px"/></td>
+                <td>&nbsp;</td>
             </tr>
         </table>
     </form>

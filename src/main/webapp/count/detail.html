@@ -81,26 +81,26 @@
                             }
                         }
                     }, {
-                        field: "wuliaohao",
+                        field: "kucunzuzhi",
                         width: "150",
                         align: "center",
-                        title: "大图",
+                        title: "库存组织",
                         formatter: function (val,row ) {
-                            if(row.ruKu.bigDrawing != null ){
-                                return row.ruKu.bigDrawing.wuliaoId;
+                            if(row.saleList != null){
+                                return row.saleList.kucunzuzhi;
                             }
                             else {
                                 return "";
                             }
                         }
                     }, {
-                        field: "tuzhihao",
+                        field: "hangHao",
                         width: "150",
                         align: "center",
-                        title: "小图",
+                        title: "行号",
                         formatter: function (val,row ) {
-                            if(row.ruKu.drawing != null){
-                                return row.ruKu.drawing.wuliaoId;
+                            if(row.saleList != null){
+                                return row.saleList.hangHao;
                             }
                             else {
                                 return "";

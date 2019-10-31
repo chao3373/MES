@@ -177,4 +177,31 @@ public class SaleListServiceImpl implements SaleListService {
         String []cunzai = saleListRepository.findCunZaiByWuliaoId(wuliaoId);
         return cunzai[0];
     }
+
+    @Override
+    public void setOpenState(Integer id, String state) {
+        saleListRepository.setOpenState(id,state);
+    }
+
+    @Override
+    public List<SaleList> notSaleNumber(SaleList saleList) {
+            return saleListRepository.findAll(new Specification<SaleList>() {
+            @Override
+            public Predicate toPredicate(Root<SaleList> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+                if(saleList != null){
+                    if(saleList.getNum() != null){
+                        predicate.getExpressions().add(cb.equal(root.get("num"),saleList.getNum()));
+                    }
+                    if(StringUtil.isNotEmpty(saleList.getWuliaoId())){
+                        predicate.getExpressions().add(cb.equal(root.get("wuliaoId"), saleList.getWuliaoId()));
+                    }
+                    predicate.getExpressions().add(cb.like(root.get("saleNumber"), "无订单%"));
+                }
+
+             return predicate;
+            }
+        });
+    }
+
 }

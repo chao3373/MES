@@ -38,5 +38,10 @@ public class WuliaoServiceImpl implements WuliaoService {
         wuliaoRepository.save(wuliao1);
     }
 
+    @Override
+    public void deleteByBigDrawingId(Integer id) {
+        wuliaoRepository.deleteByBigDrawingId(id);
+    }
+
 
 }

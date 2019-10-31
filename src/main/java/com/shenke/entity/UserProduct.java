@@ -40,7 +40,9 @@ public class UserProduct {
 
     private Integer num; //生产数量
 
-    private Date dateInProduct;//生产日期
+    private Date dateStartProduct;//生产开始日期
+
+    private Date dateInProduct;//生产完成日期
 
     private Double zbGongShi; // 准备工时
 
@@ -57,6 +59,14 @@ public class UserProduct {
 
     @Transient
     private Date eDate;//结束日期 （查询用）
+
+    public Date getDateStartProduct() {
+        return dateStartProduct;
+    }
+
+    public void setDateStartProduct(Date dateStartProduct) {
+        this.dateStartProduct = dateStartProduct;
+    }
 
     public String getUserName() {
         return userName;
@@ -198,6 +208,7 @@ public class UserProduct {
                 ", saleList=" + saleList +
                 ", xiangmuId='" + xiangmuId + '\'' +
                 ", num=" + num +
+                ", dateStartProduct=" + dateStartProduct +
                 ", dateInProduct=" + dateInProduct +
                 ", zbGongShi=" + zbGongShi +
                 ", czGongShi=" + czGongShi +

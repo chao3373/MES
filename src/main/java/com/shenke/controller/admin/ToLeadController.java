@@ -70,6 +70,7 @@ public class ToLeadController {
             maps.get(i).put("name",maps.get(i).remove("名称"));
             maps.get(i).put("guiGe",maps.get(i).remove("规格"));
             maps.get(i).put("changJia",maps.get(i).remove("厂家"));
+            maps.get(i).put("remark",maps.get(i).remove("备注"));
         }
         map.put("success", true);
         System.out.println("*****************************");

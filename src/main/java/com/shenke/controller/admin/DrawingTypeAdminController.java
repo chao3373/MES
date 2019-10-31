@@ -86,5 +86,17 @@ public class DrawingTypeAdminController {
         return map;
     }*/
 
+    /**
+     * 通过大图纸id查找
+     * @param wuliaoId
+     * @return
+     */
+    @RequestMapping("/findByBigDrawingId")
+    public Map<String,Object> findByBigDrawingId(String wuliaoId){
+        Map<String,Object> map = new HashMap<>();
+        BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(wuliaoId);
+        map.put("size",drawingTypeService.findByBigDrawingId(bigDrawing.getId()));
+        return map;
+    }
 
 }

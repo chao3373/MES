@@ -6,6 +6,7 @@ import com.shenke.entity.Log;
 import com.shenke.service.BigDrawingService;
 import com.shenke.service.LogService;
 import com.shenke.util.GetFileName;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -52,25 +53,31 @@ public class BigDrawingAdminController {
      */
     @RequestMapping("/save")
     public Map<String, Object> save(BigDrawing bigDrawing) {
-        if (!bigDrawing.getDrawingURL().isEmpty()) {
-            String fileName = bigDrawing.getDrawingURL().getOriginalFilename();
-            String path = "D:/drawing/";
-            File filepath = new File(path, fileName);
-            //判断路径是否存在不存在则创建
-            if (!filepath.getParentFile().exists()){
-                filepath.getParentFile().mkdirs();
-            }
-            //将文件上传到目标文件中
-            try {
-                bigDrawing.getDrawingURL().transferTo(new File(path + File.separator + fileName));
-                bigDrawing.setUrl(fileName);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        bigDrawingService.delete(bigDrawingService.findByWuLiaoId(bigDrawing.getWuliaoId()).getId());
+
         Map<String, Object> resultMap = new HashMap<>();
-        bigDrawingService.save(bigDrawing);
+
+        if(bigDrawingService.findByWuLiaoId(bigDrawing.getWuliaoId()) == null){
+            if (!bigDrawing.getDrawingURL().isEmpty()) {
+                String fileName = bigDrawing.getDrawingURL().getOriginalFilename();
+                String path = "D:/drawing/";
+                File filepath = new File(path, fileName);
+                //判断路径是否存在不存在则创建
+                if (!filepath.getParentFile().exists()){
+                    filepath.getParentFile().mkdirs();
+                }
+                //将文件上传到目标文件中
+                try {
+                    bigDrawing.getDrawingURL().transferTo(new File(path + File.separator + fileName));
+                    bigDrawing.setUrl(fileName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            bigDrawingService.save(bigDrawing);
+        }else {
+            resultMap.put("error","此图纸已存在");
+        }
+
         resultMap.put("success", true);
         logService.save(new Log(Log.UPDATE_ACTION, "添加或修改大图纸信息"));
         return resultMap;
@@ -187,6 +194,31 @@ public class BigDrawingAdminController {
                 bigDrawingService.save(bigDrawing);
             }
         }
+        map.put("success",true);
+        return map;
+    }
+
+    /**
+     * 物料号模糊搜索
+     * @param wuliaoId
+     * @return
+     */
+    @RequestMapping("/search")
+    public Map<String,Object> search(String wuliaoId){
+        Map<String,Object> map = new HashMap<>();
+        map.put("rows",bigDrawingService.findLikeWuliaoId("%"+wuliaoId+"%"));
+        map.put("success",true);
+        return map;
+    }
+
+    /**
+     * 修改展开工时
+    * @return
+     */
+    @RequestMapping("/updateTime")
+    public Map<String,Object> updateTime(Double time,Integer id){
+        Map<String,Object> map = new HashMap<>();
+        bigDrawingService.updateTime(time,id);
         map.put("success",true);
         return map;
     }

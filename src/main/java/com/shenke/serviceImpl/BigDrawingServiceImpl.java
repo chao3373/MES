@@ -4,11 +4,13 @@ import com.shenke.entity.BigDrawing;
 import com.shenke.repository.BigDrawingRepository;
 import com.shenke.service.BigDrawingService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 @Service("bigDrawingService")
+@Transactional
 public class BigDrawingServiceImpl implements BigDrawingService {
     @Resource
     private BigDrawingRepository bigDrawingRepository;
@@ -54,6 +56,16 @@ public class BigDrawingServiceImpl implements BigDrawingService {
     @Override
     public Integer findIdByDrawingId(String drawingId) {
         return bigDrawingRepository.findIdByDrawingId(drawingId);
+    }
+
+    @Override
+    public List<BigDrawing> findLikeWuliaoId(String s) {
+        return bigDrawingRepository.findLikeWuliaoId(s);
+    }
+
+    @Override
+    public void updateTime(Double time,Integer id) {
+        bigDrawingRepository.updateTime(time,id);
     }
 
 

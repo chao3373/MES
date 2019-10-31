@@ -57,4 +57,16 @@ public interface BigDrawingService {
     public Integer findIdByDrawingId(String drawingId);
 
 
+    /**
+     * 通过物料号模糊查询
+     * @param s
+     * @return
+     */
+    public List<BigDrawing> findLikeWuliaoId(String s);
+
+    /**
+     * 修改展开工时
+     * @param time
+     */
+    void updateTime(Double time,Integer id);
 }

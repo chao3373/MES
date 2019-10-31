@@ -12,4 +12,6 @@ public interface WuliaoService {
     public List<Wuliao> findBySaleListId(Integer saleListId);
 
     void saveOld(Wuliao wuliao1);
+
+    void deleteByBigDrawingId(Integer id);
 }

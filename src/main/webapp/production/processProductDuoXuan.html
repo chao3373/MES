@@ -59,6 +59,10 @@
                 url:"/admin/shengChan/showInProcessProduct",
                 columns:[[
                     {
+                        field: 'cb',
+                        checkbox: "true",
+                        align: "center"
+                    },{
                         field: "id",
                         width: "150",
                         align: "center",
@@ -165,25 +169,28 @@
                             }
                         }
                     }
-
-                ]],onClickRow: function (rowIndex, rowData) {
-                        $(this).datagrid('unselectRow', rowIndex);
-                }
+                ]]
             });
         }
 
         //提交生产数量
         function save() {
-            var row = $("#dg").datagrid("getRows")[0];
-            $.post("/admin/shengChan/updateAccomplishNum",{
+            var rows = $("#dg").datagrid("getSelections");
+            //var productUser = row.state.substring(4);
+            var arr = [];
+            for (var i = 0;i<rows.length; i++){
+                arr.push(rows[i].id);
+            }
+            var Ids = arr.join(",");
+            $.post("/admin/shengChan/updateAccomplishNumDuoXuan",{
                 num:$("#num").val(),
-                id:row.id
+                id:Ids
             },function (result) {
+                console.log(result);
                if(result.success){
                    close();
-                   $.post("/admin/ruKu/save",{
-                       id:result.id,
-                       saleListId:row.saleList.id
+                   $.post("/admin/ruKu/saveDuoXuan",{
+                      data:JSON.stringify(rows)
                    },function (result) {
                        if(result.success){
                            alert("提交成功！");
@@ -207,7 +214,7 @@
          * 按照条件显示按钮
          */
         function showButton() {
-            var row = $("#dg").datagrid("getRows")[0];
+            var row = $("#dg").datagrid("getSelected");
             if(row.state == "任务下发"){
                 display();
             }else {
@@ -220,36 +227,24 @@
         var ok;
         function sousuo() {
             var tiaoma = $("#tiaoma").val();
-            var row = $("#dg").datagrid("getRows")[0];
-            if(tiaoma.substring(0,2) == "TZ"){
-                if(tiaoma != row.xiaotuCode){
-                    $.messager.alert("系统提示","请按照顺序进行生产！");
-                    return;
+            var rows = $("#dg").datagrid("getRows");
+            for(var i=0;i<rows.length;i++){
+                if(rows[i].xiaotuCode == null || rows[i].xiaotuCode == ""){
+                    if(rows[i].datuCode == tiaoma){
+                        $("#dg").datagrid("selectRow",i);
+                    }
+                }else {
+                    if(rows[i].xiaotuCode == tiaoma){
+                        $("#dg").datagrid("selectRow",i);
+                    }
                 }
-                ok=1;
-                changeColor(0);
-                showButton();
-            }else {
-                if(tiaoma != row.datuCode){
-                    $.messager.alert("系统提示","请按照顺序进行生产！");
-                    return;
-                }
-                if(row.isDatu == 1){
-                    $.messager.alert("系统提示","小图工序请扫描小图条码进行生产！")
-                    return;
-                }
-                ok=1;
-                changeColor(0);
-                showButton();
             }
+            showButton();
+            $("#tiaoma").val("");
         }
 
         //点击提交按钮
         function tijiao() {
-            if (ok != 1){
-                $.messager.alert("系统提示","请扫描条形码再点击提交按钮！");
-                return;
-            }
             $("#dlg").dialog("open").dialog("setTitle","添加生产数量");
         }
 
@@ -271,11 +266,17 @@
 
         //点击开始生产按钮
         function startProduct() {
-            var row = $("#dg").datagrid("getRows")[0];
+            var rows = $("#dg").datagrid("getSelections");
             //var productUser = row.state.substring(4);
+            var arr = [];
+            for (var i = 0;i<rows.length; i++){
+                arr.push(rows[i].id);
+            }
 
-            $.post("/admin/shengChan/startProduct",{
-                id:row.id,
+            var Ids = arr.join(",");
+
+            $.post("/admin/shengChan/startProductDuoXuan",{
+                id:Ids,
                 state:"生产中："+user
             },function (result) {
                 if(result.success){
@@ -298,7 +299,7 @@
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
 <table id="dg" class="easyui-datagrid"
-       fitColumns="false" rownumbers="true" fit="true" singleSelect="false" data-options="checkOnSelect:false"
+       fitColumns="false" rownumbers="true" fit="true" singleSelect="false"
        toolbar="#tb1" split="true">
 </table>
 

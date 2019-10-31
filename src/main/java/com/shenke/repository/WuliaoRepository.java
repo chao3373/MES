@@ -3,6 +3,7 @@ package com.shenke.repository;
 import com.shenke.entity.Wuliao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -25,4 +26,12 @@ public interface WuliaoRepository extends JpaRepository<Wuliao,Integer> , JpaSpe
      */
     @Query(value = "select * from  t_wuliao where sale_list_id = ?1",nativeQuery = true)
     List<Wuliao> findBySaleListId(Integer saleListId);
+
+    /**
+     * 根据大图id删除
+     * @param id
+     */
+    @Modifying
+    @Query(value = "delete from t_wuliao where big_drawing_id = ?1",nativeQuery = true)
+    void deleteByBigDrawingId(Integer id);
 }

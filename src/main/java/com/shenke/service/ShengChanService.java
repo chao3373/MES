@@ -8,6 +8,13 @@ import java.util.List;
 public interface ShengChanService {
 
     /**
+     * 通过工序状态判断当前登录员工是否有未工作的工序
+     * @param s
+     * @return
+     */
+    List<ShengChan> findByUserForState(String s);
+
+    /**
      * 保存
      * @param shengChan
      */
@@ -72,7 +79,21 @@ public interface ShengChanService {
      * 根据id修改状态
      * @param id
      */
-    public void updatState(Integer id);
+    public void updatState(Integer id,String state);
 
     public  List<ShengChan> findBySaleListId(Integer id);
+
+    /**
+     * 查找该订单id下所有工序中完成数量最少的工序
+     * @param id
+     * @return
+     */
+    public Integer findMinAccomplishNumBySaleListId(Integer id);
+
+    /**
+     * 根据状态查找
+     * @param state
+     * @return
+     */
+    List<ShengChan> findByState(String state);
 }

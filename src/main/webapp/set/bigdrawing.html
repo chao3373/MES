@@ -38,6 +38,10 @@
                 success: function (result) {
                     var result = eval('(' + result + ')');
                     if (result.success) {
+                        if(result.error != null){
+                            $.messager.alert("系统提示",result.error);
+                            return;
+                        }
                         $.messager.alert("系统提示", "保存成功！");
                         $("#dlg").dialog("close");
                         $("#dg").datagrid("reload");
@@ -112,6 +116,7 @@
                 columns: [[
                     {field: 'id', hidden: "true", width: 20, aligh: "center"},
                     {field: 'wuliaoId', title: "物料编号", width: 50, aligh: "center"},
+                    {field: 'yuGuGongShi', title: "预估展开工时", width: 50, aligh: "center"},
                     {field: 'url', title: "文件名", width: 100, aligh: "center"},
                     {
                         field: 'operate', title: '操作', align: 'center', width: $(this).width() * 0.1,
@@ -127,14 +132,34 @@
                             return str;
                         }
                     }
-                ]],
-                onDblClickRow: function (index, row) {
-                    $("#dlg").dialog("open").dialog("setTitle", "修改图纸标信息");
-                    $("#fm").form("load", row);
-                    url = "/admin/bigdrawing/save?id=" + row.id;
-                }
+                ]]
             });
         });
+
+        //点击搜索
+        function search() {
+            $.post("/admin/bigdrawing/search",{
+                wuliaoId:$("#name").val()
+            },function (result) {
+                if(result.success){
+                    console.log(result.rows);
+                    $("#dg").datagrid("loadData",result.rows);
+                }
+            })
+        }
+
+        //更新展开工时
+        function updateTime() {
+            $.post("/admin/bigdrawing/updateTime",{
+                time:$("#time").val(),
+                id:$("#dg").datagrid("getSelected").id
+            },function (result) {
+                if (result.success){
+                    $.messager.alert("系统提示","修改成功！");
+                    $("#dg").datagrid("reload");
+                }
+            })
+        }
     </script>
 </head>
 <body style="margin: 1px">
@@ -155,10 +180,13 @@
             iconCls="icon-download" plain="true">下载</a>
     </div>
     <div>
-        &nbsp;图纸名称：&nbsp;<input type="text" id="s_roleName" size="20"
-                                onkeydown="if(event.keyCode==13) searchRole()"/> <a
-            href="javascript:searchRole()" class="easyui-linkbutton"
+        &nbsp;物料编号：&nbsp;<input type="text" id="name" size="20"
+                                onkeydown="if(event.keyCode==13) search()"/> <a
+            href="javascript:search()" class="easyui-linkbutton"
             iconCls="icon-search" plain="true">搜索</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修改展开工时：<input type="number" id="time" size="10"/> <a
+            href="javascript:updateTime()" class="easyui-linkbutton"
+            iconCls="icon-ok" plain="true">确定</a>
     </div>
 </div>
 

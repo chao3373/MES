@@ -49,6 +49,16 @@ public class ShengChan {
 
     private Integer isDatu; //判断是否为大图工序的标志（0 ：是  1：不是）
 
+    private Date startDate; //工序的开始生产的时间  用于了解员工生产一个工序的起止时间
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
     public Integer getIsDatu() {
         return isDatu;
     }
@@ -196,6 +206,7 @@ public class ShengChan {
                 ", referDate=" + referDate +
                 ", code=" + code +
                 ", isDatu=" + isDatu +
+                ", startDate=" + startDate +
                 '}';
     }
 }

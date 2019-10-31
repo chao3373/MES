@@ -115,4 +115,10 @@ public interface SaleListService {
 
     //通过物料号查找存在状态
     String findCunZaiByWuliaoId(String wuliaoId);
+
+    //设置展开状态
+    void setOpenState(Integer id, String state);
+
+    //无订单下单对比
+    List<SaleList> notSaleNumber(SaleList saleList);
 }

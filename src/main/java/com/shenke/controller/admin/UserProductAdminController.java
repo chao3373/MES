@@ -27,14 +27,6 @@ public class UserProductAdminController {
 
     @RequestMapping("/list")
     public Map<String,Object> list(Integer process_id,String user_trueName,String btime,String etime) throws ParseException {
-
-
-        System.out.println("**************************");
-        System.out.println(process_id);
-        System.out.println(user_trueName);
-        System.out.println(btime);
-        System.out.println(etime);
-        System.out.println("**************************");
         UserProduct userProduct = new UserProduct();
 
         if(process_id != null){

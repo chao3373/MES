@@ -28,6 +28,15 @@ public class Wuliao {
 
     private String changJia; //厂家
 
+    private String remark; //备注
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
     public Integer getId() {
         return id;
@@ -86,6 +95,7 @@ public class Wuliao {
                 ", guiGe='" + guiGe + '\'' +
                 ", num=" + num +
                 ", changJia='" + changJia + '\'' +
+                ", remark='" + remark + '\'' +
                 '}';
     }
 }

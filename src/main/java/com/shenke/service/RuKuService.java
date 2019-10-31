@@ -15,4 +15,8 @@ public interface RuKuService {
     public void updateState(Integer id);
 
     public RuKu findById(Integer id);
+
+    RuKu findBySaleListId(Integer saleListId);
+
+    public List<RuKu> findByDatuCode(String datuCode);
 }

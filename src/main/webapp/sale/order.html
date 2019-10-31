@@ -79,29 +79,6 @@
 
         function saveSaleGoods() {
             var row = $("#dg").datagrid("getRows");
-            /*console.log(row);
-            $("#goodsJson").val(JSON.stringify(row));
-            $("#fm").form("submit", {
-                url: "/admin/saleList/save",
-                onSubmit: function () {
-                },
-                success: function (result) {
-                    var result = eval('(' + result + ')');
-                    if (row.length == 0) {
-                        $.messager.alert("系统提示", "请导入订单信息！！");
-                        return;
-                    } else {
-                        if (result.success) {
-                            alert("保存成功");
-                            window.location.reload();
-                        } else {
-                            $.messager.alert("系统提示", "保存失败！");
-                            return;
-                        }
-                    }
-                }
-            });*/
-
             $.ajax({
                 type:"post",
                 url:"/admin/saleList/save",
@@ -118,7 +95,7 @@
                         return;
                     }
                 }
-            })
+            });
         }
 
         //修改订单信息

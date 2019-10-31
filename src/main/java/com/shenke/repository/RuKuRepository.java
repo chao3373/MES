@@ -32,4 +32,20 @@ public interface RuKuRepository extends JpaRepository<RuKu,Integer> , JpaSpecifi
     @Modifying
     @Query(value = "update t_ru_ku set state = '入库' where id = ?1",nativeQuery = true)
     public void updateState(Integer id);
+
+    /**
+     * 根据订单id查找
+     * @param saleListId
+     * @return
+     */
+    @Query(value = "select * from t_ru_ku where sale_list_id = ?1",nativeQuery = true)
+    RuKu findBySaleListId(Integer saleListId);
+
+    /**
+     * 通过大图图纸查找
+     * @param datuCode
+     * @return
+     */
+    @Query(value = "select * from t_ru_ku where datu_code = ?1",nativeQuery = true)
+    List<RuKu> findByDatuCode(String datuCode);
 }

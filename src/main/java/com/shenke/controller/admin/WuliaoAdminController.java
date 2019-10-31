@@ -41,16 +41,17 @@ public class WuliaoAdminController {
     public Map<String,Object> save(String data, Integer saleListId, String bigDrawing){
         Map<String,Object> map = new HashMap<>();
 
+        BigDrawing bigDrawing1 = bigDrawingService.findByWuLiaoId(bigDrawing);
+
+        //通过大图id删除对应物料信息
+        wuliaoService.deleteByBigDrawingId(bigDrawing1.getId());
         Gson gson = new Gson();
         List<Wuliao> plgList = gson.fromJson(data, new TypeToken<List<Wuliao>>() {
         }.getType());
 
         for(Wuliao wuliao : plgList){
-            wuliao.setBigDrawing(bigDrawingService.findByWuLiaoId(bigDrawing));
+            wuliao.setBigDrawing(bigDrawing1);
         }
-        System.out.println("**********************");
-        System.out.println(plgList);
-        System.out.println("**********************");
         wuliaoService.save(plgList);
         map.put("success",true);
         return map;
@@ -58,7 +59,6 @@ public class WuliaoAdminController {
 
     /**
      * 保存老图的物料明细
-     * @param id
      * @param wuliaoId
      */
     /*@RequestMapping("/saveOld")
@@ -92,4 +92,21 @@ public class WuliaoAdminController {
            // wuliaoService.save(list2);
         }
     }*/
+
+    /**
+     * 通过大图纸id查找
+     * @param wuliaoId
+     * @return
+     */
+    @RequestMapping("/findByBigDrawingId")
+    public Map<String,Object> findByBigDrawingId(String wuliaoId){
+        Map<String,Object> map = new HashMap<>();
+        BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(wuliaoId);
+        map.put("size",wuliaoService.findByBigDrawingId(bigDrawing.getId()).size());
+
+        System.out.println("****************************");
+        System.out.println(map);
+        System.out.println("****************************");
+        return map;
+    }
 }

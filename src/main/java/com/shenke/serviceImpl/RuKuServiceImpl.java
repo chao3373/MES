@@ -41,5 +41,15 @@ public class RuKuServiceImpl implements RuKuService {
         return ruKuRepository.findById(id).get();
     }
 
+    @Override
+    public RuKu findBySaleListId(Integer saleListId) {
+        return ruKuRepository.findBySaleListId(saleListId);
+    }
+
+    @Override
+    public List<RuKu> findByDatuCode(String datuCode) {
+        return ruKuRepository.findByDatuCode(datuCode);
+    }
+
 
 }

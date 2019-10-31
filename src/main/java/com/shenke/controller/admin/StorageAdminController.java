@@ -1,5 +1,6 @@
 package com.shenke.controller.admin;
 
+import com.shenke.entity.RuKu;
 import com.shenke.entity.Storage;
 import com.shenke.service.*;
 import com.shenke.util.StringUtil;
@@ -40,19 +41,23 @@ public class StorageAdminController {
 
     /**
      * 新增入库
-     * @param Ids
+     * @param
      * @return
      */
     @RequestMapping("/save")
-    public Map<String,Object> save(Integer []Ids){
+    public Map<String,Object> save(Integer id){
         Map<String,Object> map = new HashMap<>();
-        for(int i = 0 ;i<Ids.length ;i++){
-            Storage storage = new Storage();
-            storage.setRuKuDate(new Date());
-            storage.setRuKu(ruKuService.findById(Ids[i]));
-            storage.setState("入库");
-            storageService.save(storage);
-        }
+        RuKu ruKu = ruKuService.findById(id);
+
+        Storage storage = new Storage();
+        storage.setRuKuDate(new Date());
+        storage.setRuKu(ruKu);
+        storage.setSaleList(ruKu.getSaleList());
+        storage.setState("入库");
+        storageService.save(storage);
+
+        saleListService.setState(ruKu.getSaleList().getId(),"入库");
+
         map.put("success",true);
         return map;
     }

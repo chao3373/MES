@@ -17,6 +17,11 @@ public class ShengChanServiceImpl implements ShengChanService {
     private ShengChanRepository shengChanRepository;
 
     @Override
+    public List<ShengChan> findByUserForState(String s) {
+        return shengChanRepository.findByUserForState(s);
+    }
+
+    @Override
     public void save(ShengChan shengChan) {
         shengChanRepository.save(shengChan);
     }
@@ -62,12 +67,22 @@ public class ShengChanServiceImpl implements ShengChanService {
     }
 
     @Override
-    public void updatState(Integer id) {
-        shengChanRepository.updatState(id);
+    public void updatState(Integer id,String state) {
+        shengChanRepository.updatState(id,state);
     }
 
     @Override
     public List<ShengChan> findBySaleListId(Integer id) {
         return shengChanRepository.findBySaleListId(id);
+    }
+
+    @Override
+    public Integer findMinAccomplishNumBySaleListId(Integer id) {
+        return shengChanRepository.findMinAccomplishNumBySaleListId(id);
+    }
+
+    @Override
+    public List<ShengChan> findByState(String state) {
+        return shengChanRepository.findByState(state);
     }
 }

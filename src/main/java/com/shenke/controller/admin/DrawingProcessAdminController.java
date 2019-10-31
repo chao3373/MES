@@ -48,9 +48,11 @@ public class DrawingProcessAdminController {
     @Resource
     private LogService logService;
 
-
     @Resource
     private ClerkService clerkService;
+
+    @Resource
+    private BigDrawingProcessService bigDrawingProcessService;
 
     @RequestMapping("/addProcess")
     public Map<String,Object> addProcess(String data,Integer drawingId){
@@ -64,8 +66,6 @@ public class DrawingProcessAdminController {
         for (DrawingProcess drawingProcess : plgList){
             drawingProcess.setProcess(processService.findById(drawingProcess.getId()));
             drawingProcess.setId(null);
-            /*drawingProcess.setCzGongShi(drawingProcess.getCzGongShi());
-            drawingProcess.setZbGongShi(drawingProcess.getZbGongShi());*/
             drawingProcess.setDrawing(drawingService.findById(drawingId));
             drawingProcess.setCode(i);
             i+=1;
@@ -74,4 +74,5 @@ public class DrawingProcessAdminController {
         map.put("success",true);
         return map;
     }
+
 }

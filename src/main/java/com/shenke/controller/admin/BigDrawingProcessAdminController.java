@@ -41,9 +41,12 @@ public class BigDrawingProcessAdminController {
 
         int i = 1;
         for (BigDrawingProcess bigDrawingProcess : plgList){
+
+            System.out.println("********************************");
+            System.out.println(bigDrawingProcess);
+            System.out.println("********************************");
             bigDrawingProcess.setProcess(processService.findById(bigDrawingProcess.getId()));
             bigDrawingProcess.setId(null);
-            bigDrawingProcess.setCzGongShi(bigDrawingProcess.getCzGongShi());
             bigDrawingProcess.setZbGongShi(bigDrawingProcess.getZbGongShi());
             bigDrawingProcess.setBigDrawing(bigDrawing);
             bigDrawingProcess.setCode(i);

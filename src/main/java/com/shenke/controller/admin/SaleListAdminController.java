@@ -8,11 +8,13 @@ import com.shenke.service.*;
 import com.shenke.util.DateUtil;
 import com.shenke.util.StringUtil;
 import org.apache.commons.collections.map.HashedMap;
+import org.hibernate.collection.internal.PersistentList;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.persistence.ManyToOne;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 /***
@@ -53,10 +55,6 @@ public class SaleListAdminController {
         List<SaleList> plgList = gson.fromJson(data, new TypeToken<List<SaleList>>() {
         }.getType());
 
-        System.out.println("***********************");
-        System.out.println(plgList);
-        System.out.println("***********************");
-
        for(SaleList saleList : plgList){
            saleList.setState("下单");
            if(bigDrawingService.findByWuLiaoId(saleList.getWuliaoId())!=null){
@@ -67,6 +65,19 @@ public class SaleListAdminController {
         saleListService.save(plgList);
         map.put("success",true);
         logService.save(new Log(Log.ADD_ACTION, "保存添加订单"));
+        return map;
+    }
+
+    @RequestMapping("/notSaleNumber")
+    public Map<String,Object> notSaleNumber(String data){
+        Map<String,Object> map = new HashMap<>();
+        Gson gson = new Gson();
+        List<SaleList> plgList = gson.fromJson(data, new TypeToken<List<SaleList>>() {
+        }.getType());
+
+        for(SaleList saleList : plgList){
+            map.put("rows",saleListService.notSaleNumber(saleList));
+        }
         return map;
     }
 
@@ -92,7 +103,12 @@ public class SaleListAdminController {
             saleList.setGongxus(sb.toString().replaceFirst(",",""));
         }
 
+        System.out.println("**************list****************");
+        System.out.println(list);
+        System.out.println("**************list****************");
+
         map.put("rows",list);
+        map.put("success",true);
         logService.save(new Log(Log.SEARCH_ACTION, "查询状态为下单的商品"));
         return map;
     }
@@ -320,27 +336,47 @@ public class SaleListAdminController {
         return map;
     }
 
+    /**
+     * 图纸展开完成
+     * @param wuliaoId
+     * @param id
+     * @return
+     */
     @RequestMapping("/finishOpen")
     public Map<String,Object> finishOpen(String wuliaoId,Integer id){
         Map<String,Object> map = new HashMap<>();
-        BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(wuliaoId);
-
-        System.out.println("***********************");
-        System.out.println(wuliaoService.findByBigDrawingId(bigDrawing.getId()));
-        System.out.println("***********************");
-
-        if(wuliaoService.findByBigDrawingId(bigDrawing.getId()).size() == 0){
-
-            System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&");
-            System.out.println("进来了进来了进来了");
-            System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&");
-
-            map.put("success",false);
-            map.put("errorInfo","请先添加生产物料！");
-            return map;
-        }
         saleListService.setCunZai(id,"存在");
         map.put("success",true);
+        return map;
+    }
+
+    /**
+     *
+     * @return
+     */
+    @RequestMapping("/setOpenState")
+    public Map<String,Object> setOpenState(Integer id, String state, HttpSession session){
+        Map<String,Object> map = new HashMap<>();
+        if(state != ""){
+            User user = (User) session.getAttribute("currentUser"); //获取当前登录用户对象
+            state = state + "：" +user.getTrueName();
+        }
+
+        saleListService.setOpenState(id,state);
+        map.put("success",true);
+        return map;
+    }
+
+    /**
+     * 返回当前用户
+     * @param session
+     * @return
+     */
+    @RequestMapping("/dangqianUser")
+    public Map<String,Object> dangqianUser(HttpSession session){
+        Map<String,Object> map = new HashMap<>();
+        User user = (User) session.getAttribute("currentUser");
+        map.put("user",user.getTrueName());
         return map;
     }
 }

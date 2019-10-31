@@ -21,15 +21,18 @@
             load();
             $('#dg').datagrid({
                 onClickCell: function(index,field){
+                    var name = "dg";
                     if(field == "tiaoma"){
-                        tiaoma(index);
+                        console.log($("#dg").datagrid("getSelected"));
+                        tiaoma(index,name);
                     }
                 }
             });
             $('#addSon').datagrid({
                 onClickCell: function(index,field){
+                    var name = "addSon";
                     if(field == "tiaoma"){
-                        tiaoma(index);
+                        tiaoma(index,name);
                     }
                 }
             });
@@ -229,25 +232,25 @@
 
         }
 
-        function tiaoma(index) {
-            var row = $("#dg").datagrid("getRows")[index];
-            if( row.isDatu == 0){
+        //打印条码
+        function tiaoma(index,name) {
+            var rowDg = $("#dg").datagrid("getRows")[index];
+            var rowAddson = $("#addSon").datagrid("getRows")[index];
+            if( name == "dg"){
                 $.post("/admin/shengChan/tiaoma",{
-                    code:row.datuCode
+                    code:rowDg.datuCode
                 },function (result) {
-                    console.log(result);
                     if(result.success){
-                        print(result.url,row);
+                        print(result.url,rowDg);
                         $("#dg").datagrid("reload");
                     }
                 },"json");
             }else {
                 $.post("/admin/shengChan/tiaoma",{
-                    code:row.xiaotuCode
+                    code:rowAddson.xiaotuCode
                 },function (result) {
-                    console.log(result);
                     if(result.success){
-                        print(result.url,row);
+                        print(result.url,rowAddson);
                         $("#dg").datagrid("reload");
                     }
                 },"json");

@@ -69,6 +69,16 @@ public class SaleList {
     @Transient
     private String gongxus; //所属工序 (临时接收数据用)
 
+    private String openState; // 图纸展开状态（图纸展开界面使用 用来查看谁在展开图纸）
+
+    public String getOpenState() {
+        return openState;
+    }
+
+    public void setOpenState(String openState) {
+        this.openState = openState;
+    }
+
     public Integer getRemark() {
         return remark;
     }
@@ -243,6 +253,7 @@ public class SaleList {
                 ", shiJiGongShi=" + shiJiGongShi +
                 ", remark=" + remark +
                 ", gongxus='" + gongxus + '\'' +
+                ", openState='" + openState + '\'' +
                 '}';
     }
 }

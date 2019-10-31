@@ -80,11 +80,8 @@
 
             $("#dg2").datagrid({
                 onClickRow:function (index,row) {
-                    console.log(1111)
                     $("#dg3").datagrid("appendRow",row);
                     $("#dg2").datagrid("unselectRow",index);
-                    //$("#dg2").datagrid("reload");
-                    //$("#dg2").datagrid("onUnselectAll")
                 }
             });
 
@@ -97,6 +94,12 @@
                 }
             });
             load();
+            loadDg();
+
+
+        });
+
+        function loadDg() {
             $("#dg").datagrid({
                 url:'/admin/saleList/xiadanSuccess',
                 columns: [[
@@ -164,50 +167,49 @@
                 ]],
                 onClickRow:function (index,row) {
                     if(row!=null){
-                    $("#addSon").datagrid({
-                        url: "/admin/saleList/bigSmallDrawing",
-                        queryParams: {
-                            wuliaoId: row.wuliaoId
-                        },
-                        columns: [[
-                            {
-                                field: 'id',
-                                title: 'id',
-                                width: 100,
-                                hidden: 'true',
-                                align: 'center'
-                            }, {
-                                field: 'wuliaoId',
-                                title: '小图物料编号',
-                                width: 100,
-                                align: 'center',
-                                formatter: function (value, row, index) {
-                                    if (!row.drawing) {
-                                        return '';
-                                    } else {
-                                        return row.drawing.wuliaoId;
+                        $("#addSon").datagrid({
+                            url: "/admin/saleList/bigSmallDrawing",
+                            queryParams: {
+                                wuliaoId: row.wuliaoId
+                            },
+                            columns: [[
+                                {
+                                    field: 'id',
+                                    title: 'id',
+                                    width: 100,
+                                    hidden: 'true',
+                                    align: 'center'
+                                }, {
+                                    field: 'wuliaoId',
+                                    title: '小图物料编号',
+                                    width: 100,
+                                    align: 'center',
+                                    formatter: function (value, row, index) {
+                                        if (!row.drawing) {
+                                            return '';
+                                        } else {
+                                            return row.drawing.wuliaoId;
+                                        }
+                                    }
+                                }, {
+                                    field: 'gongxus',
+                                    title: '所含工序',
+                                    width: 200,
+                                    align: 'center'
+                                }, {
+                                    field: 'choose',
+                                    title: '选择工序',
+                                    width: 100,
+                                    align: 'center',
+                                    formatter: function (val, row) {
+                                        return "<a href=\"javascript:openProcessChooseDialog('" + row.gongxus + "'," + row.drawing.id + ")\"><img style='margin-top:4px' src='/static/images/edit.gif'/></a>";
                                     }
                                 }
-                            }, {
-                                field: 'gongxus',
-                                title: '所含工序',
-                                width: 200,
-                                align: 'center'
-                            }, {
-                                field: 'choose',
-                                title: '选择工序',
-                                width: 100,
-                                align: 'center',
-                                formatter: function (val, row) {
-                                    return "<a href=\"javascript:openProcessChooseDialog('" + row.gongxus + "'," + row.drawing.id + ")\"><img style='margin-top:4px' src='/static/images/edit.gif'/></a>";
-                                }
-                            }
-                        ]]
-                    });
-                }  }
+                            ]]
+                        });
+                    }}
             });
-
-        });
+        }
 
 
 
@@ -281,7 +283,7 @@
                         width:20,
                         align:'center',
                         editor:{
-                            type: 'text',
+                            type:'numberbox',
                             options: {
                                 precision:1
                             }
@@ -292,7 +294,7 @@
                         width:20,
                         align:'center',
                         editor:{
-                            type: 'text',
+                            type:'numberbox',
                             options: {
                                 precision:1
                             }
@@ -301,6 +303,8 @@
                 ]]
             });
         }
+
+
 
         /**
          * 添加工序
@@ -329,7 +333,8 @@
         function saveProcess(){
             accept();
             var drawingId=$("#drawingId").val();
-            if(drawingId == ''){
+
+            if(drawingId == ''){ //保存大图工序
                 $.ajax({
                     type:"post",
                     url:"/admin/bigDrawingProcess/addProcess",
@@ -342,14 +347,14 @@
                         if(result.success) {
                             closesaveProcessDialog();
                             $.messager.alert("系统提示","添加成功");
-                            $("#addSon").datagrid("reload");
+                            $("#dg").datagrid("reload");
                         }else{
                             $.messager.alert("系统提示","添加失败");
                             return;
                         }
                     }
                 })
-            }else {
+            }else { //保存小图工序
                 $.ajax({
                     type:"post",
                     url:"/admin/drawingProcess/addProcess",
@@ -360,7 +365,7 @@
                     dataType:"json",
                     success:function (result) {
                         if(result.success) {
-                            $("#dg").datagrid("reload");
+                            $("#addSon").datagrid("reload");
                             closesaveProcessDialog();
                             $.messager.alert("系统提示","添加成功");
                         }else{
@@ -389,34 +394,54 @@
 
         //下发任务
         function xiafa() {
-
-            var wuliaoId = $("#dg").datagrid("getSelected").wuliaoId;
-            var id = $("#dg").datagrid("getSelected").id
-
-            /*$.post("/admin/wuliao/saveOld",{
-                wuliaoId:wuliaoId,
-                id:id
-            },function (result) {
-
-            },"json")*/
-
-
+            var row = $("#dg").datagrid("getSelected");
+            var rows = $("#addSon").datagrid("getRows");
+            if(row == null){
+                $.messager.alert("系统提示","请选择一条信息！");
+                return;
+            }
+            var m=0;
+            var n=0;
+            //判断大图是否有工序
+            if(row.gongxus == ""){
+                m=1;
+            }
+            //判断小图是否有工序
+            if(rows != null){
+                for(var i = 0; i < rows.length; i++){
+                    if(rows[i].gongxus == ""){
+                        n=1;
+                        break;
+                    }
+                }
+            }
+            if(n == 1 || m == 1){
+                $.messager.alert("系统提示","<span style='color: #CC2222'>"+"系统检测到您有未添加工序的图纸，请及时添加！"+"</span>");
+                return;
+            }
             $.post("/admin/shengChan/save",{
-                wuliaoId:wuliaoId,
-                id:id
+                wuliaoId:row.wuliaoId,
+                id:row.id
             },function (result) {
                 if(result.success){
                     $.post("/admin/saleList/setState",{
-                        id:$("#dg").datagrid("getSelected").id,
+                        id:row.id,
                         state:"任务下发"
                     },function (result) {
                         if(result.success){
+                            $.messager.alert("系统提示","下发成功");
                             $("#dg").datagrid("reload");
                             $("#addSon").datagrid("loadData",[]);
                         }
                     },"json");
-                    $.messager.alert("系统提示","下发成功");
                 }
+            },"json");
+
+            //添加老图物料明细
+            $.post("/admin/wuliao/saveOld",{
+                wuliaoId:wuliaoId,
+                id:id
+            },function (result) {
             },"json")
         }
 

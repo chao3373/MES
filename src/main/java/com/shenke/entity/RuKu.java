@@ -15,19 +15,11 @@ public class RuKu {
 
     @JoinColumn
     @ManyToOne
-    private BigDrawing bigDrawing; // 大图纸 对象
-
-    @JoinColumn
-    @ManyToOne
-    private Drawing drawing; // 小图纸 对象
-
-    @JoinColumn
-    @ManyToOne
     private SaleList saleList;//订单对象
 
     private String datuCode; //大图编码
 
-    private String xiaotuCode;//小图编码
+    private Integer orderNum; // 订单数量
 
     private Integer num; // 数量
 
@@ -35,28 +27,12 @@ public class RuKu {
 
     private String state;//状态
 
-    public Integer getRukuNum() {
-        return rukuNum;
+    public Integer getOrderNum() {
+        return orderNum;
     }
 
-    public void setRukuNum(Integer rukuNum) {
-        this.rukuNum = rukuNum;
-    }
-
-    public Integer getNum() {
-        return num;
-    }
-
-    public void setNum(Integer num) {
-        this.num = num;
-    }
-
-    public String getXiaotuCode() {
-        return xiaotuCode;
-    }
-
-    public void setXiaotuCode(String xiaotuCode) {
-        this.xiaotuCode = xiaotuCode;
+    public void setOrderNum(Integer orderNum) {
+        this.orderNum = orderNum;
     }
 
     public Integer getId() {
@@ -65,22 +41,6 @@ public class RuKu {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public BigDrawing getBigDrawing() {
-        return bigDrawing;
-    }
-
-    public void setBigDrawing(BigDrawing bigDrawing) {
-        this.bigDrawing = bigDrawing;
-    }
-
-    public Drawing getDrawing() {
-        return drawing;
-    }
-
-    public void setDrawing(Drawing drawing) {
-        this.drawing = drawing;
     }
 
     public SaleList getSaleList() {
@@ -99,6 +59,22 @@ public class RuKu {
         this.datuCode = datuCode;
     }
 
+    public Integer getNum() {
+        return num;
+    }
+
+    public void setNum(Integer num) {
+        this.num = num;
+    }
+
+    public Integer getRukuNum() {
+        return rukuNum;
+    }
+
+    public void setRukuNum(Integer rukuNum) {
+        this.rukuNum = rukuNum;
+    }
+
     public String getState() {
         return state;
     }
@@ -111,11 +87,9 @@ public class RuKu {
     public String toString() {
         return "RuKu{" +
                 "id=" + id +
-                ", bigDrawing=" + bigDrawing +
-                ", drawing=" + drawing +
                 ", saleList=" + saleList +
                 ", datuCode='" + datuCode + '\'' +
-                ", xiaotuCode='" + xiaotuCode + '\'' +
+                ", orderNum=" + orderNum +
                 ", num=" + num +
                 ", rukuNum=" + rukuNum +
                 ", state='" + state + '\'' +

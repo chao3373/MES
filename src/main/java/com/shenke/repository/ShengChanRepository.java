@@ -14,7 +14,7 @@ public interface ShengChanRepository extends JpaRepository<ShengChan,Integer> , 
      * "任务下发"界面显示的信息
      * @return
      */
-    @Query(value = "select * from  t_sheng_chan where state = '任务下发' group by datu_code",nativeQuery = true)
+    @Query(value = "select * from  t_sheng_chan where state = '任务下发' and is_datu = 0 group by datu_code",nativeQuery = true)
     public List<ShengChan> listProduct();
 
     /**
@@ -74,8 +74,8 @@ public interface ShengChanRepository extends JpaRepository<ShengChan,Integer> , 
      * @param id
      */
     @Modifying
-    @Query(value = "update t_sheng_chan set state = '生产完成' where id = ?1",nativeQuery = true)
-    public void updatState(Integer id);
+    @Query(value = "update t_sheng_chan set state = ?2 where id = ?1",nativeQuery = true)
+    public void updatState(Integer id,String state);
 
     /**
      * 按照订单编号查找
@@ -84,4 +84,29 @@ public interface ShengChanRepository extends JpaRepository<ShengChan,Integer> , 
      */
     @Query(value = "select * from t_sheng_chan where sale_list_id =?1 and is_datu = 1 GROUP BY xiaotu_code",nativeQuery = true)
     List<ShengChan> findBySaleListId(Integer id);
+
+    /**
+     * 查找该订单id下所有工序中完成数量最少的工序
+     * @param id
+     * @return
+     */
+    @Query(value = "select min(accomplish_num) from t_sheng_chan where sale_list_id = ?1",nativeQuery = true)
+    Integer findMinAccomplishNumBySaleListId(Integer id);
+
+    /**
+     * 通过状态查找
+     * @param state
+     * @return
+     */
+    @Query(value = "select * from t_sheng_chan where state = ?1",nativeQuery = true)
+    List<ShengChan> findByState(String state);
+
+
+    /**
+     * 通过工序状态判断当前登录员工是否有未工作的工序
+     * @param s
+     * @return
+     */
+    @Query(value = "select * from t_sheng_chan where state like ?1",nativeQuery = true)
+    List<ShengChan> findByUserForState(String s);
 }

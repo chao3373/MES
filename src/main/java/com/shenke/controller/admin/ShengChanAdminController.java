@@ -156,6 +156,10 @@ public class ShengChanAdminController {
      */
     @RequestMapping("/tiaoma")
     public Map<String,Object> tiaoma(String code){
+
+        System.out.println("*******************");
+        System.out.println(code);
+        System.out.println("*******************");
         Map<String,Object> map = new HashMap<>();
         TiaoMaUtil.generateFile(code,"D:/tm/" + code + ".png");
         map.put("url","/tm/" + code + ".png");
@@ -171,36 +175,38 @@ public class ShengChanAdminController {
     public Map<String,Object> showInProcessProduct(HttpSession session){
         Map<String,Object> map = new HashMap<>();
         User user = (User) session.getAttribute("currentUser"); //获取当前登录用户对象
-        List<UserProcess> list = userProcessService.findByUserId(user.getId());
-        List list1 = new ArrayList();
-        for (UserProcess up : list){
-            list1.add(up.getProcess().getId());
-        }
-        if(list1.size() == 0){
-            return map;
-        }
-        Integer []Arr = new  Integer[list1.size()];
-        list1.toArray(Arr);
+        //通过工序状态判断当前登录员工是否有未工作的工序
+        List<ShengChan> list3 = shengChanService.findByUserForState("%"+user.getTrueName());
+        //若有扫码但是没有生产的工序 就显示没有生产的工序
+        if(list3.size() != 0){
+            map.put("rows",list3);
+        }else {
+            List<UserProcess> list = userProcessService.findByUserId(user.getId());
+            List list1 = new ArrayList();
+            for (UserProcess up : list){
+                list1.add(up.getProcess().getId());
+            }
+            if(list1.size() == 0){
+                return map;
+            }
+            Integer []Arr = new  Integer[list1.size()];
+            list1.toArray(Arr);
 
-        System.out.println("**********************");
-        System.out.println(list1);
-        System.out.println("**********************");
+            List<ShengChan> list2 = shengChanService.showInProcessProduct(Arr);
 
-        List<ShengChan> list2 = shengChanService.showInProcessProduct(Arr);
-
-        for(ShengChan shengChan : list2){
-            if(shengChan.getCode() == 1){
-                shengChan.setAllowNum(shengChan.getNum() - shengChan.getAccomplishNum());
-            }else {
-                if(shengChanService.selectBeforeProcess(shengChan.getXiaotuCode(),shengChan.getCode()-1) == shengChan.getNum()){
+            for(ShengChan shengChan : list2){
+                if(shengChan.getCode() == 1){
                     shengChan.setAllowNum(shengChan.getNum() - shengChan.getAccomplishNum());
                 }else {
-                    shengChan.setAllowNum(shengChanService.selectBeforeProcess(shengChan.getXiaotuCode(),shengChan.getCode()-1));
+                    if(shengChanService.selectBeforeProcess(shengChan.getXiaotuCode(),shengChan.getCode()-1) == shengChan.getNum()){
+                        shengChan.setAllowNum(shengChan.getNum() - shengChan.getAccomplishNum());
+                    }else {
+                        shengChan.setAllowNum(shengChanService.selectBeforeProcess(shengChan.getXiaotuCode(),shengChan.getCode()-1));
+                    }
                 }
             }
+            map.put("rows",list2);
         }
-
-        map.put("rows",list2);
         return map;
     }
 
@@ -235,11 +241,14 @@ public class ShengChanAdminController {
         Integer sumNum = num + shengChan.getAccomplishNum();
         shengChanService.updateAccomplishNum(id, sumNum);
         if(sumNum == shengChan.getNum()){
-            shengChanService.updatState(id);
+            shengChanService.updatState(id,"生产完成");
+        }else {
+            shengChanService.updatState(id,"任务下发");
         }
 
         UserProduct userProduct = new UserProduct();
         userProduct.setBigDrawing(shengChan.getBigDrawing());
+        userProduct.setDateStartProduct(shengChan.getStartDate());
         userProduct.setDateInProduct(new Date());
         userProduct.setDrawing(shengChan.getDrawing());
         userProduct.setNum(num);
@@ -253,11 +262,74 @@ public class ShengChanAdminController {
 
         userProductService.save(userProduct);
 
-
-
         map.put("id",id);
         map.put("num",num);
         map.put("success",true);
+        return map;
+    }
+
+
+    /**
+     * 更新完成数量 保存生产记录(多选)
+     * @param id
+     * @param num
+     * @param session
+     * @return
+     */
+    @RequestMapping("/updateAccomplishNumDuoXuan")
+    public Map<String,Object> updateAccomplishNumDuoXuan(Integer []id,Integer num,HttpSession session){
+        Map<String,Object> map = new HashMap<>();
+        System.out.println("******************************");
+        System.out.println(id);
+        System.out.println("******************************");
+        for(int i = 0;i<id.length;i++){
+            ShengChan shengChan = shengChanService.findOne(id[i]);
+            String xiaotuCode = shengChan.getXiaotuCode();
+            Integer code = shengChan.getCode();
+
+            if(shengChan.getCode() == 1){
+                if(num > (shengChan.getNum()-shengChan.getAccomplishNum())){
+                    map.put("errorInfo", "输入数量有误！");
+                    map.put("success", false);
+                    return map;
+                }
+            }else {
+                if((num+shengChan.getAccomplishNum())>shengChanService.selectBeforeProcess(xiaotuCode,code-1)){
+                    map.put("errorInfo", "输入数量有误！");
+                    map.put("success", false);
+                    return map;
+                }
+            }
+
+            Integer sumNum = num + shengChan.getAccomplishNum();
+            shengChanService.updateAccomplishNum(id[i], sumNum);
+            if(sumNum == shengChan.getNum()){
+                shengChanService.updatState(id[i],"生产完成");
+            }else {
+                shengChanService.updatState(id[i],"任务下发");
+            }
+
+            UserProduct userProduct = new UserProduct();
+            userProduct.setDateStartProduct(shengChan.getStartDate());
+            userProduct.setBigDrawing(shengChan.getBigDrawing());
+            userProduct.setDateInProduct(new Date());
+            userProduct.setNum(num);
+            userProduct.setDrawing(shengChan.getDrawing());
+            userProduct.setShengChan(shengChan);
+            userProduct.setSaleList(shengChan.getSaleList());
+            userProduct.setXiangmuId(shengChan.getSaleList().getXiangmuId());
+            userProduct.setProcess(shengChan.getProcess());
+            userProduct.setUser((User) session.getAttribute("currentUser")); //获取当前登录用户对象);
+            userProduct.setZbGongShi(shengChan.getZbGongShi());
+            userProduct.setCzGongShi(shengChan.getCzGongShi());
+
+            userProductService.save(userProduct);
+
+        /*    map.put("id",id);
+            map.put("num",num);*/
+            map.put("success",true);
+        }
+
         return map;
     }
 
@@ -287,6 +359,52 @@ public class ShengChanAdminController {
         return map;
     }
 
+    /**
+     * 设置工序开始生产
+     * @param id
+     * @param state
+     * @return
+     */
+    @RequestMapping("/startProduct")
+    public Map<String,Object> startProduct(Integer id,String state){
+        Map<String,Object> map = new HashMap<>();
 
+        if(shengChanService.findByState(state).size() == 1){
+            map.put("error","请先生产完您已扫码的工序!");
+            map.put("success",true);
+        }else {
+            //shengChanService.updatState(id,state);
+            ShengChan shengChan = shengChanService.findOne(id);
+            shengChan.setStartDate(new Date());
+            shengChan.setState(state);
+            shengChanService.save(shengChan);
+            map.put("success",true);
+        }
+        return map;
+    }
+
+    /**
+     * 设置工序开始生产(多选)
+     * @param id
+     * @param state
+     * @return
+     */
+    @RequestMapping("/startProductDuoXuan")
+    public Map<String,Object> startProductDuoXuan(Integer []id,String state){
+        Map<String,Object> map = new HashMap<>();
+        for (int i = 0;i<id.length;i++){
+            /*if(shengChanService.findByState(state).size() >0){
+                map.put("error","请先生产完您已扫码的工序!");
+                map.put("success",true);
+            }else {
+            }*/
+            ShengChan shengChan = shengChanService.findOne(id[i]);
+            shengChan.setStartDate(new Date());
+            shengChan.setState(state);
+            shengChanService.save(shengChan);
+        }
+        map.put("success",true);
+        return map;
+    }
 
 }
