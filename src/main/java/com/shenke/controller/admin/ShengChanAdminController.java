@@ -131,9 +131,6 @@ public class ShengChanAdminController {
                 shengChanService.save(shengChan);
             }
         }
-
-
-
         map.put("success", true);
         return map;
     }

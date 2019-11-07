@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.persistence.ManyToOne;
 import javax.servlet.http.HttpSession;
+import java.lang.reflect.MalformedParameterizedTypeException;
 import java.util.*;
 
 /***
@@ -75,9 +76,16 @@ public class SaleListAdminController {
         List<SaleList> plgList = gson.fromJson(data, new TypeToken<List<SaleList>>() {
         }.getType());
 
-        for(SaleList saleList : plgList){
-            map.put("rows",saleListService.notSaleNumber(saleList));
-        }
+        Map<String,Object> map1 = saleListService.aaaa(plgList);
+
+        Object show = map1.get("list");
+        Object daochu = map1.get("list2");
+
+
+        map.put("show",show);
+        map.put("daochu",daochu);
+
+        map.put("success",true);
         return map;
     }
 

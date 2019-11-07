@@ -7,6 +7,7 @@ import com.shenke.repository.BigDrawingRepository;
 import com.shenke.repository.SaleListRepository;
 import com.shenke.service.SaleListService;
 import com.shenke.util.StringUtil;
+import com.sun.javafx.collections.MappingChange;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -183,9 +186,14 @@ public class SaleListServiceImpl implements SaleListService {
         saleListRepository.setOpenState(id,state);
     }
 
-    @Override
+    /*@Override
     public List<SaleList> notSaleNumber(SaleList saleList) {
-            return saleListRepository.findAll(new Specification<SaleList>() {
+        System.out.println("*****************predicate*****************");
+        System.out.println();
+        System.out.println(saleListRepository.notSaleNumber(saleList.getNum(),saleList.getWuliaoId()));
+        System.out.println("*****************predicate*****************");
+        return saleListRepository.notSaleNumber(saleList.getNum(),saleList.getWuliaoId());
+          *//*  return saleListRepository.findAll(new Specification<SaleList>() {
             @Override
             public Predicate toPredicate(Root<SaleList> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
                 Predicate predicate = cb.conjunction();
@@ -199,9 +207,30 @@ public class SaleListServiceImpl implements SaleListService {
                     predicate.getExpressions().add(cb.like(root.get("saleNumber"), "无订单%"));
                 }
 
+                System.out.println("*****************predicate*****************");
+                System.out.println(predicate);
+                System.out.println("*****************predicate*****************");
              return predicate;
             }
-        });
+        });*//*
+    }*/
+
+    @Override
+    public Map<String,Object> aaaa(List<SaleList> plgList) {
+        Map<String,Object> map = new HashMap<>();
+        List<SaleList> list = new ArrayList<>();
+        List<SaleList> list2 = new ArrayList<>();
+        for(SaleList saleList : plgList){
+            if(saleListRepository.notSaleNumber(saleList.getNum(),saleList.getWuliaoId()) != null){
+                list.add(saleListRepository.notSaleNumber(saleList.getNum(),saleList.getWuliaoId()));
+                list.add(saleList);
+            }else {
+                list2.add(saleList);
+            }
+        }
+        map.put("list",list);
+        map.put("list2",list2);
+        return map;
     }
 
 }

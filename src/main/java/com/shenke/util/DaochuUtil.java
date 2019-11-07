@@ -20,6 +20,12 @@ import java.util.Map;
 public class DaochuUtil {
     //导出
     public static void daochuExcel(String str, String title) throws Exception {
+
+        System.out.println("******************");
+        System.out.println(str);
+        System.out.println(str.getClass());
+        System.out.println(title);
+        System.out.println("******************");
         Gson gson = new Gson();
         JsonParser jsonParser = new JsonParser();
         JsonArray asJsonArray = jsonParser.parse(str).getAsJsonArray();

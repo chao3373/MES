@@ -149,4 +149,7 @@ public interface SaleListRepository  extends JpaRepository<SaleList, Integer>, J
     @Modifying
     @Query(value = "update t_sale_list set open_state = ?2 where id = ?1",nativeQuery = true)
     void setOpenState(Integer id, String state);
+
+    @Query(value = "select * from t_sale_list where sale_number like '无订单%' and num = ?1 and wuliao_id = ?2",nativeQuery = true)
+    SaleList notSaleNumber(Integer num, String wuliaoId);
 }

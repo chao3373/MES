@@ -17,7 +17,13 @@
     <script type="text/javascript">
         var url;
         $(document).ready(function () {
-
+            $('#dg').datagrid({
+                rowStyler:function(index,row){
+                    if (row.id != null){
+                        return 'background-color:red;color:white;font-weight:bold;';
+                    }
+                }
+            });
         });
 
 
@@ -74,6 +80,11 @@
                 },
                 dataType:"json",
                 success:function (result) {
+                    console.log(result);
+                    if (result.success) {
+                        $("#dg").datagrid("loadData",result.show);
+                        $("#addSon").datagrid("loadData",result.daochu);
+                    }
                     /*if (result.success) {
                         alert("保存成功");
                         window.location.reload();
@@ -84,13 +95,66 @@
                 }
             });
         }
+
+        //导出
+        function daochu(dg) {
+            var fields = $("#dg").datagrid('getColumnFields');
+            var datagridTitle = new Array();
+            for (var i = 0; i < fields.length; i++) {
+                var option = $("#dg").datagrid('getColumnOption', fields[i]);
+                if (option.field != "checkItem" && option.hidden != "true") { //过滤勾选框和隐藏列
+                    var obj = {};
+                    obj.title = option.title;
+                    obj.field = option.field;
+                    if (option.formatter) {
+                        obj.formatter = option.formatter;
+                    }
+                    datagridTitle.push(obj);
+                }
+            }
+            console.log(datagridTitle);
+
+            var jsonarr = [];
+            var rows = $(dg).datagrid("getRows");
+            for (var i = 0; i < rows.length; i++) {
+                var json = {};
+                console.log(rows[i]);
+                for (var j = 0; j < datagridTitle.length; j++) {
+                    var st = datagridTitle[j].title;
+                    if (datagridTitle[j].formatter) {
+                        json[datagridTitle[j].title] =  datagridTitle[j].formatter(rows[datagridTitle[j].field], rows[i]);
+                    } else {
+                        json[datagridTitle[j].title] =  rows[i][datagridTitle[j].field];
+                    }
+                }
+                console.log(JSON.stringify(json));
+                jsonarr.push(JSON.stringify(json));
+            }
+
+            jsonarr = "[" + jsonarr.join(",") + "]";
+            console.log(jsonarr);
+
+            $.ajax({
+                type: "POST",
+                url: "/admin/daochu?title=订单",
+                data: {a : jsonarr},
+                success: function (result) {
+                    if(result.success){
+                        $.messager.alert("系统提示","导出成功");
+                    }
+                    return;
+                }
+            });
+
+        }
     </script>
 </head>
 <body class="easyui-layout">
-<div data-options="region:'center'" style="padding: 10px; border: 1px">
+<div region="north" style="height: 300px">
     <table id="dg" class="easyui-datagrid" style="" rownumbers="true"
            singleSelect="true" fit="true" toolbar="#tb">
         <thead>
+        <th id="saleNumber" field="saleNumber" width="100" align="center">订单号</th>
         <th id="kucunzuzhi" field="kucunzuzhi" width="100" align="center">库存组织</th>
         <th id="hangHao" field="hangHao" width="100" align="center">行号</th>
         <th id="wuliaoId" field="wuliaoId" width="100" align="center">物料编号</th>
@@ -99,7 +163,6 @@
         <th id="num" field="num" width="100" align="center">数量</th>
         <th id="xiangmuId" field="xiangmuId" width="100" align="center">项目号</th>
         <th id="shenqingNumber" field="shenqingNumber" width="100" align="center">申请单号</th>
-        <th id="saleNumber" field="saleNumber" width="100" align="center">订单号</th>
         <th id="referDate" field="referDate" width="150" align="center">需交日期</th>
         <th id="saleDate" field="saleDate" width="150" align="center">接单日期</th>
         </thead>
@@ -113,6 +176,31 @@
             <a href="javascript:duibi()" class="easyui-linkbutton"
                 iconCls="icon-ok" plain="true">对比</a>
         </div>
+    </div>
+</div>
+
+<div region="center" style="margin-top: 5px">
+    <table id="addSon" class="easyui-datagrid" fitColumns="false" singleSelect="true"
+           rownumbers="true" fit="true" split="true" toolbar="#tb2">
+        <thead>
+            <th id="saleNumberDaochu" field="saleNumber" width="100" align="center">订单号</th>
+            <th id="kucunzuzhiDaochu" field="kucunzuzhi" width="100" align="center">库存组织</th>
+            <th id="hangHaoDaochu" field="hangHao" width="100" align="center">行号</th>
+            <th id="wuliaoIdDaochu" field="wuliaoId" width="100" align="center">物料编号</th>
+            <th id="tuzhiNameDaochu" field="tuzhiName" width="100" align="center">图纸名称</th>
+            <th id="tuzhiIdDaochu" field="tuzhiId" width="100" align="center">图纸编号</th>
+            <th id="numDaochu" field="num" width="100" align="center">数量</th>
+            <th id="xiangmuIdDaochu" field="xiangmuId" width="100" align="center">项目号</th>
+            <th id="shenqingNumberDaochu" field="shenqingNumber" width="100" align="center">申请单号</th>
+            <th id="referDateDaochu" field="referDate" width="150" align="center">需交日期</th>
+            <th id="saleDateDaochu" field="saleDate" width="150" align="center">接单日期</th>
+        </thead>
+    </table>
+</div>
+<div id="tb2">
+    <div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:daochu('#addSon')" id="daochu"
+                                         class="easyui-linkbutton" iconCls="icon-remove" plain="true">导出</a>
     </div>
 </div>
 

@@ -3,6 +3,7 @@ package com.shenke.service;
 
 import com.shenke.entity.DrawingProcess;
 import com.shenke.entity.SaleList;
+import com.sun.javafx.collections.MappingChange;
 import org.eclipse.jdt.internal.compiler.ast.IntersectionCastTypeReference;
 import org.springframework.stereotype.Service;
 
@@ -120,5 +121,7 @@ public interface SaleListService {
     void setOpenState(Integer id, String state);
 
     //无订单下单对比
-    List<SaleList> notSaleNumber(SaleList saleList);
+    //List<SaleList> notSaleNumber(SaleList saleList);
+
+    Map<String,Object> aaaa(List<SaleList> plgList);
 }
