@@ -124,6 +124,7 @@ public class BigDrawingAdminController {
     @RequestMapping("/download")
     public String downloadFile(HttpServletRequest request, HttpServletResponse response,String fileName) throws Exception {
         System.out.println("下载");
+        System.out.println(fileName);
         if (fileName != null) {
             //当前是从该工程的WEB-INF//File//下获取文件(该目录可以在下面一行代码配置)然后下载到C:\\users\\downloads即本机的默认下载的目录
             String realPath = "d:/drawing/";
@@ -145,9 +146,13 @@ public class BigDrawingAdminController {
                     bis = new BufferedInputStream(fis);
                     OutputStream os = response.getOutputStream();
                     int i = bis.read(buffer);
+                    System.out.println("**********************");
+                    System.out.println(i);
+                    System.out.println("**********************");
                     while (i != -1) {
                         os.write(buffer, 0, i);
                         i = bis.read(buffer);
+                        System.out.println("("+i+")");
                     }
                     return "下载成功";
                 } catch (Exception e) {
@@ -189,8 +194,12 @@ public class BigDrawingAdminController {
                 //计算实际展开工时
                 Long between = bigDrawing.getStopDate().getTime() - bigDrawing.getStartDate().getTime();
                 Double d= between.doubleValue();
-                bigDrawing.setShiJiGongShi((d/60000));
-                map.put("jishi",(d/60000));
+
+                if(bigDrawing.getShiJiGongShi() != null){
+                    bigDrawing.setShiJiGongShi(bigDrawing.getShiJiGongShi() + (d/60000));
+                }else {
+                    bigDrawing.setShiJiGongShi(d/60000);
+                }
                 bigDrawingService.save(bigDrawing);
             }
         }

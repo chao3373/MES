@@ -99,4 +99,38 @@ public class DrawingTypeAdminController {
         return map;
     }
 
+    /**
+     * 根据id删除
+     * @param id
+     * @return
+     */
+    @RequestMapping("/deleteById")
+    public Map<String,Object> deleteById(Integer id){
+        Map<String,Object> map = new HashMap<>();
+        drawingTypeService.deleteById(id);
+        map.put("success",true);
+        return map;
+    }
+
+    @RequestMapping("/xiugai")
+    public Map<String,Object> xiugai(String wuliaoId,String tuZhiName,Integer num,Integer id){
+        System.out.println("********************************");
+        System.out.println(wuliaoId);
+        System.out.println(tuZhiName);
+        System.out.println(num);
+        System.out.println(id);
+        System.out.println("********************************");
+        Map<String,Object> map = new HashMap<>();
+        DrawingType drawingType = drawingTypeService.findById(id);
+        drawingType.getDrawing().setWuliaoId(wuliaoId);
+        drawingType.getDrawing().setTuZhiName(tuZhiName);
+        drawingType.setNum(num);
+        System.out.println("**************");
+        System.out.println(drawingType);
+        System.out.println("**************");
+        drawingTypeService.save(drawingType);
+        map.put("success",true);
+        return map;
+    }
+
 }

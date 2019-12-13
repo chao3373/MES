@@ -39,7 +39,7 @@ public class SaleList {
     private String xiangmuId;//项目编号
 
     @Column(length = 20)
-    private String shenqingNumber;//申请编号
+    private String shenqingNumber;//申请单号
 
     @Column(length = 20)
     private  String kucunzuzhi;//库存组织
@@ -70,6 +70,16 @@ public class SaleList {
     private String gongxus; //所属工序 (临时接收数据用)
 
     private String openState; // 图纸展开状态（图纸展开界面使用 用来查看谁在展开图纸）
+
+    private String outCode; //出库编码 在下订单的时候生成出库编码
+
+    public String getOutCode() {
+        return outCode;
+    }
+
+    public void setOutCode(String outCode) {
+        this.outCode = outCode;
+    }
 
     public String getOpenState() {
         return openState;
@@ -254,6 +264,7 @@ public class SaleList {
                 ", remark=" + remark +
                 ", gongxus='" + gongxus + '\'' +
                 ", openState='" + openState + '\'' +
+                ", outCode='" + outCode + '\'' +
                 '}';
     }
 }

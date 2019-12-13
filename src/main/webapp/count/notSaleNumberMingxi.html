@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>无订单下单分拣</title>
+    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
+    <link rel="stylesheet" type="text/css"
+          href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript"
+            src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/static/js/date.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+           load();
+        });
+
+        function load() {
+            $("#dg").datagrid({
+                url:"/admin/saleList/listAllNoSaleNumber",
+                columns: [[
+                    {
+                        field: "saleNumber",
+                        title: "订单编号",
+                        width: "140",
+                        align: "center"
+                    },{
+                        field: "kucunzuzhi",
+                        title: "库存组织",
+                        width: "140",
+                        align: "center"
+                    },{
+                        field: "hangHao",
+                        title: "行号",
+                        width: "140",
+                        align: "center"
+                    },{
+                        field: "wuliaoId",
+                        title: "物料编号",
+                        width: "140",
+                        align: "center"
+                    },{
+                        field: "tuzhiName",
+                        title: "图纸名称",
+                        width: "140",
+                        align: "center"
+                    },{
+                        field: "tuzhiId",
+                        title: "图纸编号",
+                        width: "140",
+                        align: "center"
+                    },{
+                        field: "num",
+                        title: "数量",
+                        width: "140",
+                        align: "center"
+                    },{
+                        field: "xiangmuId",
+                        title: "项目号",
+                        width: "140",
+                        align: "center"
+                    },{
+                        field: "shenqingNumber",
+                        title: "申请单号",
+                        width: "140",
+                        align: "center"
+                    },{
+                        field: "saleDate",
+                        title: "接单日期",
+                        width: "140",
+                        align: "center"
+                    },{
+                        field: "referDate",
+                        title: "交货日期",
+                        width: "140",
+                        align: "center"
+                    }
+                ]]
+            });
+        }
+
+
+        //查询
+        function search() {
+            $("#fm").form('submit', {
+                url: "/admin/saleList/findAboutNoSaleNumber",
+                success: function (result) {
+                    console.log(result)
+                    var ruseltt = eval('(' + result + ')');
+                    if(ruseltt.success){
+                        $("#dg").datagrid("loadData",ruseltt.rows);
+                    }
+                }
+            });
+        }
+
+        //点击替换
+        var row;
+        function tihuan(){
+            row = $("#dg").datagrid("getSelected");
+            if(row == null){
+                $.messager.alert("系统提示","请选择要替换的订单");
+                return;
+            }
+            $("#dlg").dialog("open").dialog("setTitle","替换订单编号");
+        }
+
+        //保存替换
+        function save() {
+            var saleNumber = $("#saleNumber").val();
+            if(saleNumber == null){
+                $.messager.alert("系统提示","内容为空！");
+                return;
+            }
+            $.post("/admin/saleList/updateSaleNumber",{
+                id:row.id,
+                saleNumber:saleNumber
+            },function (result) {
+                if(result.success){
+                    $.messager.alert("系统提示","替换成功！");
+                    $("#dg").datagrid("reload");
+                    close();
+                }
+            })
+        }
+
+        //关闭对话框
+        function close() {
+            $("#dlg").dialog("close");
+        }
+
+    </script>
+</head>
+<body class="easyui-layout">
+    <table id="dg" class="easyui-datagrid" style="" rownumbers="true"
+           singleSelect="true" fit="true" toolbar="#tb">
+    </table>
+
+    <div id="tb">
+        <form id="fm">
+            <table cellspacing="8px">
+                <tr>
+                    <td>
+                        物料编号：<input type="text" id="wuliaoId" name="wuliaoId" style="width: 130px"/>
+                    </td>
+                    <td>
+                        库存组织：<input type="text" id="kucunzuzhi" name="kucunzuzhi" style="width: 130px"/>
+                    </td>
+                    <td>
+                        行号：<input type="text" id="hangHao" name="hangHao" style="width: 130px"/>
+                    </td>
+                    <td>
+                        数量：<input type="text" id="num" name="num" style="width: 130px"/>
+                    </td>
+                    <td>
+                        <a href="javascript:search()" class="easyui-linkbutton"
+                           iconCls="icon-search" plain="true">查询</a>
+                    </td>
+                    <td>
+                        <a href="javascript:tihuan()" class="easyui-linkbutton"
+                           iconCls="icon-add" plain="true">替换</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        项目号：<input type="text" id="xiangmuId" name="xiangmuId" style="width: 130px"/>
+                    </td>
+                    <td>
+                        申请单号：<input type="text" id="shenqingNumber" name="shenqingNumber" style="width: 130px"/>
+                    </td>
+                    <td>
+                        接单日期：<input type="text" id="saleDate" name="saleDateCha" class="easyui-datebox"
+                            demandd="true" size="15"/>
+                    </td>
+                    <td>
+                        交货日期：<input type="text" id="referDate" name="referDateCha" class="easyui-datebox"
+                                    demandd="true" size="15"/>
+                    </td>
+                    <td>
+                        <a href="javascript:refresh()" class="easyui-linkbutton"
+                           iconCls="icon-reload" plain="true">刷新</a>
+                    </td>
+
+                </tr>
+            </table>
+        </form>
+    </div>
+
+    <!--添加完成数量对话框-->
+    <div id="dlg" class="easyui-dialog" style="width: 300px;height: 150px;"
+         closed="true" buttons="#dlg-buttons">
+            <table cellspacing="8px">
+                <tr>
+                    <td>订单编号：</td>
+                    <td><input type="text" id="saleNumber" name="saleNumber" required="true"/></td>
+                </tr>
+            </table>
+    </div>
+    <!-- 对话框按钮 -->
+    <div id="dlg-buttons">
+        <a href="javascript:save()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+        <a href="javascript:close()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
+    </div>
+
+</body>
+</html>

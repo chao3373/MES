@@ -5,6 +5,7 @@ import org.krysalis.barcode4j.impl.code128.Code128Bean;
 import org.krysalis.barcode4j.impl.code39.Code39Bean;
 import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
 import org.krysalis.barcode4j.tools.UnitConv;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.awt.image.BufferedImage;
@@ -48,27 +49,22 @@ public class TiaoMaUtil {
             return;
         }
 
-        /*Code39Bean bean = new Code39Bean();
-
-        // 精细度
-        final int dpi = 100;
-        // module宽度
-        final double moduleWidth = UnitConv.in2mm(1.0f / dpi);
-
-        // 配置对象
-        bean.setModuleWidth(moduleWidth);
-        bean.setWideFactor(3);
-        bean.doQuietZone(false);*/
-
         //创建128编码对象
         Code128Bean bean = new Code128Bean();
+
+
         //设置分辨率
-        final int dpi = 100;
+        final int dpi = 120;
         // module宽度
         final double moduleWidth = UnitConv.in2mm(1.2f / dpi);
         //设置两侧是否留白
-        bean.doQuietZone(true);
+        bean.doQuietZone(false);
         bean.setModuleWidth(moduleWidth);
+        System.out.println("********************************");
+        bean.getModuleWidth();
+        bean.getBarHeight();
+
+        System.out.println("********************************");
 
 
 

@@ -10,4 +10,8 @@ public interface UserProcessService {
     public void save(UserProcess userProcess);
 
     public List<UserProcess> findByUserId(Integer id);
+
+    List<UserProcess> processListByUser(String s, Integer id);
+
+    void deleteByProcessIds(Integer[] ids);
 }

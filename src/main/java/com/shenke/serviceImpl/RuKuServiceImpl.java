@@ -17,11 +17,6 @@ public class RuKuServiceImpl implements RuKuService {
     private RuKuRepository ruKuRepository;
 
     @Override
-    public RuKu findOneByxiaotuCode(String xiaotuCode) {
-        return ruKuRepository.findOneByxiaotuCode(xiaotuCode);
-    }
-
-    @Override
     public void save(RuKu ruku) {
         ruKuRepository.save(ruku);
     }
@@ -47,8 +42,8 @@ public class RuKuServiceImpl implements RuKuService {
     }
 
     @Override
-    public List<RuKu> findByDatuCode(String datuCode) {
-        return ruKuRepository.findByDatuCode(datuCode);
+    public List<RuKu> findByoutCode(String outCode) {
+        return ruKuRepository.findByoutCode(outCode);
     }
 
 

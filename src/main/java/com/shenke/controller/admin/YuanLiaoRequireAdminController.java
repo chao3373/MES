@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -37,28 +34,34 @@ public class YuanLiaoRequireAdminController {
      * 保存原料需求单
      * @param num
      * @param wuliaoId
-     * @param saleListId
      * @param session
      * @return
      */
     @RequestMapping("/save")
-    public Map<String,Object> save (Integer num,String wuliaoId,Integer saleListId, HttpSession session){
+    public Map<String,Object> save (Integer num,String wuliaoId, HttpSession session){
         Map<String,Object> map = new HashMap<>();
         BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(wuliaoId);
 
         List<Wuliao> list = wuliaoService.findByBigDrawingId(bigDrawing.getId());
+        List<SaleList> lists = saleListService.findByWuliaoIdTuzhiOpen(wuliaoId);
 
-        for (Wuliao wuliao : list){
-            YuanLiaoRequire yuanLiaoRequire = new YuanLiaoRequire();
-            yuanLiaoRequire.setTao(num);
-            yuanLiaoRequire.setSaleList(saleListService.findById(saleListId));
-            yuanLiaoRequire.setShenQingDate(new Date());
-            yuanLiaoRequire.setWuliao(wuliao);
-            yuanLiaoRequire.setUser((User) session.getAttribute("currentUser"));
-            yuanLiaoRequire.setState("备货中");
-            yuanLiaoRequire.setSumNum(num * wuliao.getNum());
-            yuanLiaoRequireService.save(yuanLiaoRequire);
+        for(SaleList saleList : lists){
+            yuanLiaoRequireService.deleteBySaleListId(saleList.getId());
+            for (Wuliao wuliao : list){
+                YuanLiaoRequire yuanLiaoRequire = new YuanLiaoRequire();
+                yuanLiaoRequire.setTao(num);
+                yuanLiaoRequire.setSaleList(saleList);
+                yuanLiaoRequire.setShenQingDate(new Date());
+                yuanLiaoRequire.setWuliao(wuliao);
+                yuanLiaoRequire.setUser((User) session.getAttribute("currentUser"));
+                yuanLiaoRequire.setState("备货中");
+                yuanLiaoRequire.setSumNum(num * wuliao.getNum());
+                yuanLiaoRequireService.save(yuanLiaoRequire);
+            }
         }
+
+
+
         map.put("success",true);
         return map;
     }
@@ -103,6 +106,26 @@ public class YuanLiaoRequireAdminController {
             }
         }
 
+        return map;
+    }
+
+    @RequestMapping("/findByIds")
+    public Map<String,Object> findByIds(Integer []Ids){
+        Map<String,Object> map = new HashMap<>();
+        List<List<YuanLiaoRequire>> list = new ArrayList<>();
+        for(int i = 0;i<Ids.length;i++){
+            list.add(yuanLiaoRequireService.findBySaleListId(Ids[i]));
+        }
+        for(List<YuanLiaoRequire> list1 : list){
+            YuanLiaoRequire yuanLiaoRequire = new YuanLiaoRequire();
+            Wuliao wuliao = new Wuliao();
+            wuliao.setName("订单号：");
+            wuliao.setGuiGe(list1.get(1).getSaleList().getSaleNumber());
+            yuanLiaoRequire.setWuliao(wuliao);
+            list1.add(0,yuanLiaoRequire);
+        }
+        map.put("success",true);
+        map.put("data",list);
         return map;
     }
 }

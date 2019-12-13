@@ -34,11 +34,11 @@ public interface ShengChanService {
 
     /**
      * 查找此工序可以生产的件数（即前一工序已生产的件数）
-     * @param xiaotuCode
+     * @param biaoqianCode
      * @param i
      * @return
      */
-    public Integer selectBeforeProcess(String xiaotuCode, int i);
+    public Integer selectBeforeProcess(String biaoqianCode, int i);
 
     /**
      * 通过Id查询对象
@@ -96,4 +96,33 @@ public interface ShengChanService {
      * @return
      */
     List<ShengChan> findByState(String state);
+
+    /**
+     * 通过salelistId 查询大图生产情况
+     * @param id
+     * @return
+     */
+    List<ShengChan> findBySaleListIdAboutDatu(Integer id);
+
+    /**
+     * 通过saleListId 查询小图生产情况
+     * @param id
+     * @return
+     */
+    List<ShengChan> findBySaleListIdAboutXiaotu(Integer id);
+
+    /**
+     * 通过salelistId修改大图的状态  （从“不可生产”---> “未生产”）
+     * @param saleListId
+     */
+    void updateDatuState(Integer saleListId);
+
+    void deleteByProcessIds(Integer[] ids);
+
+    /**
+     * 销售订单追踪界面根据saleList 的 id 查找该id下所有的工序信息
+     * @param id
+     * @return
+     */
+    List<ShengChan> findBySaleList(Integer id);
 }

@@ -23,9 +23,64 @@
             //焦点聚焦条码input
             $("#tiaoma").select();
             //提交 和 开始生产两个按钮都隐藏
-            $("#tijiao").linkbutton("disable");
-            $("#startProduct").linkbutton("disable");
+            // $("#tijiao").linkbutton("disable");
+            // $("#startProduct").linkbutton("disable");
+
+            //选择工序下拉框的触发事件
+            processCombobox();
+
+            // $('#dg').datagrid({
+            //     rowStyler: function (index, row) {
+            //          if (row.state != "未生产") {
+            //              return 'background:blue;color:white'
+            //          }
+            //     }
+            // });
         });
+
+
+
+
+        //选择工序下拉框的触发事件
+        var duoXuan;
+        function processCombobox() {
+            $("#name").combobox({
+                onSelect:function (val) {
+                    console.log(val)
+                    /*$.post("/admin/shengChan/showInProcessProduct",{
+                        processId:val.id
+                    },function (result) {
+                       $("#dg").datagrid("loadData",result.rows);
+                    });*/
+
+                    $("#dg").datagrid({
+                        url: '/admin/shengChan/showInProcessProduct',
+                        queryParams: {
+                            processId:val.id
+                        }
+                    });
+                    duoXuan = val.duoXuan;
+
+
+
+                    if (val.duoXuan == "否" || val.duoXuan == null){
+                        $("#dg").datagrid({
+                            onClickRow: function (rowIndex, rowData) {
+                                $("#dg").datagrid('unselectRow', rowIndex);
+                            }
+                        })
+                    }
+                    if (val.duoXuan == "是"){
+                        $("#dg").datagrid({
+                            onClickRow: function (rowIndex, rowData) {
+                                $("#dg").datagrid('selectRow', rowIndex);
+                            }
+                        })
+                    }
+                }
+            })
+        }
+
 
         //提交显示  开始生产隐藏
         function show() {
@@ -51,139 +106,302 @@
                     user = result.user;
                 }
             });
+
+
         }
 
         //加载主界面
         function load(){
-            $("#dg").datagrid({
-                url:"/admin/shengChan/showInProcessProduct",
-                columns:[[
-                    {
-                        field: "id",
-                        width: "150",
-                        align: "center",
-                        title: "id",
-                        hidden:"true"
-                    },{
-                        field: "saleNumber",
-                        title:"订单号",
-                        width: "140",
-                        align: "center",
-                        formatter:function (val, row) {
-                            if(row.saleList){
-                                return row.saleList.saleNumber;
-                            }
-                            else {
-                                return '';
-                            }
-                        }
-                    },{
-                        field: "datu",
-                        title:"大图",
-                        width: "110",
-                        align: "center",
-                        formatter:function (val, row) {
-                            if(row.bigDrawing){
-                                return row.bigDrawing.wuliaoId;
-                            }
-                            else {
-                                return '';
-                            }
-                        }
-                    },{
-                        field: "xiaotu",
-                        title:"小图",
-                        width: "110",
-                        align: "center",
-                        formatter:function (val, row) {
-                            if(row.drawing){
-                                return row.drawing.wuliaoId;
-                            }
-                            else {
-                                return '';
-                            }
-                        }
-                    },{
-                        field: "gongxu",
-                        title:"工序",
-                        width: "90",
-                        align: "center",
-                        formatter:function (val, row) {
-                            if(row.process){
-                                return row.process.name;
-                            }
-                            else {
-                                return '';
-                            }
-                        }
-                    },{
-                        field: "num",
-                        title:"需求量",
-                        width: "80",
-                        align: "center"
-                    },{
-                        field: "accomplishNum",
-                        title:"已完成",
-                        width: "80",
-                        align: "center"
-                    },{
-                        field: "unaccomplishNum",
-                        title:"未完成",
-                        width: "80",
-                        align: "center",
-                        formatter:function (val, row) {
-                            return (row.num)-(row.accomplishNum);
-                        }
-                    },{
-                        field: "allowNum",
-                        title:"可生产数量",
-                        width: "80",
-                        align: "center"
-                    },{
-                        field: "xiangmuhao",
-                        title:"项目号",
-                        width: "100",
-                        align: "center",
-                        formatter:function (val, row) {
-                            if(row.saleList){
-                                return row.saleList.xiangmuId;
-                            }
-                            else {
-                                return '';
-                            }
-                        }
-                    },{
-                        field: "state",
-                        title:"状态",
-                        width: "80",
-                        align: "center",
-                        formatter:function (row,val) {
-                            if(row == "任务下发"){
-                                return "未生产";
-                            }else {
-                                return row;
-                            }
+            $.post("/admin/showGongShi/select",
+                function (result) {
+                    console.log(result)
+                    if(result.success){
+                        console.log(result.show);
+                        if(result.show == 1){
+                            console.log(result.show == 1)
+                            console.log(1111)
+                            $("#dg").datagrid({
+                                url:"/admin/shengChan/showInProcessProduct",
+                                columns:[[
+                                    {
+                                        field: "id",
+                                        width: "150",
+                                        align: "center",
+                                        title: "id",
+                                        hidden:"true"
+                                    },{
+                                        field: "saleNumber",
+                                        title:"订单编号",
+                                        width: "140",
+                                        align: "center",
+                                        formatter:function (val, row) {
+                                            if(row.saleList){
+                                                return row.saleList.saleNumber;
+                                            }
+                                            else {
+                                                return '';
+                                            }
+                                        }
+                                    },{
+                                        field: "datu",
+                                        title:"总图物料编号",
+                                        width: "110",
+                                        align: "center",
+                                        formatter:function (val, row) {
+                                            if(row.bigDrawing){
+                                                return row.bigDrawing.wuliaoId;
+                                            }
+                                            else {
+                                                return '';
+                                            }
+                                        }
+                                    },{
+                                        field: "xiaotu",
+                                        title:"分图物料编号",
+                                        width: "110",
+                                        align: "center",
+                                        formatter:function (val, row) {
+                                            if(row.drawing){
+                                                return row.drawing.wuliaoId;
+                                            }
+                                            else {
+                                                return '';
+                                            }
+                                        }
+                                    },{
+                                        field: "gongxu",
+                                        title:"工序",
+                                        width: "90",
+                                        align: "center",
+                                        formatter:function (val, row) {
+                                            if(row.process){
+                                                return row.process.name;
+                                            }
+                                            else {
+                                                return '';
+                                            }
+                                        }
+                                    },{
+                                        field: "num",
+                                        title:"需求量",
+                                        width: "80",
+                                        align: "center"
+                                    },{
+                                        field: "accomplishNum",
+                                        title:"已完成",
+                                        width: "80",
+                                        align: "center"
+                                    },{
+                                        field: "unaccomplishNum",
+                                        title:"未完成",
+                                        width: "80",
+                                        align: "center",
+                                        formatter:function (val, row) {
+                                            return (row.num)-(row.accomplishNum);
+                                        }
+                                    },{
+                                        field: "allowNum",
+                                        title:"可生产数量",
+                                        width: "80",
+                                        align: "center",
+                                        formatter:function (val, row) {
+                                            if(val == null || val == ""){
+                                                return 0;
+                                            }
+                                            else {
+                                                return val;
+                                            }
+                                        }
+                                    },{
+                                        field: "xiangmuhao",
+                                        title:"项目号",
+                                        width: "100",
+                                        align: "center",
+                                        formatter:function (val, row) {
+                                            if(row.saleList){
+                                                return row.saleList.xiangmuId;
+                                            }
+                                            else {
+                                                return '';
+                                            }
+                                        }
+                                    },{
+                                        field: "state",
+                                        title:"状态",
+                                        width: "80",
+                                        align: "center"
+                                    },{
+                                        field: "biaoqianCode",
+                                        title:"编码",
+                                        width: "80",
+                                        align: "center"
+                                    }
+
+                                ]],onClickRow: function (rowIndex, rowData) {
+                                    $(this).datagrid('unselectRow', rowIndex);
+                                }
+                            });
+                        }else {
+                            $("#dg").datagrid({
+                                url:"/admin/shengChan/showInProcessProduct",
+                                columns:[[
+                                    {
+                                        field: "id",
+                                        width: "150",
+                                        align: "center",
+                                        title: "id",
+                                        hidden:"true"
+                                    },{
+                                        field: "saleNumber",
+                                        title:"订单编号",
+                                        width: "140",
+                                        align: "center",
+                                        formatter:function (val, row) {
+                                            if(row.saleList){
+                                                return row.saleList.saleNumber;
+                                            }
+                                            else {
+                                                return '';
+                                            }
+                                        }
+                                    },{
+                                        field: "总图物料编号",
+                                        title:"大图",
+                                        width: "110",
+                                        align: "center",
+                                        formatter:function (val, row) {
+                                            if(row.bigDrawing){
+                                                return row.bigDrawing.wuliaoId;
+                                            }
+                                            else {
+                                                return '';
+                                            }
+                                        }
+                                    },{
+                                        field: "分图物料编号",
+                                        title:"小图",
+                                        width: "110",
+                                        align: "center",
+                                        formatter:function (val, row) {
+                                            if(row.drawing){
+                                                return row.drawing.wuliaoId;
+                                            }
+                                            else {
+                                                return '';
+                                            }
+                                        }
+                                    },{
+                                        field: "gongxu",
+                                        title:"工序",
+                                        width: "90",
+                                        align: "center",
+                                        formatter:function (val, row) {
+                                            if(row.process){
+                                                return row.process.name;
+                                            }
+                                            else {
+                                                return '';
+                                            }
+                                        }
+                                    },{
+                                        field: "num",
+                                        title:"需求量",
+                                        width: "80",
+                                        align: "center"
+                                    },{
+                                        field: "accomplishNum",
+                                        title:"已完成",
+                                        width: "80",
+                                        align: "center"
+                                    },{
+                                        field: "unaccomplishNum",
+                                        title:"未完成",
+                                        width: "80",
+                                        align: "center",
+                                        formatter:function (val, row) {
+                                            return (row.num)-(row.accomplishNum);
+                                        }
+                                    },{
+                                        field: "allowNum",
+                                        title:"可生产数量",
+                                        width: "80",
+                                        align: "center",
+                                        formatter:function (val, row) {
+                                            if(val == null || val == ""){
+                                                return 0;
+                                            }
+                                            else {
+                                                return val;
+                                            }
+                                        }
+                                    },{
+                                        field: "xiangmuhao",
+                                        title:"项目号",
+                                        width: "100",
+                                        align: "center",
+                                        formatter:function (val, row) {
+                                            if(row.saleList){
+                                                return row.saleList.xiangmuId;
+                                            }
+                                            else {
+                                                return '';
+                                            }
+                                        }
+                                    },{
+                                        field: "state",
+                                        title:"状态",
+                                        width: "80",
+                                        align: "center"
+                                    },{
+                                        field: "zbGongShi",
+                                        title:"准备工时",
+                                        width: "80",
+                                        align: "center"
+                                    },{
+                                        field: "czGongShi",
+                                        title:"操作工时",
+                                        width: "80",
+                                        align: "center"
+                                    },{
+                                        field: "biaoqianCode",
+                                        title:"编码",
+                                        width: "80",
+                                        align: "center"
+                                    }
+
+                                ]],onClickRow: function (rowIndex, rowData) {
+                                    $(this).datagrid('unselectRow', rowIndex);
+                                }
+                            });
                         }
                     }
+                });
+        }
 
-                ]],onClickRow: function (rowIndex, rowData) {
-                        $(this).datagrid('unselectRow', rowIndex);
-                }
-            });
+
+        //批量获取id
+        function huoquIds() {
+            var rows = $("#dg").datagrid("getRows");
+            var arr = [];
+            for(var i=0;i<rows.length;i++){
+                arr.push(rows[i].id)
+            }
+            var Ids = arr.join(",");
+            return Ids;
         }
 
         //提交生产数量
         function save() {
-            var row = $("#dg").datagrid("getRows")[0];
+            var rows = $("#dg").datagrid("getSelections");
+
             $.post("/admin/shengChan/updateAccomplishNum",{
                 num:$("#num").val(),
-                id:row.id
+                Ids:huoquIds()
             },function (result) {
                if(result.success){
                    close();
                    $.post("/admin/ruKu/save",{
-                       id:result.id,
-                       saleListId:row.saleList.id
+                       data:JSON.stringify(rows)
                    },function (result) {
                        if(result.success){
                            alert("提交成功！");
@@ -194,7 +412,7 @@
                else {
                    $.messager.alert("系统提示",result.errorInfo);
                }
-            },"json")
+            },"json");
         }
 
         //关闭dlg
@@ -203,54 +421,57 @@
             $("#dlg").dialog("close");
         }
 
-        /**
-         * 按照条件显示按钮
-         */
-        function showButton() {
-            var row = $("#dg").datagrid("getRows")[0];
-            if(row.state == "任务下发"){
-                display();
-            }else {
-                show();
-            }
-        }
-
 
         //点击搜索按钮
         var ok;
         function sousuo() {
             var tiaoma = $("#tiaoma").val();
             var row = $("#dg").datagrid("getRows")[0];
-            if(tiaoma.substring(0,2) == "TZ"){
-                if(tiaoma != row.xiaotuCode){
+            var rows = $("#dg").datagrid("getRows");
+            if(duoXuan == "是"){
+                for(var i=0;i<rows.length;i++){
+                    if(rows[i].biaoqianCode == tiaoma){
+                        $("#dg").datagrid("selectRow",i);
+                    }
+                }
+                ok=1;
+            }else if(duoXuan == "否"){
+                if(tiaoma != row.biaoqianCode){
                     $.messager.alert("系统提示","请按照顺序进行生产！");
                     return;
                 }
-                ok=1;
-                changeColor(0);
-                showButton();
-            }else {
-                if(tiaoma != row.datuCode){
-                    $.messager.alert("系统提示","请按照顺序进行生产！");
-                    return;
-                }
-                if(row.isDatu == 1){
-                    $.messager.alert("系统提示","小图工序请扫描小图条码进行生产！")
-                    return;
+                var row = $("#dg").datagrid("getRows");
+                if(row[0].biaoqianCode == tiaoma){
+                    $("#dg").datagrid("selectRow",0);
                 }
                 ok=1;
-                changeColor(0);
-                showButton();
+            }else if(duoXuan == undefined && row.state != "未生产"){
+                for(var i=0;i<rows.length;i++){
+                    if(rows[i].biaoqianCode == tiaoma){
+                        $("#dg").datagrid("selectRow",i);
+                    }
+                }
+            }else if(duoXuan == undefined && row.state == "未生产"){
+                $.messager.alert("系统提示","请选择工序或向管理员确认已添加工序属性！");
+                return;
             }
         }
 
         //点击提交按钮
         function tijiao() {
-            if (ok != 1){
-                $.messager.alert("系统提示","请扫描条形码再点击提交按钮！");
+            var rows = $("#dg").datagrid("getSelections");
+            if(rows.length == 0){
+                $.messager.alert("系统提示","请先扫描条码！");
                 return;
             }
-            $("#dlg").dialog("open").dialog("setTitle","添加生产数量");
+
+            $.messager.confirm("系统提示","您确定要提交以下工序的生产数量吗？",function (r) {
+                if(r){
+                    $("#dlg").dialog("open").dialog("setTitle","添加生产数量");
+                }else {
+                    return ;
+                }
+            })
         }
 
         //点击刷新按钮
@@ -258,38 +479,61 @@
             window.location.reload();
         }
 
-        //更改选中行颜色
-        function changeColor(i) {
-            $('#dg').datagrid({
-                rowStyler:function(index,row){
-                    if (index == i){
-                        return 'background-color:green;color:white;font-weight:bold;';
-                    }
-                }
-            });
-        }
 
         //点击开始生产按钮
         function startProduct() {
-            var row = $("#dg").datagrid("getRows")[0];
-            //var productUser = row.state.substring(4);
+            var rows = $("#dg").datagrid("getSelections");
+            for(var i=0;i<rows.length;i++){
+                if(rows[i].allowNum<=0){
+                    break;
+                    alert("工序可生产数量为0");
+                    return;
+                }
+            }
+            var arr = [];
+            for(var i = 0; i < rows.length; i++){
+                arr.push(rows[i].id)
+            }
+            var Ids = arr.join(",");
 
             $.post("/admin/shengChan/startProduct",{
-                id:row.id,
+                Ids:Ids,
                 state:"生产中："+user
             },function (result) {
                 if(result.success){
                     if(result.error){
                         $.messager.alert("系统提示",result.error);
-                        changeColor(-1);
+                        //changeColor(-1);
                         return;
                     }else {
                         window.location.reload();
-                        changeColor(-1);
+                        //changeColor(-1);
                     }
 
                 }
             },"json");
+        }
+
+        //取消生产
+        function quxiaoProduct() {
+            var rows = $("#dg").datagrid("getSelections");
+            if(rows.length == 0){
+                $.messager.alert("系统提示","请先扫描条码！");
+                return;
+            }
+            $.messager.confirm("系统提示","您确定要取消此工序的生产吗？",function (r) {
+                if(r){
+                    $.post("/admin/shengChan/updateState",{
+                        Ids:huoquIds()
+                    },function (result) {
+                        if(result.success){
+                            $("#dg").datagrid("reload");
+                        }
+                    })
+                }else{
+                    return;
+                }
+            })
         }
 
 
@@ -311,7 +555,7 @@
             <option value="任务下发">未生产</option>
             <option value="生产中">生产中</option>
         </select>-->
-        &nbsp;&nbsp;条形码：&nbsp; <input  type="text" id="tiaoma"  name="tiaoma"  size="15"
+        &nbsp;&nbsp;条形码：&nbsp; <input  type="text" id="tiaoma"  name="tiaoma"  size="15" autocomplete="off"
                                  onkeydown="if(event.keyCode==13) sousuo()" />
         &nbsp;&nbsp;<a href="javascript:sousuo()"
                        class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
@@ -319,8 +563,13 @@
                        class="easyui-linkbutton" iconCls="icon-refresh" plain="true">刷新</a>
         &nbsp;&nbsp;<a href="javascript:startProduct()" id="startProduct"
                        class="easyui-linkbutton" iconCls="icon-ok" plain="true">开始生产</a>
+        &nbsp;&nbsp;<a href="javascript:quxiaoProduct()" id="quxiaoProduct"
+                       class="easyui-linkbutton" iconCls="icon-ok" plain="true">取消生产</a>
         &nbsp;&nbsp;<a href="javascript:tijiao()" id="tijiao"
                        class="easyui-linkbutton" iconCls="icon-ok" plain="true">提交</a>
+        &nbsp;&nbsp;选择工序:<input class="easyui-combobox" id="name" name="name" style="width: 100px"
+                           data-options="panelHeight:'auto',valueField:'id',textField:'name',
+                           url:'/admin/userProcess/processListByUser'"/>
     </fieldset>
 </div>
 

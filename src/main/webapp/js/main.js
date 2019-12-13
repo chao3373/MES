@@ -7,6 +7,9 @@ function chaKanTZ() {
 //小图查看图纸
 function chaKanXTZ() {
     var src = "/tz/" + $("#dg").datagrid("getSelected").url;
+
+    //var aa = "/tz/" + $("#dg").datagrid("getSelected").wuliaoId + ".jpg";
+
     window.open(src);
 }
 
@@ -98,5 +101,16 @@ function shuaXinDg(dg, url){
             }
         }
     })
+}
+
+//获取from表单中的所有name和对应的值
+function getFrom(from) {
+    var from = $(from);
+    var obj = {};
+    var t = from.serializeArray();
+    $.each(t, function () {
+        obj[this.name] = this.value;
+    });
+    return obj;
 }
 

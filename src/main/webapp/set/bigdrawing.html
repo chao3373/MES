@@ -15,23 +15,18 @@
     <script type="text/javascript" src="../js/main.js"></script>
     <script type="text/javascript">
         var url;
-
         /*function searchRole() {
             $("#dg").datagrid('load', {
                 name: $("#s_roleName").val()
             });
         }*/
-
-
         function closeRoleDialog() {
             $("#dlg").dialog("close");
             resetValue();
         }
-
         function resetValue() {
             $("#wuliaoId").val();
         }
-
         function saveRole() {
             $("#fm").form("submit", {
                 url: url,
@@ -51,13 +46,11 @@
                 }
             });
         }
-
         //添加图纸信息
         function openRoleAddDialog() {
             $("#dlg").dialog("open").dialog("setTitle", "添加图纸信息");
             url = "/admin/bigdrawing/save";
         }
-
         //修改图纸信息
         function openRoleModifyDialog() {
             var selectedRows = $("#dg").datagrid("getSelections");
@@ -70,7 +63,6 @@
             $("#fm").form("load", row);
             url = "/admin/bigdrawing/save?id=" + row.id;
         }
-
         function deleteRole() {
             var selectedRows = $("#dg").datagrid("getSelections");
             if (selectedRows.length != 1) {
@@ -93,7 +85,6 @@
                 }
             });
         }
-
         function download(){
             alert("down");
             // var row = $("#dg").datagrid("getSelected");
@@ -101,15 +92,14 @@
             // $("#download").attr("href",href);
             // xiazai();
         }
-
         function xiazai(){
             // setTimeout(xiazai2(), 1000);
-            var row = $("#dg").datagrid("getSelected");
-            console.log(row);
+           var row = $("#dg").datagrid("getSelected");
             var href = "/admin/bigdrawing/download?fileName=" + row.url;
             $("#download").attr("href",href);
             $("#xz").click();
         }
+
 
         $(document).ready(function () {
             $("#dg").datagrid({
@@ -126,16 +116,15 @@
                         }
                     },
                     {
-                        field: 'download', title: '下载', align: 'center', width: $(this).width() * 0.1,
+                        field: 'download', title: '下载', align: 'center',hidden:true, width: $(this).width() * 0.1,
                         formatter: function (value, row, index) {
-                            var str = '<a href="#123" id="download" onclick="xiazai();return false;" name="download" class="easyui-linkbutton" ><p id="xz">下载</p></a>';
+                            var str = '<a href id="download" return false;" name="download" class="easyui-linkbutton" ><p id="xz">下载</p></a>';
                             return str;
                         }
                     }
                 ]]
             });
         });
-
         //点击搜索
         function search() {
             $.post("/admin/bigdrawing/search",{
@@ -147,7 +136,6 @@
                 }
             })
         }
-
         //更新展开工时
         function updateTime() {
             $.post("/admin/bigdrawing/updateTime",{
@@ -164,7 +152,7 @@
 </head>
 <body style="margin: 1px">
 <table id="dg" title="大图纸设置" class="easyui-datagrid" fitColumns="true"
-      rownumbers="true" singleSelect="true"
+       rownumbers="true" singleSelect="true"
        url="/admin/bigdrawing/list" fit="true" toolbar="#tb">
 </table>
 
@@ -177,7 +165,7 @@
             href="javascript:deleteRole()" class="easyui-linkbutton"
             iconCls="icon-remove" plain="true">删除</a><a
             href="javascript:xiazai()" class="easyui-linkbutton"
-            iconCls="icon-download" plain="true">下载</a>
+             plain="true">下载</a>
     </div>
     <div>
         &nbsp;物料编号：&nbsp;<input type="text" id="name" size="20"

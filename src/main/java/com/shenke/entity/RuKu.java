@@ -17,7 +17,7 @@ public class RuKu {
     @ManyToOne
     private SaleList saleList;//订单对象
 
-    private String datuCode; //大图编码
+    private String outCode; //发货编码
 
     private Integer orderNum; // 订单数量
 
@@ -26,6 +26,14 @@ public class RuKu {
     private Integer rukuNum;//入库数量
 
     private String state;//状态
+
+    public String getOutCode() {
+        return outCode;
+    }
+
+    public void setOutCode(String outCode) {
+        this.outCode = outCode;
+    }
 
     public Integer getOrderNum() {
         return orderNum;
@@ -51,13 +59,6 @@ public class RuKu {
         this.saleList = saleList;
     }
 
-    public String getDatuCode() {
-        return datuCode;
-    }
-
-    public void setDatuCode(String datuCode) {
-        this.datuCode = datuCode;
-    }
 
     public Integer getNum() {
         return num;
@@ -88,7 +89,7 @@ public class RuKu {
         return "RuKu{" +
                 "id=" + id +
                 ", saleList=" + saleList +
-                ", datuCode='" + datuCode + '\'' +
+                ", outCode='" + outCode + '\'' +
                 ", orderNum=" + orderNum +
                 ", num=" + num +
                 ", rukuNum=" + rukuNum +

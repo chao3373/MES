@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>销售订单审核</title>
+    <title>信息录入</title>
     <link rel="stylesheet" type="text/css"
           href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
     <link rel="stylesheet" type="text/css"
@@ -23,7 +23,7 @@
 
         function searchSale() {
             $("#dg").datagrid({
-                url:'/admin/saleList/findBySaleNumber',
+                url:'/admin/saleList/findBySaleNumberXinxiLuRu',
                 queryParams:{
                     saleNumber:$("#saleNumber").val()
                 }
@@ -76,11 +76,15 @@
         }
 
         $(document).ready(function () {
+            loadDg();
 
 
             $("#dg2").datagrid({
                 onClickRow:function (index,row) {
-                    $("#dg3").datagrid("appendRow",row);
+                    $("#dg3").datagrid("appendRow",{
+                        name:row.name,
+                        code:row.id
+                    });
                     $("#dg2").datagrid("unselectRow",index);
                 }
             });
@@ -94,7 +98,6 @@
                 }
             });
             load();
-            loadDg();
 
 
         });
@@ -107,12 +110,12 @@
                         field: "saleNumber",
                         width: "150",
                         align: "center",
-                        title: "销售单号"
+                        title: "订单编号"
                     },{
                         field: "saleDate",
                         width: "150",
                         align: "center",
-                        title: "销售日期",
+                        title: "接单日期",
                         formatter: function (value, row, index) {
                             if (value) {
                                 var date = new Date(value);
@@ -192,6 +195,11 @@
                                         }
                                     }
                                 }, {
+                                    field: 'num',
+                                    title: '数量',
+                                    width: 100,
+                                    align: 'center'
+                                }, {
                                     field: 'gongxus',
                                     title: '所含工序',
                                     width: 200,
@@ -210,9 +218,6 @@
                     }}
             });
         }
-
-
-
 
         //弹出的对话框中的值
         function load(){
@@ -314,9 +319,12 @@
         function openProcessChooseDialog(gongxus,id){
             var processArr=gongxus.split(",");
             $("#dlg2").dialog("open").dialog("setTitle","选择工序");
+            console.log(id);
+            console.log(id ==null);
+
             $("#dg2").datagrid({
                 url:'/admin/process/list',
-                onLoadSuccess:function(data){
+                /*onLoadSuccess:function(data){
                     var allRows=$("#dg2").datagrid("getRows");
                     for(var i=0;i<allRows.length;i++){
                         var name=allRows[i].name;
@@ -324,8 +332,42 @@
                             $("#dg2").datagrid("checkRow",i);
                         }
                     }
-                }
+                }*/
             });
+            if(id == null){
+                $.post("/admin/bigDrawingProcess/findByBigDrawingId",{
+                    wuliaoId:$("#dg").datagrid("getSelected").wuliaoId
+                },function (result) {
+                    if(result.success){
+                        var data = result.rows;
+                        for(var i=0;i<data.length;i++){
+                            $("#dg3").datagrid("appendRow",{
+                                name:data[i].process.name,
+                                zbGongShi:data[i].zbGongShi,
+                                czGongShi:data[i].czGongShi,
+                                code:data[i].process.id
+                            })
+                        }
+                    }
+                })
+            }else {
+                $.post("/admin/drawingProcess/findByDrawingId",{
+                    id:$("#addSon").datagrid("getSelected").drawing.id
+                },function (result) {
+                    if(result.success){
+                        var data = result.rows;
+                        for(var i=0;i<data.length;i++){
+                            $("#dg3").datagrid("appendRow",{
+                                name:data[i].process.name,
+                                zbGongShi:data[i].zbGongShi,
+                                czGongShi:data[i].czGongShi,
+                                code:data[i].process.id
+                            })
+                        }
+                    }
+                })
+            }
+
             $("#drawingId").val(id);
         }
 
@@ -333,6 +375,8 @@
         function saveProcess(){
             accept();
             var drawingId=$("#drawingId").val();
+
+            console.log(drawingId)
 
             if(drawingId == ''){ //保存大图工序
                 $.ajax({
@@ -562,7 +606,7 @@
     <div id="tb1">
         <fieldset style="border-color: #E7F0FF">
             <legend>查询设置</legend>
-            &nbsp;单据号&nbsp; <input type="text" id="s_saleNumber" size="15"
+            &nbsp;订单编号&nbsp; <input type="text" id="saleNumber" size="15"
                                    onkeydown="if(event.keyCode==13) searchSale()"/>
             &nbsp;&nbsp;<a href="javascript:searchSale()"
                            class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>

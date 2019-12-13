@@ -31,7 +31,7 @@
                         field: "dingdanhao",
                         width: "150",
                         align: "center",
-                        title: "销售单号",
+                        title: "订单编号",
                         formatter:function (val, row) {
                             console.log(row)
                             if(row.saleList != null){
@@ -55,7 +55,7 @@
                             }
                         }
                     }, {
-                        field: "datuCode",
+                        field: "outCode",
                         width: "150",
                         align: "center",
                         title: "条形码"
@@ -63,7 +63,7 @@
                         field: "num",
                         width: "150",
                         align: "center",
-                        title: "数量"
+                        title: "已完成数量"
                     }, {
                         field: "orderNum",
                         width: "150",
@@ -76,8 +76,8 @@
 
         //点击搜索
         function sousuo() {
-            $.post("/admin/ruKu/findByDatuCode",{
-                datuCode:$("#tiaoma").val()
+            $.post("/admin/ruKu/findByoutCode",{
+                outCode:$("#tiaoma").val()
             },function (result) {
                 if(result.success){
                     $("#dg").datagrid("loadData",result.rows);

@@ -3,6 +3,7 @@ package com.shenke.controller.admin;
 import com.shenke.entity.DrawingProcess;
 import com.shenke.entity.Log;
 import com.shenke.entity.Process;
+import com.shenke.entity.UserProcess;
 import com.shenke.service.*;
 import com.shenke.util.StringUtil;
 import org.apache.commons.collections.map.HashedMap;
@@ -31,10 +32,27 @@ public class ProcessAdminController {
     private BigDrawingService bigDrawingService;
 
     @Resource
+    private ShengChanService shengChanService;
+
+    @Resource
+    private UserProductService userProductService;
+
+    @Resource
+    private UserProcessService userProcessService;
+
+    @Resource
+    private DrawingProcessService drawingProcessService;
+
+    @Resource
+    private BigDrawingProcessService bigDrawingProcessService;
+
+    @Resource
     private LogService logService;
 
     @Resource
     private ProcessGroupService processGroupService;
+
+
 
     /**
      *  查询全部工时信息
@@ -68,27 +86,35 @@ public class ProcessAdminController {
     @RequestMapping("/save")
     public Map<String,Object> save(Integer id,String name){
         Map<String,Object> map = new HashMap<>();
-        Process process = new Process();
-        process.setName(name);
-        process.setProcessGroup(processGroupService.findById(id));
-
-        System.out.println("*************");
-        System.out.println(process);
-        System.out.println("*************");
-        processService.save(process);
+        List<Process> list = processService.findByName(name);
+        if(list.size() >= 1){
+            map.put("success",true);
+            map.put("error",name+"工序已存在！");
+        }else {
+            Process process = new Process();
+            process.setName(name);
+            process.setProcessGroup(processGroupService.findById(id));
+            processService.save(process);
+            map.put("success",true);
+        }
         return map;
     }
 
     @RequestMapping("/deleteByIds")
     public void deleteByIds(Integer[] ids){
+        userProductService.deleteByProcessIds(ids);
+        shengChanService.deleteByProcessIds(ids);
+        userProcessService.deleteByProcessIds(ids);
+        drawingProcessService.deleteByProcessIds(ids);
+        bigDrawingProcessService.deleteByProcessIds(ids);
         processService.deleteByIds(ids);
-        logService.save(new Log(Log.SEARCH_ACTION, "删除员工信息"));
     }
 
     @RequestMapping("/findByPGId")
     public Map<String,Object> findByPGId(Integer id){
         Map<String,Object> map = new HashMap<>();
         map.put("rows",processService.findByPGId(id));
+        map.put("success",true);
         return map;
     }
 
@@ -108,4 +134,19 @@ public class ProcessAdminController {
         map.put("success", true);
         return map;
     }
+
+    /**
+     * 设置工序是否为多选
+     * @param Ids
+     * @param duoXuan
+     * @return
+     */
+    @RequestMapping("/duoXuan")
+    public Map<String,Object> setDuoXuan(Integer []Ids,String duoXuan){
+        Map<String,Object> map = new HashMap<>();
+        processService.setDuoXuan(Ids,duoXuan);
+        map.put("success",true);
+        return map ;
+    }
 }
+

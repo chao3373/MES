@@ -10,6 +10,7 @@ import com.shenke.entity.Wuliao;
 import com.shenke.service.BigDrawingService;
 import com.shenke.service.SaleListService;
 import com.shenke.service.WuliaoService;
+import com.shenke.service.YuanLiaoRequireService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,22 +38,26 @@ public class WuliaoAdminController {
     @Resource
     private SaleListService saleListService;
 
+    @Resource
+    private YuanLiaoRequireService yuanLiaoRequireService;
+
     @RequestMapping("/save")
-    public Map<String,Object> save(String data, Integer saleListId, String bigDrawing){
+    public Map<String,Object> save(String data,String bigDrawing){
         Map<String,Object> map = new HashMap<>();
 
         BigDrawing bigDrawing1 = bigDrawingService.findByWuLiaoId(bigDrawing);
 
         //通过大图id删除对应物料信息
-        wuliaoService.deleteByBigDrawingId(bigDrawing1.getId());
+        //wuliaoService.deleteByBigDrawingId(bigDrawing1.getId());
         Gson gson = new Gson();
         List<Wuliao> plgList = gson.fromJson(data, new TypeToken<List<Wuliao>>() {
         }.getType());
-
         for(Wuliao wuliao : plgList){
-            wuliao.setBigDrawing(bigDrawing1);
+            if(wuliao.getId() == null){
+                wuliao.setBigDrawing(bigDrawing1);
+                wuliaoService.save(wuliao);
+            }
         }
-        wuliaoService.save(plgList);
         map.put("success",true);
         return map;
     }
@@ -102,11 +107,17 @@ public class WuliaoAdminController {
     public Map<String,Object> findByBigDrawingId(String wuliaoId){
         Map<String,Object> map = new HashMap<>();
         BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(wuliaoId);
-        map.put("size",wuliaoService.findByBigDrawingId(bigDrawing.getId()).size());
+        map.put("rows",wuliaoService.findByBigDrawingId(bigDrawing.getId()));
 
-        System.out.println("****************************");
-        System.out.println(map);
-        System.out.println("****************************");
+        return map;
+    }
+
+    @RequestMapping("/deleteById")
+    public Map<String,Object> deleteById(Integer id){
+        Map<String,Object> map = new HashMap<>();
+        yuanLiaoRequireService.deleByWuliaoId(id);
+        wuliaoService.deleteById(id);
+        map.put("success",true);
         return map;
     }
 }

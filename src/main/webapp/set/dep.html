@@ -135,6 +135,7 @@
         });
         $("#tree").tree({
             onClick: function (node) {
+                console.log(node)
                 $("#del").linkbutton("enable");
                 loadDg(node.id);
             }

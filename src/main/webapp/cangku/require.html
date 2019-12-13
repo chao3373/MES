@@ -75,6 +75,13 @@
                 //url:'/admin/saleList/xiadanSuccess',
                 columns: [[
                     {
+                        field: 'cb',
+                        title: 'cb',
+                        width: 20,
+                        checkbox: "true",
+                        align: 'center'
+                    },
+                    {
                         field: "id",
                         width: "150",
                         align: "center",
@@ -512,13 +519,93 @@
             }
         }
 
+        //导出
+        function daochu() {
+            var rows = $("#dg").datagrid("getSelections");
+            if(rows.length == 0){
+                $.messager.alert("系统提示","请选择要导出的物料！");
+                return;
+            }
+            var arr = [];
+            for (var i = 0; i < rows.length; i++) {
+                arr.push(rows[i].id);
+            }
+            var Ids = arr.join(",");
+
+            var data = [];
+            $.ajax({
+                type:"post",
+                async:false,
+                url:"/admin/yuanLiaoRequire/findByIds",
+                data:{Ids:Ids},
+                dataType:"json",
+                success:function (result) {
+                    if(result.success){
+                        data = result.data;
+                    }
+                }
+            });
+
+            var fields = $("#addSon").datagrid('getColumnFields');
+            console.log(fields)
+            var datagridTitle = new Array();
+            for (var i = 0; i < fields.length; i++) {
+                console.log(i)
+                console.log(fields);
+                console.log(fields[i]);
+                var option = $("#addSon").datagrid('getColumnOption', fields[i]);
+                console.log(option)
+                if (option.field != "checkItem" && option.hidden != "true") { //过滤勾选框和隐藏列
+                    var obj = {};
+                    obj.title = option.title;
+                    obj.field = option.field;
+                    if (option.formatter) {
+                        obj.formatter = option.formatter;
+                    }
+                    datagridTitle.push(obj);
+                }
+            }
+
+            var jsonarr = [];
+
+            for(var i = 0;i<data.length;i++){
+                console.log(data[i]);
+
+                for(var j = 0;j<data[i].length;j++){
+                    var json = {};
+                    for (var k = 0; k < datagridTitle.length-2; k++) {
+                        if(datagridTitle[k].formatter){
+                            json[datagridTitle[k].title] =  datagridTitle[k].formatter(data[i][datagridTitle[k].field],data[i][j]);
+                        }else {
+                            json[datagridTitle[k].title] = data[i][j][datagridTitle[k].field];
+                        }
+                    }
+                    jsonarr.push(JSON.stringify(json));
+                }
+            }
+            jsonarr = "[" + jsonarr.join(",") + "]";
+            $.ajax({
+                type: "POST",
+                url: "/admin/daochu?title=物料明细",
+                data: {a : jsonarr},
+                success: function (result) {
+                    if(result.success){
+                        $.messager.alert("系统提示","导出成功");
+                    }
+                    return;
+                }
+            });
+
+
+        }
+
 
     </script>
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
 <div region="north" style="height: 300px">
     <table id="dg" class="easyui-datagrid"
-           fitColumns="false" rownumbers="true" singleSelect="true" fit="true"
+           fitColumns="false" rownumbers="true" singleSelect="false" fit="true"
            toolbar="#tb1" split="true">
     </table>
 
@@ -534,6 +621,8 @@
                                  class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
             &nbsp;&nbsp;<a href="javascript:printdg()"
                            class="easyui-linkbutton" iconCls="icon-print" plain="true">打印采购单</a>
+            &nbsp;&nbsp;<a href="javascript:daochu()"
+                           class="easyui-linkbutton" iconCls="icon-print" plain="true">导出</a>
         </fieldset>
     </div>
 </div>

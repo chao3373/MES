@@ -38,4 +38,10 @@ public class DrawingProcessServiceImpl implements DrawingProcessService {
     public List<DrawingProcess> findByArr(Integer[] a) {
         return drawingProcessRepository.findByArr(a);
     }
+
+    @Override
+    public void deleteByProcessIds(Integer[] ids) {
+        System.out.println("4");
+        drawingProcessRepository.deleteByProcessIds(ids);
+    }
 }

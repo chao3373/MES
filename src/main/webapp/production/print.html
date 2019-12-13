@@ -42,28 +42,13 @@
     // }
 
     window.print();
-    // window.print();
 
-    // var timeId = setInterval(function () {
-    //     if (document.getElementsByTagName("img")) {
-    //         // window.close();
-    //         window.print();
-    //         alert("111");
-    //         clearInterval(timeId);
-    //         // window.print();
-    //     }
-    // }, 1000)
-    // $(function () {
-    //     var trs = $("tr");
-    //     for (var i = 1; i < trs.length; i++) {
-    //         if (i % 10 == 0) {
-    //             console.log(i);
-    //             console.log(trs[i]);
-    //             $(trs[i]).css({"background": "red"});
-    //             $(trs[i]).after("<div style='page-break-after:always;'></div>");
-    //         }
-    //     }
-    // })
+    var timeId = setInterval(function () {
+        if (document.getElementsByTagName("img")) {
+            window.print();
+            clearInterval(timeId);
+        }
+    }, 1000);
 </script>
 </body>
 </html>

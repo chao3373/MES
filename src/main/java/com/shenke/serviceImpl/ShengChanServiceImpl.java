@@ -37,8 +37,8 @@ public class ShengChanServiceImpl implements ShengChanService {
     }
 
     @Override
-    public Integer selectBeforeProcess(String xiaotuCode, int i) {
-        return shengChanRepository.selectBeforeProcess(xiaotuCode,i);
+    public Integer selectBeforeProcess(String biaoqianCode, int i) {
+        return shengChanRepository.selectBeforeProcess(biaoqianCode,i);
     }
 
     @Override
@@ -84,5 +84,31 @@ public class ShengChanServiceImpl implements ShengChanService {
     @Override
     public List<ShengChan> findByState(String state) {
         return shengChanRepository.findByState(state);
+    }
+
+    @Override
+    public List<ShengChan> findBySaleListIdAboutDatu(Integer id) {
+        return shengChanRepository.findBySaleListIdAboutDatu(id);
+    }
+
+    @Override
+    public List<ShengChan> findBySaleListIdAboutXiaotu(Integer id) {
+        return shengChanRepository.findBySaleListIdAboutXiaotu(id);
+    }
+
+    @Override
+    public void updateDatuState(Integer saleListId) {
+        shengChanRepository.updateDatuState(saleListId);
+    }
+
+    @Override
+    public void deleteByProcessIds(Integer[] ids) {
+        System.out.println("2");
+        shengChanRepository.deleteByProcessIds(ids);
+    }
+
+    @Override
+    public List<ShengChan> findBySaleList(Integer id) {
+        return shengChanRepository.findBySaleList(id);
     }
 }

@@ -16,4 +16,5 @@ public interface DrawingProcessService {
     public List<DrawingProcess> findByArr(Integer []a);
 
 
+    void deleteByProcessIds(Integer[] ids);
 }

@@ -42,17 +42,29 @@ public class StringUtil {
 	}
 
 	/**
-	 * 生成四位编号
+	 * 下单时候生成发货编码
 	 * 
 	 * @param code
 	 * @return
 	 */
 	public static String formatCode(String code) {
+
+		System.out.println("util code:  "+code);
 		int length = code.length();
-		Integer num = Integer.parseInt(code.substring(length - 7, length)) + 1;
+		Integer num = Integer.parseInt(code.substring(length - 8, length)) + 1;
+
+		System.out.println("util num:  "+ num);
+
 		String codeNum = num.toString();
+
+		System.out.println("util codeNum : "+codeNum);
+
 		int codeLength = codeNum.length();
-		for (int i = 7; i > codeLength; i--) {
+
+		System.out.println("codeLength : "+codeLength);
+
+		for (int i = 8; i > codeLength; i--) {
+			System.out.println("for循环codeNum ：" +codeNum);
 			codeNum = "0" + codeNum;
 		}
 		return codeNum;

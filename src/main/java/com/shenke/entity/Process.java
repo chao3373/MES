@@ -18,7 +18,17 @@ public class Process {
 
     @ManyToOne
     @JoinColumn
-    private ProcessGroup processGroup;
+    private ProcessGroup processGroup; // 工序组 对象
+
+    private String duoXuan; // 工序是否多选 （是/否）
+
+    public String getDuoXuan() {
+        return duoXuan;
+    }
+
+    public void setDuoXuan(String duoXuan) {
+        this.duoXuan = duoXuan;
+    }
 
     public ProcessGroup getProcessGroup() {
         return processGroup;
@@ -50,6 +60,7 @@ public class Process {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", processGroup=" + processGroup +
+                ", duoXuan='" + duoXuan + '\'' +
                 '}';
     }
 }

@@ -14,6 +14,7 @@
     <script type="text/javascript"
             src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="/static/js/date.js"></script>
+    <script type="text/javascript" src="/js/main.js"></script>
     <script type="text/javascript">
         var url;
 
@@ -22,12 +23,20 @@
         }
 
         function searchSale() {
-            $.post("/admin/saleList/selectLikeWuliaoId",{
-                wuliaoId:$("#wuliaoSearch").val(),
-                state:"分配工时"
-            },function (result) {
-                $("#dg").datagrid("loadData",result.rows)
-            },"json")
+
+            var data = getFrom("#search");
+            data.cunzai = "分配工时";
+            data.state = "下单";
+            console.log(data)
+
+            $.ajax({
+                type: "POST",
+                url: "/admin/saleList/selectAboutSaleList",
+                data: data,
+                success: function (result) {
+                    $("#dg").datagrid("loadData",result.rows)
+                }
+            });
         }
 
         function formatSupplier(val, row) {
@@ -82,65 +91,48 @@
 
             load();
             $("#dg").datagrid({
-                url:'/admin/saleList/showTuZhiOpen',
+                url: '/admin/saleList/showTuZhiOpen',
                 columns: [[
                     {
                         field: "saleNumber",
                         width: "150",
                         align: "center",
-                        title: "销售单号"
-                    },{
-                        field: "saleDate",
+                        title: "订单编号"
+                    },  {
+                        field: "xiangmuId",
                         width: "150",
                         align: "center",
-                        title: "销售日期",
-                        formatter: function (value, row, index) {
-                            if (value) {
-                                var date = new Date(value);
-                                var o = {
-                                    "M+": date.getMonth() + 1,                 //月份
-                                    "d+": date.getDate(),                    //日
-                                    "h+": date.getHours(),                   //小时
-                                    "m+": date.getMinutes(),                 //分
-                                    "s+": date.getSeconds(),                 //秒
-                                    "q+": Math.floor((date.getMonth() + 3) / 3), //季度
-                                    "S": date.getMilliseconds()             //毫秒
-                                };
-                                if (/(y+)/.test("yyyy-MM-dd hh:mm:ss"))
-                                    var fmt = "yyyy-MM-dd hh:mm:ss".replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
-                                for (var k in o)
-                                    if (new RegExp("(" + k + ")").test(fmt))
-                                        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-                                return fmt;
-                            } else {
-                                return "";
-                            }
-                        }
-                    },{
-                        field:'wuliaoId',
-                        title:'物料编号',
-                        width:100,
-                        align:'center'
-                    },{
+                        title: "项目号"
+                    },  {
+                        field: "shenqingNumber",
+                        width: "150",
+                        align: "center",
+                        title: "申请单号"
+                    }, {
+                        field: 'wuliaoId',
+                        title: '物料编号',
+                        width: 100,
+                        align: 'center'
+                    }, {
                         field: "tuzhiName",
                         width: "150",
                         align: "center",
                         title: "图纸名称"
-                    },{
+                    }, {
                         field: "tuzhiId",
                         width: "150",
                         align: "center",
                         title: "图纸编号"
-                    },{
+                    }, {
                         field: "num",
                         width: "150",
                         align: "center",
                         title: "数量"
-                    },{
-                        field: "referDate",
+                    }, {
+                        field: "saleDate",
                         width: "150",
                         align: "center",
-                        title: "需交日期",
+                        title: "接单日期",
                         formatter: function (value, row, index) {
                             if (value) {
                                 var date = new Date(value);
@@ -162,54 +154,89 @@
                             } else {
                                 return "";
                             }
+                        },
+                        sortable: true,
+                        sorter: function(a, b) {
+                            return (a > b ? 1 : -1);
                         }
-                    },{
+                    }, {
+                        field: "referDate",
+                        width: "150",
+                        align: "center",
+                        title: "交货日期",
+                        formatter: function (value, row, index) {
+                            if (value) {
+                                var date = new Date(value);
+                                var o = {
+                                    "M+": date.getMonth() + 1,                 //月份
+                                    "d+": date.getDate(),                    //日
+                                    "h+": date.getHours(),                   //小时
+                                    "m+": date.getMinutes(),                 //分
+                                    "s+": date.getSeconds(),                 //秒
+                                    "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+                                    "S": date.getMilliseconds()             //毫秒
+                                };
+                                if (/(y+)/.test("yyyy-MM-dd hh:mm:ss"))
+                                    var fmt = "yyyy-MM-dd hh:mm:ss".replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+                                for (var k in o)
+                                    if (new RegExp("(" + k + ")").test(fmt))
+                                        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                                return fmt;
+                            } else {
+                                return "";
+                            }
+                        },
+                        sortable: true,
+                        sorter: function(a, b) {
+                            return (a > b ? 1 : -1);
+                        }
+                    }, {
                         field: "openState",
                         width: "150",
                         align: "center",
                         title: "展开状态"
                     }
-                ]],
-                onClickRow:function (index,row) {
+                ]],remoteSort: false,
+                onClickRow: function (index, row) {
                     $("#addSon").datagrid({
-                        url:"/admin/saleList/bigSmallDrawing",
-                        queryParams:{
-                            wuliaoId:row.wuliaoId
+                        url: "/admin/saleList/bigSmallDrawing",
+                        queryParams: {
+                            wuliaoId: row.wuliaoId
                         },
-                        columns:[[
+                        columns: [[
                             {
-                                field:'id',
-                                title:'id',
-                                width:100,
-                                hidden:'true',
-                                align:'center'
-                            },{
-                                field:'wuliaoId',
-                                title:'小图物料编号',
-                                width:100,
-                                align:'center',
-                                formatter:function (row, value) {
+                                field: 'id',
+                                title: 'id',
+                                width: 100,
+                                hidden: 'true',
+                                align: 'center'
+                            }, {
+                                field: 'wuliaoId',
+                                title: '小图物料编号',
+                                width: 100,
+                                align: 'center',
+                                formatter: function (row, value) {
 
                                     var wl = $("#wuliaoId").val();
-                                    if(value.drawing !=null || wl != null){
-                                        if(value.drawing){
+                                    if (value.drawing != null || wl != null) {
+                                        if (value.drawing) {
                                             return value.drawing.wuliaoId;
-                                        }else if(wl != null){
+                                        } else if (wl != null) {
                                             return wl;
-                                        }else {
+                                        } else {
                                             return "";
                                         }
                                     }
 
                                 }
-                            },{
-                                field:'tuzhiName',
-                                title:'图纸名称',
-                                width:100,
-                                align:'center',
-                                formatter:function (row, value) {
+                            }, {
+                                field: 'tuzhiName',
+                                title: '图纸名称',
+                                width: 100,
+                                align: 'center',
+                                formatter: function (row, value) {
                                     var tn = $("#tuZhiName").val();
-                                    if(value.drawing !=null || tn != null) {
+                                    if (value.drawing != null || tn != null) {
                                         if (value.drawing) {
                                             return value.drawing.tuZhiName;
                                         } else if (tn != null) {
@@ -219,23 +246,58 @@
                                         }
                                     }
                                 }
-                            },{
-                                field:'num',
-                                title:'数量',
-                                width:100,
-                                align:'center'
+                            }, {
+                                field: 'num',
+                                title: '数量',
+                                width: 100,
+                                align: 'center'
+                            }
+                        ]]
+                    });
+
+                    $("#addSonRight").datagrid({
+                        url: "/admin/wuliao/findByBigDrawingId",
+                        queryParams: {
+                            wuliaoId: row.wuliaoId
+                        },
+                        columns: [[
+                            {
+                                field: 'id',
+                                title: 'id',
+                                width: 100,
+                                hidden: 'true',
+                                align: 'center'
+                            }, {
+                                field: 'name',
+                                title: '名称',
+                                width: 100,
+                                align: 'center'
+                            }, {
+                                field: 'guiGe',
+                                title: '规格',
+                                width: 100,
+                                align: 'center'
+                            }, {
+                                field: 'num',
+                                title: '数量',
+                                width: 100,
+                                align: 'center'
+                            }, {
+                                field: 'changJia',
+                                title: '厂家',
+                                width: 100,
+                                align: 'center'
+                            }, {
+                                field: 'remark',
+                                title: '备注',
+                                width: 100,
+                                align: 'center'
                             }
                         ]]
                     });
                 }
             });
-
         });
-
-
-
-
-
 
         //弹出的对话框中的值
         function load(){
@@ -293,6 +355,43 @@
                 ]]
             });
 
+            //右下物料明细列
+            $("#addSonRight").datagrid({
+                columns:[[
+                    {
+                        field:'id',
+                        title:'id',
+                        width:100,
+                        hidden:'true',
+                        align:'center'
+                    },{
+                        field:'name',
+                        title:'名称',
+                        width:100,
+                        align:'center'
+                    },{
+                        field:'guiGe',
+                        title:'规格',
+                        width:100,
+                        align:'center'
+                    },{
+                        field:'num',
+                        title:'数量',
+                        width:100,
+                        align:'center'
+                    },{
+                        field:'changJia',
+                        title:'厂家',
+                        width:100,
+                        align:'center'
+                    },{
+                        field:'remark',
+                        title:'备注',
+                        width:100,
+                        align:'center'
+                    }
+                ]]
+            });
         }
 
         //保存小图信息
@@ -342,6 +441,7 @@
         //刷新
         function reload() {
             $("#wuliaoSearch").val("");
+            $("#xiangmuSearch").val("");
             $("#dg").datagrid("reload");
         }
 
@@ -355,12 +455,27 @@
                 $.messager.alert("系统提示","请选择一条信息！");
                 return;
             }
-            $.messager.confirm("系统提示", "您确定要删除吗?", function (r) {
-                if (r) {
-                    $("#addSon").datagrid("deleteRow",
-                        $("#addSon").datagrid("getRowIndex",row));
-                }
-            });
+
+            if(row.id == undefined){
+                $.messager.confirm("系统提示", "您确定要删除吗?", function (r) {
+                    if (r) {
+                        $("#addSon").datagrid("deleteRow",
+                            $("#addSon").datagrid("getRowIndex",row));
+                    }
+                });
+            }else {
+                $.messager.confirm("系统提示", "您确定要删除吗?", function (r) {
+                    if (r) {
+                        $.post("/admin/drawingType/deleteById",{
+                            id:row.id
+                        },function (result) {
+                            if(result.success){
+                                $("#addSon").datagrid("reload");
+                            }
+                        },"json")
+                    }
+                });
+            }
         }
 
         //导入小图信息
@@ -401,7 +516,7 @@
 
                         if(resultt.rows[0].name != null){
                            for(var i=0;i<resultt.rows.length;i++){
-                                $("#dg2").datagrid("appendRow",{
+                                $("#addSonRight").datagrid("appendRow",{
                                     //wuliaoId:resultt.rows[i].wuliaoId
                                     name: resultt.rows[i].name,
                                     guiGe:resultt.rows[i].guiGe,
@@ -436,6 +551,7 @@
                 return;
             }
             $("#addSonDrawing").dialog("open").dialog("setTitle", "添加图纸信息");
+            $("#wuliaoId").val(Row.wuliaoId);
         }
 
         //添加小图物料
@@ -455,14 +571,6 @@
             $("#addSonDrawing").dialog("close");
         }
 
-        //添加生产物料
-        function addWuliao() {
-            if(Row==null){
-                $.messager.alert("系统提示","请选择大图信息！");
-                return;
-            }
-            $("#dlg").dialog("open").dialog("setTitle","添加生产物料");
-        }
 
         //保存物料信息
         function saveWuliao() {
@@ -475,8 +583,7 @@
                 type:"post",
                 url:"/admin/wuliao/save",
                 data:{
-                    data: JSON.stringify($("#dg2").datagrid("getRows")),
-                    saleListId:Row.id,
+                    data: JSON.stringify($("#addSonRight").datagrid("getRows")),
                     bigDrawing:Row.wuliaoId
                 },
                 dataType:"json",
@@ -489,7 +596,6 @@
                         },function (result) {
                             if (result.success) {
                                 $.messager.alert("系统提示", "保存成功！");
-                                closeWuliao();
                             }
                             else {
                                 $.messager.alert("系统提示", "保存失败！");
@@ -504,11 +610,6 @@
             })
         }
 
-        //关闭添加物料对话框
-        function closeWuliao() {
-            $("#dlg").dialog("close");
-            $("#dg2").datagrid("loadData",[]);
-        }
 
         //手动添加物料
         function shoudongtianjia() {
@@ -517,7 +618,7 @@
 
         //保存手动添加物料明细
         function save() {
-            $('#dg2').datagrid('appendRow', {
+            $('#addSonRight').datagrid('appendRow', {
                 name: $("#name-add").val(),
                 guiGe: $("#guiGe-add").val(),
                 num: $("#num-add").val(),
@@ -539,15 +640,27 @@
 
         //删除物料明细
         function deleteWuLiao() {
-            var selectedRows = $("#dg2").datagrid("getSelections");
-            if (selectedRows.length != 1) {
+            var selectedRow = $("#addSonRight").datagrid("getSelected");
+            if (selectedRow == null) {
                 $.messager.alert("系统提示", "请选择一条要删除的商品！");
                 return;
             }
+            console.log(selectedRow);
             $.messager.confirm("系统提示", "您确定要删除这商品吗?", function (r) {
                 if (r) {
-                    $("#dg2").datagrid("deleteRow",
-                        $("#dg2").datagrid("getRowIndex", selectedRows[0]));
+                    if(selectedRow.id == undefined){
+                        $("#addSonRight").datagrid("deleteRow",
+                            $("#addSonRight").datagrid("getRowIndex", selectedRows[0]));
+                    }else {
+                        $.post("/admin/wuliao/deleteById",{
+                            id:selectedRow.id
+                        },function (result) {
+                            if(result.success){
+                                $("#addSonRight").datagrid("reload");
+                            }
+                        },"json")
+                    }
+
                 }
             });
         }
@@ -555,7 +668,7 @@
         //开始计时
         var Row;
         function start() {
-            show();
+
             //获取当前用户
             var user = "";
             $.ajax({
@@ -574,56 +687,67 @@
                 $.messager.alert("系统提示","请选择一条信息");
                 return;
             }
-
-           // var openUser = Row.openState.substring(4);
-
-            /*if(Row.openState != "" && Row.openState != "展开中："+user){
-                $.messager.alert("系统提示","该图纸"+openUser+"正在展开，请选择别的图纸展开！");
-                display();
-                return;
-            }*/
-
             console.log(Row.openState);
             if(Row.openState == "" || Row.openState == null){
-
+                console.log(11)
+                $.post("/admin/saleList/setOpenState",{
+                    wuliaoId:Row.wuliaoId,
+                    state:"展开中"
+                },function (result) {
+                    if(result.success){
+                        if(result.error){
+                            $.messager.alert("系统提示",result.error);
+                            return;
+                        }else {
+                            $.post("/admin/bigdrawing/jiShi",{
+                                code:1,
+                                wuliaoId:Row.wuliaoId
+                            },function (result) {
+                                if(result.success){
+                                    $.messager.alert("系统提示","图纸展开开始");
+                                    show();
+                                    $('#dg').datagrid({
+                                        rowStyler:function(index,row){
+                                            if (index == $("#dg").datagrid("getRowIndex",$("#dg").datagrid("getSelected"))){
+                                                return 'background-color:green;color:white;font-weight:bold;';
+                                            }
+                                        },
+                                        onClickRow:function (index, data) {
+                                            $("#dg").datagrid("unselectRow",index);
+                                        }
+                                    });
+                                }
+                            },"json")
+                        }
+                    }
+                },"json");
             }else if(Row.openState != "展开中："+user){
+                console.log(22)
                 $.messager.alert("系统提示","该图纸"+Row.openState.substring(4)+"正在展开，请选择别的图纸展开！");
                 display();
                 return;
-            }
-            $('#dg').datagrid({
-                rowStyler:function(index,row){
-                    if (index == $("#dg").datagrid("getRowIndex",$("#dg").datagrid("getSelected"))){
-                        return 'background-color:green;color:white;font-weight:bold;';
-                    }
-                },
-                onClickRow:function (index, data) {
-                    $("#dg").datagrid("unselectRow",index);
-                }
-            });
-
-            $.post("/admin/saleList/setOpenState",{
-                id:Row.id,
-                state:"展开中"
-            },function (result) {
-                if(result.success){
-                    $.post("/admin/bigdrawing/jiShi",{
-                        code:1,
-                        wuliaoId:Row.wuliaoId
-                    },function (result) {
-                        if(result.success){
-                            $.messager.alert("系统提示","图纸展开开始");
+            }else if(Row.openState == "展开中："+user){
+                console.log(33 )
+                $.messager.alert("系统提示","图纸展开开始");
+                show();
+                $('#dg').datagrid({
+                    rowStyler:function(index,row){
+                        if (index == $("#dg").datagrid("getRowIndex",$("#dg").datagrid("getSelected"))){
+                            return 'background-color:green;color:white;font-weight:bold;';
                         }
-                    },"json")
-                }
-            },"json");
+                    },
+                    onClickRow:function (index, data) {
+                        $("#dg").datagrid("unselectRow",index);
+                    }
+                });
+            }
         }
 
         //结束计时
         function stop() {
             display();
             $.post("/admin/saleList/setOpenState",{
-                id:Row.id,
+                wuliaoId:Row.wuliaoId,
                 state:""
             },function (result) {
                 if(result.success){
@@ -634,6 +758,9 @@
                         if(result.success){
                             alert("图纸展开结束");
                             window.location.reload();
+                        }else {
+                            $.messager.alert("系统提示","操作失败");
+                            return;
                         }
                     },"json")
                 }
@@ -654,9 +781,14 @@
             $("#toLead").linkbutton("disable");
             $("#OK").linkbutton("disable");
             $("#shanchu").linkbutton("disable");
+            $("#xiugaiTuzhi").linkbutton("disable");
+            $("#toleadWuLiao").linkbutton("disable");
+            $("#shoudongtianjia").linkbutton("disable");
+            $("#deleteWuLiao").linkbutton("disable");
+            $("#saveWuLiao").linkbutton("disable");
         }
 
-        /**
+        /**toleadWuLiao  shoudongtianjia  deleteWuLiao
          * 显示按钮
          */
         function show() {
@@ -669,80 +801,140 @@
             $("#toLead").linkbutton("enable");
             $("#OK").linkbutton("enable");
             $("#shanchu").linkbutton("enable");
+            $("#xiugaiTuzhi").linkbutton("enable");
+            $("#toleadWuLiao").linkbutton("enable");
+            $("#shoudongtianjia").linkbutton("enable");
+            $("#deleteWuLiao").linkbutton("enable");
+            $("#saveWuLiao").linkbutton("enable");
         }
 
         //图纸展开完成
         function finish() {
             var row = $("#dg").datagrid("getSelected");
+            var rows = $("#addSon").datagrid("getRows");
+            var rowRight = $("#addSonRight").datagrid("getRows");
+            //判断有没选中订单信息
             if(row == null){
                 $.messager.alert("系统提示","请选择一条订单信息");
                 return;
             }
+            if(rows.length == 0 || rowRight.length == 0){
+                $.messager.confirm("系统提示","<span style='color:red'>"+"信息未添加完整，是否继续添加？"+"</span>", function(r){
+                    if (r){
+                        return;
+                    }else {
+                        console.log(3)
+                        $.post("/admin/saleList/finishOpen",{
+                            id:row.id,
+                            wuliaoId:row.wuliaoId
+                        },function (result) {
+                            if(result.success){
+                                alert("保存成功！");
+                                window.location.reload();
+                            }
+                            else {
+                                alert(result.errorInfo);
+                            }
+                        });
+                    }
+                });
+            }else {
+                $.post("/admin/saleList/finishOpen",{
+                    id:row.id,
+                    wuliaoId:row.wuliaoId
+                },function (result) {
+                    if(result.success){
+                        alert("保存成功！");
+                        window.location.reload();
+                    }
+                    else {
+                        alert(result.errorInfo);
+                    }
+                });
+            }
+        }
 
-            $.post("/admin/wuliao/findByBigDrawingId",{
-                wuliaoId:row.wuliaoId
-            },function (result) {
-               if(result.size == 0){
-                   $.messager.confirm("系统提示","<span style='color:red'>"+"系统检测到未添加物料明细，是否继续添加物料明细？"+"</span>", function(r){
-                       if (r){
-                           return;
-                       }else {
-                           $.post("/admin/drawingType/findByBigDrawingId",{
-                               wuliaoId:row.wuliaoId
-                           },function (result) {
-                               if(result.size == 0){
-                                   $.messager.confirm("系统提示","<span style='color:red'>"+"系统检测到未添加分图，是否继续添加分图？"+"</span>", function(r){
-                                       if (r){
-                                           return;
-                                       }else {
-                                           $.post("/admin/saleList/finishOpen",{
-                                               id:row.id,
-                                               wuliaoId:row.wuliaoId
-                                           },function (result) {
-                                               if(result.success){
-                                                   alert("保存成功！");
-                                                   window.location.reload();
-                                               }
-                                               else {
-                                                   alert(result.errorInfo);
-                                               }
-                                           })
+        //修改添加的小图纸的信息
+        function xiugaiTuzhi() {
+            var row = $("#addSon").datagrid("getSelected");
+            console.log(row)
+            if(row == null){
+                $.messager.alert("系统提示","请选择一条要修改的信息！");
+                return;
+            }
+            $("#dlg-xiugaiTuzhi").dialog("open").dialog("setTitle","修改信息");
+            if(row.id == undefined){
+                $("#wuliaoId-xiugai").val(row.wuliaoId);
+                $("#tuZhiName-xiugai").val(row.tuZhiName);
+                $("#num-xiugai").val(row.num);
+            }else {
+                $("#wuliaoId-xiugai").val(row.drawing.wuliaoId);
+                $("#tuZhiName-xiugai").val(row.drawing.tuZhiName);
+                $("#num-xiugai").val(row.num);
+            }
+        }
 
-                                       }
-                                   });
-                               }else {
-                                   $.post("/admin/saleList/finishOpen",{
-                                       id:row.id,
-                                       wuliaoId:row.wuliaoId
-                                   },function (result) {
-                                       if(result.success){
-                                           alert("保存成功！");
-                                           window.location.reload();
-                                       }
-                                       else {
-                                           alert(result.errorInfo);
-                                       }
-                                   })
-                               }
-                           });
-                       }
-                   });
-               }else {
-                   $.post("/admin/saleList/finishOpen",{
-                       id:row.id,
-                       wuliaoId:row.wuliaoId
-                   },function (result) {
-                       if(result.success){
-                           alert("保存成功！");
-                           window.location.reload();
-                       }
-                       else {
-                           alert(result.errorInfo);
-                       }
-                   })
-               }
-            });
+        //修改添加的物料的信息
+        function xiugaiWuliao() {
+            var row = $("#addSonRight").datagrid("getSelected");
+            if(row == null){
+                $.messager.alert("系统提示","请选择一条要修改的信息！");
+                return;
+            }
+            $("#dlg-xiugaiWuliao").dialog("open").dialog("setTitle","修改信息");
+            $("#name-xiugai").val(row.name);
+            $("#guiGe-xiugai").val(row.guiGe);
+            $("#wuliaonum-xiugai").val(row.num);
+            $("#changJia-xiugai").val(row.changJia);
+            $("#remark-xiugai").val(row.remark);
+        }
 
+        //保存修改小图
+        function saveXiuGaiXiaotu() {
+            var row = $("#addSon").datagrid("getSelected");
+            if(row.id == undefined){
+                $("#wuliaoId").val($("#wuliaoId-xiugai").val());
+                $("#tuZhiName").val($("#tuZhiName-xiugai").val());
+                $("#num").val($("#num-xiugai").val());
+                $("#addSon").datagrid("updateRow",{
+                    index: $("#addSon").datagrid("getRowIndex",row),
+                    row:{
+                        wuliaoId:$("#wuliaoId").val(),
+                        tuZhiName:$("#tuZhiName").val(),
+                        num:$("#num").val()
+                    }
+                })
+            }else {
+                $.post("/admin/drawingType/xiugai",{
+                    id:row.id,
+                    wuliaoId:$("#wuliaoId-xiugai").val(),
+                    num:$("#num-xiugai").val(),
+                    tuZhiName:$("#tuZhiName-xiugai").val()
+                },function (result) {
+                    if(result.success){
+                        $.messager.alert("系统提示","修改成功");
+                        closeXiuGaiXiaotu();
+                        $("#addSon").datagrid("reload");
+                    }
+                })
+            }
+        }
+
+        //关闭修改小图对话框
+        function closeXiuGaiXiaotu() {
+            $("#dlg-xiugaiTuzhi").dialog("close");
+            $("#wuliaoId-xiugai").val("");
+            $("#tuZhiName-xiugai").val("");
+            $("#num-xiugai").val("");
+        }
+
+        //保存修改物料
+        function saveXiuGaiWuliao() {
+
+        }
+
+        //关闭修改物料对话框
+        function closeXiuGaiWuliao() {
 
         }
 
@@ -760,34 +952,32 @@
     <div id="tb1">
         <fieldset style="border-color: #E7F0FF">
             <legend>查询设置</legend>
-            &nbsp;物料编号：<input type="text" id="wuliaoSearch" name="wuliaoId"
+            <form id="search">
+            &nbsp;物料编号：<input type="text" id="wuliaoSearch" name="wuliaoId" autocomplete="off"
                    size="15" onkeydown="if(event.keyCode==13) searchSale()" />
+                &nbsp;&nbsp;&nbsp;申请单号：<input type="text" id="xiangmuSearch" name="xiangmuId" autocomplete="off"
+                   size="15" onkeydown="if(event.keyCode==13) searchSale()" />
+
             &nbsp;&nbsp;<a href="javascript:searchSale()"
                            class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
             &nbsp;&nbsp;<a href="javascript:reload()"
                                  class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
-            &nbsp;&nbsp;<a href="javascript:addWuliao()" id="addWuliao"
-                                             class="easyui-linkbutton" iconCls="icon-add" plain="true">添加生产物料</a>
             &nbsp;&nbsp;<a href="javascript:start()" id="start"
                                              class="easyui-linkbutton" iconCls="icon-add" plain="true">开始展开</a>
             &nbsp;&nbsp;<a href="javascript:stop()" id="stop"
                                              class="easyui-linkbutton" iconCls="icon-add" plain="true">展开结束</a>
             &nbsp;&nbsp;<a href="javascript:finish()" id="finish"
                                              class="easyui-linkbutton" iconCls="icon-ok" plain="true">展开完成</a>
+            </form>
         </fieldset>
     </div>
 </div>
 
-<div region="center" style="margin-top: 5px">
+<!--左下方小图框-->
+<div region="center" style="margin-top: 5px;width:500px" >
     <table id="addSon" class="easyui-datagrid" fitColumns="false" singleSelect="true"
            rownumbers="true" fit="true" split="true" toolbar="#tb2">
     </table>
-    <thead>
-    <th field="id" width="150" align="center">id
-    </th>
-    <th field="wuliaoId" width="100" align="center">小图物料号
-    </th>
-    </thead>
 </div>
 
 <div id="tb2">
@@ -796,12 +986,39 @@
                                          class="easyui-linkbutton" iconCls="icon-add" plain="true">手动添加子图</a>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:toLead()" id="toLead"
                                          class="easyui-linkbutton" iconCls="icon-add" plain="true">EXCEL导入子图</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:xiugaiTuzhi()" id="xiugaiTuzhi"
+                                         class="easyui-linkbutton" iconCls="icon-reload" plain="true">修改</a>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:OK()" id="OK"
                                          class="easyui-linkbutton" iconCls="icon-save" plain="true">保存</a>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:shanchu()" id="shanchu"
                                          class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
     </div>
 </div>
+
+<!--右下方物料明细框-->
+<div region="east" style="margin-top: 5px;width:630px" >
+    <table id="addSonRight" class="easyui-datagrid" fitColumns="false" singleSelect="true"
+           rownumbers="true" fit="true" split="true" toolbar = "#tb3" >
+    </table>
+</div>
+
+<div id="tb3">
+    <div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:toLead()" class="easyui-linkbutton" id="toleadWuLiao"
+           iconCls="icon-add" plain="true">导入</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:shoudongtianjia()" id="shoudongtianjia"
+           class="easyui-linkbutton" iconCls="icon-add" plain="true">手动添加</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:deleteWuLiao()" class="easyui-linkbutton" id="deleteWuLiao"
+           iconCls="icon-remove" plain="true">删除</a>
+      <!--  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:xiugaiWuliao()" class="easyui-linkbutton" id="xiugaiWuliao"
+           iconCls="icon-reload"plain="true">修改</a>-->
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:saveWuliao()" class="easyui-linkbutton" id="saveWuLiao"
+           iconCls="icon-ok"plain="true">保存</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:red'>注意：此处添加的物料数量为一套的数量！</span>
+    </div>
+</div>
+
+
 
 <!--弹出来添加子图的对话框-->
 <div class="easyui-dialog" id="addSonDrawing" style="width: 350px; height: 200px; padding: 10px 20px"
@@ -831,7 +1048,6 @@
        iconCls="icon-ok">添加</a> <a href="javascript:closeDialog()"
                                    class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 </div>
-
 <!--打开导入面板-->
 <div id="dlg3" class="easyui-dialog"
      style="width: 400px; height: 180px; padding: 10px 20px" closed="true"
@@ -842,49 +1058,12 @@
         <input id="fil" name="fileName" type="file"/>
     </form>
 </div>
-
 <!--导入文件-->
 <div id="dlg-buttons2">
     <a href="javascript:saveToLead()" class="easyui-linkbutton"
        iconCls="icon-ok">确定</a> <a href="javascript:closeToLead()"
                                    class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 </div>
-
-<!--添加物料对话框-->
-<div id="dlg" class="easyui-dialog" style="width: 650px;height: 350px;"
-     closed="true" buttons="#dlg-buttons" toolbar="#tb3">
-    <!--<input type="hidden" id="drawingId" name="drawingId"/>-->
-        <table id="dg2"  class="easyui-datagrid"  fit="true" fitColumns="false" >
-            <thead>
-                <th field="id" width="20" align="left" hidden="true">编号</th>
-                <th field="name" width="140" align="center">名称</th>
-                <th field="guiGe" width="120" align="center">规格</th>
-                <th field="num" width="100" align="center">数量</th>
-                <th field="changJia" width="100" align="center">厂家</th>
-                <th field="remark" width="150" align="center">备注</th>
-            </thead>
-    </table>
-</div>
-
-<div id="tb3">
-    <div style="padding: 2px">
-        <a href="javascript:toLead()" class="easyui-linkbutton"
-           iconCls="icon-add" plain="true">导入</a>
-        <a href="javascript:shoudongtianjia()"
-           class="easyui-linkbutton" iconCls="icon-add" plain="true">手动添加</a>
-        <a href="javascript:deleteWuLiao()" class="easyui-linkbutton"
-           iconCls="icon-remove" plain="true">删除</a>
-        <span style='color:red'>注意：此处添加的物料数量为一套的数量！</span>
-    </div>
-</div>
-</div>
-
-<div id="dlg-buttons">
-    <a href="javascript:saveWuliao()" class="easyui-linkbutton"
-       iconCls="icon-ok">保存</a> <a href="javascript:closeWuliao()"
-                                   class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
-</div>
-
 
 <!--手动添加物料信息-->
 <div id="dlg2" class="easyui-dialog"
@@ -927,6 +1106,64 @@
        class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
 </div>
 
+<!--修改小图信息对话框-->
+<div id="dlg-xiugaiTuzhi" class="easyui-dialog" style="width: 300px;height: 150px;"
+     closed="true" buttons="#dlg-buttons">
+        <table cellspacing="8px">
+            <tr>
+                <td>小图纸物料编号：</td>
+                <td><input type="text" id="wuliaoId-xiugai" name="wuliaoId" required="true"/></td>
+            </tr>
+            <tr>
+                <td>图纸名称：</td>
+                <td><input type="text" id="tuZhiName-xiugai" name="tuZhiName" required="true"/></td>
+            </tr>
+            <tr>
+                <td>数量：</td>
+                <td><input type="text" id="num-xiugai" name="num" required="true"/></td>
+            </tr>
+        </table>
+    </form>
+</div>
+<!-- 对话框按钮 -->
+<div id="dlg-buttons">
+    <a href="javascript:saveXiuGaiXiaotu()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+    <a href="javascript:closeXiuGaiXiaotu()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
+</div>
+
+
+<!--修改物料信息对话框-->
+<div id="dlg-xiugaiWuliao" class="easyui-dialog" style="width: 300px;height: 150px;"
+     closed="true" buttons="#dlg-buttons1">
+        <table cellspacing="8px">
+            <tr>
+                <td>名称：</td>
+                <td><input type="text" id="name-xiugai" name="name" required="true"/></td>
+            </tr>
+            <tr>
+                <td>规格：</td>
+                <td><input type="text" id="guiGe-xiugai" name="guiGe" required="true"/></td>
+            </tr>
+            <tr>
+                <td>数量：</td>
+                <td><input type="text" id="wuliaonum-xiugai" name="num" required="true"/></td>
+            </tr>
+            <tr>
+                <td>厂家：</td>
+                <td><input type="text" id="changJia-xiugai" name="changJia" required="true"/></td>
+            </tr>
+            <tr>
+                <td>备注：</td>
+                <td><input type="text" id="remark-xiugai" name="remark" required="true"/></td>
+            </tr>
+        </table>
+    </form>
+</div>
+<!-- 对话框按钮 -->
+<div id="dlg-buttons1">
+    <a href="javascript:saveXiuGaiWuliao()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+    <a href="javascript:closeXiuGaiWuliao()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
+</div>
 
 </body>
 </html>

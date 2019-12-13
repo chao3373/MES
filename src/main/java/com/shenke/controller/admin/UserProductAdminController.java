@@ -39,17 +39,32 @@ public class UserProductAdminController {
 
         if(StringUtil.isNotEmpty(etime) && StringUtil.isNotEmpty(btime)){
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            /*SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date eDate = sdf.parse(etime);
             Date bDate = sdf.parse(btime);
+*/
+            java.util.Date start = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(btime + " 00:00:00");
+            java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(etime + " 23:59:59");
 
-            userProduct.setbDate(bDate);
-            userProduct.seteDate(eDate);
+            userProduct.setbDate(start);
+            userProduct.seteDate(end);
+
         }
 
         Map<String,Object> map = new HashMap<>();
+        List<UserProduct> list = userProductService.list(userProduct);
 
-        map.put("rows",userProductService.list(userProduct));
+        Double sumGongshi = 0.00;
+        Double sumNum = 0.00;
+        for(UserProduct userProduct1 : list){
+            sumGongshi = sumGongshi + (userProduct1.getZbGongShi() + userProduct1.getCzGongShi()) * userProduct1.getNum();
+            sumNum = sumNum + userProduct1.getNum();
+
+        }
+        map.put("sumGongshi",sumGongshi);
+        map.put("sumNum",sumNum);
+        map.put("rows",list);
+        System.out.println(map);
         return map;
     }
 

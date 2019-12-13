@@ -30,4 +30,12 @@ public interface DrawingProcessRepository extends JpaRepository<DrawingProcess,I
 
     @Query(value = "select * from  t_drawing_process where  drawing_id in ?1 order by drawing_id",nativeQuery = true)
     public List<DrawingProcess> findByArr(Integer[] a);
+
+    /**
+     * 通过工序id删除
+     * @param ids
+     */
+    @Modifying
+    @Query(value = "delete from t_drawing_process where process_id in ?1",nativeQuery = true)
+    void deleteByProcessIds(Integer[] ids);
 }

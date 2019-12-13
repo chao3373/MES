@@ -27,6 +27,7 @@
                 .toString() : '0' + this.getDate());
             return str;
         }
+
         //显示时间数据时先进行格式化
         function formatDate(val, row) {
             var dateType = "";
@@ -35,123 +36,133 @@
             dateType = date.format("yyyy-MM-dd")
             return dateType;
         }
+
         //字符串转日期
         function strToDate(val) {
             var dateType = "";
             var date = new Date(val).getTime();
             return date;
         }
+
         function strDate(val) {
             var dateType = "";
             var date = new Date(val).format("yyyy-MM-dd");
             return date;
         }
+
         $(document).ready(function () {
             load();
+            $.ajax({
+                type: "POST",
+                url: "/admin/userProduct/list",
+                success:function (result) {
+                    if (result){
+                        $("#dg").datagrid("loadData", result.rows);
+                        $("#sumGongShi").text(result.sumGongshi);
+                        $("#sumNum").text(result.sumNum);
+                    }
+                }
+            })
+
         });
+
 
 
         function load() {
             $("#dg").datagrid({
-                url:"/admin/userProduct/list",
                 columns: [[
                     {
                         field: "saleNumber",
-                        title:"订单号",
+                        title: "订单编号",
                         width: "140",
                         align: "center",
-                        formatter:function (val, row) {
-                            if(row.saleList){
+                        formatter: function (val, row) {
+                            if (row.saleList) {
                                 return row.saleList.saleNumber;
-                            }
-                            else {
+                            } else {
                                 return '';
                             }
                         }
-                    },{
+                    }, {
                         field: "xiangmuhao",
-                        title:"项目号",
+                        title: "项目号",
                         width: "100",
                         align: "center",
-                        formatter:function (val, row) {
-                            if(row.saleList){
+                        formatter: function (val, row) {
+                            if (row.saleList) {
                                 return row.saleList.xiangmuId;
-                            }
-                            else {
+                            } else {
                                 return '';
                             }
                         }
-                    },{
+                    }, {
                         field: "datu",
-                        title:"大图",
+                        title: "总图物料编号",
                         width: "110",
                         align: "center",
-                        formatter:function (val, row) {
-                            if(row.bigDrawing){
+                        formatter: function (val, row) {
+                            if (row.bigDrawing) {
                                 return row.bigDrawing.wuliaoId;
-                            }
-                            else {
+                            } else {
                                 return '';
                             }
                         }
-                    },{
+                    }, {
                         field: "xiaotu",
-                        title:"小图",
+                        title: "分图物料编号",
                         width: "110",
                         align: "center",
-                        formatter:function (val, row) {
-                            if(row.drawing){
+                        formatter: function (val, row) {
+                            if (row.drawing) {
                                 return row.drawing.wuliaoId;
-                            }
-                            else {
+                            } else {
                                 return '';
                             }
                         }
-                    },{
+                    }, {
                         field: "gongxu",
-                        title:"工序",
+                        title: "工序",
                         width: "90",
                         align: "center",
-                        formatter:function (val, row) {
-                            if(row.process){
+                        formatter: function (val, row) {
+                            if (row.process) {
                                 return row.process.name;
-                            }
-                            else {
+                            } else {
                                 return '';
                             }
                         }
-                    },{
+                    }, {
                         field: "num",
-                        title:"数量",
+                        title: "数量",
                         width: "80",
                         align: "center"
-                    },{
+                    }, {
                         field: "zbGongShi",
-                        title:"准备工时",
+                        title: "准备工时",
                         width: "80",
                         align: "center"
-                    },{
+                    }, {
                         field: "czGongShi",
-                        title:"操作工时",
+                        title: "操作工时",
                         width: "80",
                         align: "center"
-                    },{
+                    }, {
                         field: "user",
-                        title:"生产员工",
+                        title: "生产员工",
                         width: "80",
                         align: "center",
-                        formatter:function (row, val) {
-                            if(row){
+                        formatter: function (row, val) {
+                            if (row) {
                                 return row.trueName;
-                            }else {
+                            } else {
                                 return "";
                             }
                         }
-                    },{
-                        field:'dateStartProduct',
-                        title:'开始时间',
-                        width:140,
-                        align:'center',
+                    }, {
+                        field: 'dateStartProduct',
+                        title: '开始时间',
+                        width: 140,
+                        align: 'center',
                         formatter: function (value, row, index) {
                             if (value) {
                                 var date = new Date(value);
@@ -174,11 +185,11 @@
                                 return "";
                             }
                         }
-                    },{
-                        field:'dateInProduct',
-                        title:'结束时间',
-                        width:140,
-                        align:'center',
+                    }, {
+                        field: 'dateInProduct',
+                        title: '结束时间',
+                        width: 140,
+                        align: 'center',
                         formatter: function (value, row, index) {
                             if (value) {
                                 var date = new Date(value);
@@ -211,17 +222,17 @@
 
         //按照条件查询
         function search() {
-           /* $("#fm").form('submit', {
-                url: "/admin/userProduct/findShengchan",
-                success: function (result) {
-                    if (result != null) {
-                        var obj = eval('(' + result + ')');
-                        if (obj.success) {
-                            $("#dg").datagrid("loadData", obj.rows);
-                        }
-                    }
-                }
-            });*/
+            /* $("#fm").form('submit', {
+                 url: "/admin/userProduct/findShengchan",
+                 success: function (result) {
+                     if (result != null) {
+                         var obj = eval('(' + result + ')');
+                         if (obj.success) {
+                             $("#dg").datagrid("loadData", obj.rows);
+                         }
+                     }
+                 }
+             });*/
 
             $("#dg").datagrid({
                 url: '/admin/userProduct/list',
@@ -249,27 +260,42 @@
         <form id="fm">
             <table>
                 <tr>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;员工： <input type="text"  id="s_trueName" style="width: 130px"/>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;生产员工： <input type="text" id="s_trueName" style="width: 130px"/>
                     </td>
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;工序： <input class="easyui-combobox" id="s_process"
-                    style="width: 100px;" data-options="panelHeight:'auto',
+                                                           style="width: 100px;" data-options="panelHeight:'auto',
                 valueField:'id',textField:'name',url:'/admin/process/processCombobox'"/>
                     </td>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;生产日期：&nbsp;<input
-                            type="text" id="s_btime"  class="easyui-datebox"
-                            demandd="true" size="15"/></td>
-                    <td>
-                        到
-                    </td>
-                    <td>
-                        <input type="text" id="s_etime"  class="easyui-datebox"
-                            demandd="true" size="15"/></td>
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:search()"
                                                    class="easyui-linkbutton" iconCls="icon-search">查询</a>
                     </td>
                     <td>
+                        &nbsp;&nbsp;
+                    </td>
+                    <td>
+                        <span style="color:red;font-size: 20px;font-weight: 500">总工时：<span
+                                id="sumGongShi"></span></span>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;生产日期：&nbsp;<input
+                            type="text" id="s_btime" class="easyui-datebox"
+                            demandd="true" size="15"/></td>
+                    <td>
+                        -
+                        <input type="text" id="s_etime" class="easyui-datebox"
+                               demandd="true" size="15"/></td>
+                    <td>
                         &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:refresh()" class="easyui-linkbutton"
                                                    iconCls="icon-reload">刷新</a>
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;
+                    </td>
+
+                    <td>
+                        <span style="color: red; font-size: 20px;font-weight: 500">总数量：<span id="sumNum"></span></span>
                     </td>
                 </tr>
             </table>

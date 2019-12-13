@@ -27,9 +27,11 @@ public class ShengChan {
     @ManyToOne
     private Process process; //工序对象
 
-    private String datuCode; //大图标签编码
+//    private String datuCode; //大图标签编码
+//
+//    private String xiaotuCode;//小图标签编码
 
-    private String xiaotuCode;//小图标签编码
+    private String biaoqianCode; // 标签编码
 
     private String state; // 状态
 
@@ -147,22 +149,6 @@ public class ShengChan {
         this.process = process;
     }
 
-    public String getDatuCode() {
-        return datuCode;
-    }
-
-    public void setDatuCode(String datuCode) {
-        this.datuCode = datuCode;
-    }
-
-    public String getXiaotuCode() {
-        return xiaotuCode;
-    }
-
-    public void setXiaotuCode(String xiaotuCode) {
-        this.xiaotuCode = xiaotuCode;
-    }
-
     public String getState() {
         return state;
     }
@@ -187,6 +173,14 @@ public class ShengChan {
         this.czGongShi = czGongShi;
     }
 
+    public String getBiaoqianCode() {
+        return biaoqianCode;
+    }
+
+    public void setBiaoqianCode(String biaoqianCode) {
+        this.biaoqianCode = biaoqianCode;
+    }
+
     @Override
     public String toString() {
         return "ShengChan{" +
@@ -195,8 +189,7 @@ public class ShengChan {
                 ", bigDrawing=" + bigDrawing +
                 ", drawing=" + drawing +
                 ", process=" + process +
-                ", datuCode='" + datuCode + '\'' +
-                ", xiaotuCode='" + xiaotuCode + '\'' +
+                ", biaoqianCode='" + biaoqianCode + '\'' +
                 ", state='" + state + '\'' +
                 ", zbGongShi=" + zbGongShi +
                 ", czGongShi=" + czGongShi +

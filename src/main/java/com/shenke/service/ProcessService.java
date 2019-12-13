@@ -34,4 +34,9 @@ public interface ProcessService {
     void deleteByIds(Integer[] ids);
 
     public List<Process> selectByName(String s);
+
+    //设置工序是否多选的状态
+    void setDuoXuan(Integer[] ids, String duoXuan);
+
+    List<Process> findByName(String name);
 }

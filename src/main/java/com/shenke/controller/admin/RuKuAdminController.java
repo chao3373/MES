@@ -33,64 +33,8 @@ public class RuKuAdminController {
     private SaleListService saleListService;
 
     @RequestMapping("/save")
-    public Map<String,Object> save(Integer id,Integer saleListId){
+    public Map<String,Object> save(String data){
         Map<String,Object> map = new HashMap<>();
-        ShengChan shengChan = shengChanService.findOne(id);
-        Integer minNum = shengChanService.findMinAccomplishNumBySaleListId(saleListId);
-        RuKu ruKu = ruKuService.findBySaleListId(saleListId);
-        SaleList saleList = saleListService.findById(saleListId);
-
-        if(ruKu != null){
-            ruKu.setNum(minNum);
-            ruKuService.save(ruKu);
-            if(ruKu.getNum() == ruKu.getOrderNum()){
-                saleListService.setState(shengChan.getSaleList().getId(),"生产完成");
-            }
-        }else {
-            RuKu ruKu1 = new RuKu();
-            ruKu1.setNum(minNum);
-            ruKu1.setRukuNum(0);
-            ruKu1.setState("准备入库");
-            ruKu1.setOrderNum(saleList.getNum());
-            ruKu1.setSaleList(saleList);
-            ruKu1.setDatuCode(shengChan.getDatuCode());
-            ruKuService.save(ruKu1);
-            if(ruKu1.getNum() == ruKu1.getOrderNum()){
-                saleListService.setState(shengChan.getSaleList().getId(),"生产完成");
-            }
-        }
-
-        /*if(shengChanService.findMaxCode(xiaotuCode) == shengChan.getCode()){
-            RuKu ruku = ruKuService.findOneByxiaotuCode(xiaotuCode);
-            if(ruku != null){
-                ruku.setNum(shengChan.getAccomplishNum());
-                ruKuService.save(ruku);
-            }else {
-                RuKu ruku1 = new RuKu();
-                ruku1.setBigDrawing(shengChan.getBigDrawing());
-                ruku1.setNum(shengChan.getAccomplishNum());
-                ruku1.setDatuCode(shengChan.getDatuCode());
-                ruku1.setDrawing(shengChan.getDrawing());
-                ruku1.setSaleList(shengChan.getSaleList());
-                ruku1.setState("准备入库");
-                ruku1.setXiaotuCode(xiaotuCode);
-                ruku1.setRukuNum(0);
-                ruKuService.save(ruku1);
-            }
-
-        }*/
-        map.put("success",true);
-        return map;
-    }
-
-    /**
-     * 多选生产时候的保存
-     * @param data
-     * @return
-     */
-    @RequestMapping("/saveDuoXuan")
-    public Map<String,Object> saveDuoXuan(String data) {
-        Map<String, Object> map = new HashMap<>();
         Gson gson = new Gson();
         List<ShengChan> plgList = gson.fromJson(data, new TypeToken<List<ShengChan>>() {
         }.getType());
@@ -100,6 +44,26 @@ public class RuKuAdminController {
             RuKu ruKu = ruKuService.findBySaleListId(saleListId);
             SaleList saleList =shengChan.getSaleList();
             Integer minNum = shengChanService.findMinAccomplishNumBySaleListId(saleListId);
+
+            //判断大图是否可以修改状态为“未生产”
+            List<ShengChan> datu = shengChanService.findBySaleListIdAboutDatu(saleListId);
+            List<ShengChan> xiaotu = shengChanService.findBySaleListIdAboutXiaotu(saleListId);
+            Integer m ;
+            Integer n ;
+            if(datu.size() == 0){
+                m=1; // 大图已开始生产
+            }else {
+                m=2; //大图一定没有开始生产
+            }
+            if(xiaotu.size() == 0){
+                n=1; //小图一定生产完了
+            }else {
+                n=2; // 小图生产开始但是没有生产完
+            }
+
+            if(n==1 && m== 2){
+                shengChanService.updateDatuState(saleListId);
+            }
 
             if (ruKu != null) {
                 ruKu.setNum(minNum);
@@ -114,13 +78,14 @@ public class RuKuAdminController {
                 ruKu1.setState("准备入库");
                 ruKu1.setOrderNum(saleList.getNum());
                 ruKu1.setSaleList(saleList);
-                ruKu1.setDatuCode(shengChan.getDatuCode());
+                ruKu1.setOutCode(saleList.getOutCode());
                 ruKuService.save(ruKu1);
                 if(ruKu1.getNum() == ruKu1.getOrderNum()){
                     saleListService.setState(shengChan.getSaleList().getId(),"生产完成");
                 }
             }
         }
+        map.put("success",true);
         return map;
     }
 
@@ -137,13 +102,13 @@ public class RuKuAdminController {
 
     /**
      * 通过大图编号搜索
-     * @param datuCode
+     * @param outCode
      * @return
      */
-    @RequestMapping("/findByDatuCode")
-    public Map<String,Object> findByDatuCode(String datuCode){
+    @RequestMapping("/findByoutCode")
+    public Map<String,Object> findByoutCode(String outCode){
         Map<String,Object> map = new HashMap<>();
-        map.put("rows",ruKuService.findByDatuCode(datuCode));
+        map.put("rows",ruKuService.findByoutCode(outCode));
         map.put("success",true);
         return map;
     }

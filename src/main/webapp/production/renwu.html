@@ -17,22 +17,11 @@
     <script type="text/javascript">
 
         $(document).ready(function() {
-            loadAddson();
             load();
             $('#dg').datagrid({
                 onClickCell: function(index,field){
-                    var name = "dg";
                     if(field == "tiaoma"){
-                        console.log($("#dg").datagrid("getSelected"));
-                        tiaoma(index,name);
-                    }
-                }
-            });
-            $('#addSon').datagrid({
-                onClickCell: function(index,field){
-                    var name = "addSon";
-                    if(field == "tiaoma"){
-                        tiaoma(index,name);
+                        tiaoma(index);
                     }
                 }
             });
@@ -64,12 +53,25 @@
                         }
                     },{
                         field: "datu",
-                        title:"物料编号",
+                        title:"总图物料编号",
                         width: "150",
                         align: "center",
                         formatter:function (val, row) {
                             if(row.bigDrawing){
                                 return row.bigDrawing.wuliaoId;
+                            }
+                            else {
+                                return '';
+                            }
+                        }
+                    },{
+                        field: "xaiotu",
+                        title:"分图物料编号",
+                        width: "150",
+                        align: "center",
+                        formatter:function (val, row) {
+                            if(row.drawing){
+                                return row.drawing.wuliaoId;
                             }
                             else {
                                 return '';
@@ -92,7 +94,7 @@
                         field: "saleDate",
                         width: "150",
                         align: "center",
-                        title: "下单日期",
+                        title: "接单日期",
                         formatter: function (value, row, index) {
                             if (row.saleList) {
                                 var date = new Date(row.saleList.saleDate);
@@ -119,7 +121,7 @@
                         field: "referDate",
                         width: "150",
                         align: "center",
-                        title: "需交日期",
+                        title: "交货日期",
                         formatter: function (value, row, index) {
                             if (row) {
                                 var date = new Date(row.referDate);
@@ -154,132 +156,50 @@
                             return '点击打印';
                         }
                     }
-                ]],
-                onClickRow:function (index,row) {
-                if(row!=null){
-                    $("#addSon").datagrid({
-                        url: "/admin/shengChan/findBySaleListId",
-                        queryParams: {
-                            id: row.saleList.id
-                        },
-                        columns: [[
-                            {
-                                field: 'id',
-                                title: 'id',
-                                width: 100,
-                                hidden: 'true',
-                                align: 'center'
-                            }, {
-                                field: 'wuliaoId',
-                                title: '小图物料编号',
-                                width: 100,
-                                align: 'center',
-                                formatter: function (value, row, index) {
-                                    if (!row.drawing) {
-                                        return '';
-                                    } else {
-                                        return row.drawing.wuliaoId;
-                                    }
-                                }
-                            },{
-                                field: 'tiaoma',
-                                title: '条码',
-                                align: 'center',
-                                width: "150",
-                                styler:function(){
-                                    return 'background-color:red;color:white;';
-                                },
-                                formatter:function (val, row) {
-                                    return '点击打印';
-                                }
-                            }
-                        ]]
-                    });
-                }  }
-            });
-        }
-
-        //弹出的对话框中的值
-        function loadAddson(){
-            //下方子图部分的列
-            $("#addSon").datagrid({
-                columns:[[
-                    {
-                        field:'id',
-                        title:'id',
-                        width:100,
-                        hidden:'true',
-                        align:'center'
-                    },{
-                        field:'wuliaoId',
-                        title:'小图物料编号',
-                        width:100,
-                        align:'center'
-                    },{
-                        field: 'tiaoma',
-                        title: '条码',
-                        align: 'center',
-                        width: "150",
-                        styler:function(){
-                            return 'background-color:red;color:white;';
-                        },
-                        formatter:function (val, row) {
-                            return '点击打印';
-                        }
-                    }
                 ]]
             });
-
         }
+
+
 
         //打印条码
-        function tiaoma(index,name) {
-            var rowDg = $("#dg").datagrid("getRows")[index];
-            var rowAddson = $("#addSon").datagrid("getRows")[index];
-            if( name == "dg"){
-                $.post("/admin/shengChan/tiaoma",{
-                    code:rowDg.datuCode
-                },function (result) {
-                    if(result.success){
-                        print(result.url,rowDg);
-                        $("#dg").datagrid("reload");
-                    }
-                },"json");
-            }else {
-                $.post("/admin/shengChan/tiaoma",{
-                    code:rowAddson.xiaotuCode
-                },function (result) {
-                    if(result.success){
-                        print(result.url,rowAddson);
-                        $("#dg").datagrid("reload");
-                    }
-                },"json");
-            }
-
+        function tiaoma(index) {
+                var rowDg = $("#dg").datagrid("getRows")[index];
+            $.post("/admin/shengChan/tiaoma",{
+                code:rowDg.biaoqianCode
+            },function (result) {
+                if(result.success){
+                    print(result.url,rowDg);
+                    $("#dg").datagrid("reload");
+                }
+            },"json");
         }
 
-        //打印
+
+         //打印
         function print(url,row) {
-            var url = "<img style='width:auto;height: 100%;' src='" + url + "'/>";
+            var url = "<img style='width:305px;height: 140%;' src='" + url + "'/>";
             // url += result.url;
             // url += "'/>";
             tableString = "";
             tableString += "<div id='tab' style='text-align: center;width: 100%;font-size: 100px; font-weight: 900;'>";
-            tableString +="<table style='width: 22%;text-align: center;'>";
+            tableString +="<table style='width: 21%;font-size 80px;text-align: center; margin: auto' >";
             tableString +="<tr><td style='text-align: center;'>" + url;
             tableString += "</td></tr>";
-            tableString +="<tr><td>数量："+row.num+"</td></tr>";
-            tableString +="<tr><td>交期："+row.referDate.substring(0,10)+"</td></tr>";
+            tableString +="<tr><td style='font-size: 8px'>数量："+row.num+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;交期："+row.referDate.substring(0,10)+"</td></tr>";
+            // tableString +="<tr><td>交期："+row.referDate.substring(0,10)+"</td></tr>";
             tableString +="</table></div>";
             //tableString += row.saleListProduct.labelNumber;
             if (window.showModalDialog) {
                 window.showModalDialog(
-                    "..\\print.html",
+                    // "/production/print.html",
+                    "..\\printBiaoqian.html",
                     tableString,
                     "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
             } else {
                 window.open(
-                    "..\\print.html",
+                    "..\\printBiaoqian.html",
+                    // "/production/print.html",
                     tableString,
                     "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
             }
@@ -297,10 +217,10 @@
                 }
             });
         }
+
     </script>
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
-   <div region="north" style="height: 300px">
        <table id="dg" class="easyui-datagrid"
               fitColumns="false" rownumbers="true" singleSelect="true" fit="true"
               toolbar="#tb1" split="true">
@@ -310,21 +230,15 @@
        <div id="tb1">
            <fieldset style="border-color: #E7F0FF">
                <legend>查询设置</legend>
-               &nbsp;订单号&nbsp; <input type="text" id="saleNumber" size="15"/>
-               &nbsp;&nbsp;&nbsp;物料编号&nbsp; <input type="text" id="wuliaoId" size="15"/>
+               &nbsp;订单号&nbsp; <input type="text" id="saleNumber" size="15" autocomplete="off"/>
+               &nbsp;&nbsp;&nbsp;物料编号&nbsp; <input type="text" id="wuliaoId" size="15" autocomplete="off"/>
                &nbsp;&nbsp;<a href="javascript:searchSale()"
                               class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
                &nbsp;&nbsp;<a href="javascript:reload()"
                               class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
            </fieldset>
        </div>
-   </div>
 
-   <div region="center" style="margin-top: 5px">
-       <table id="addSon" class="easyui-datagrid" fitColumns="false" singleSelect="true"
-              rownumbers="true" fit="true" split="true">
-       </table>
-   </div>
 
 </body>
 </html>

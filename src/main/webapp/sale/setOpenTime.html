@@ -96,21 +96,17 @@
                 return;
             }
 
-            var arr1 = [];
             var arr2 = [];
             for(var i=0;i<rows.length;i++){
-                arr1.push(rows[i].id);
                 arr2.push(rows[i].wuliaoId)
             }
 
-            var ids = arr1.join(",");
             var wuliaoIds = arr2.join(",");
 
 
 
             $.post("/admin/saleList/baoCunOpenTime",
                 {
-                    ids:ids,
                     yuGuGongShi:$("#yuGuGongShi").val(),
                     wuliaoIds:wuliaoIds
                 },function (result) {
@@ -146,8 +142,7 @@
            toolbar="#tb1" split="true">
         <thead>
         <th id="id" width="200" hidden="true" align="center">id</th>
-        <th id="kucunzuzhi" field="kucunzuzhi" width="200" align="center">库存组织</th>
-        <th id="hangHao" field="hangHao" width="100" align="center">行号</th>
+        <th id="saleNumber" field="saleNumber" width="100" align="center">订单号</th>
         <th id="wuliaoId" field="wuliaoId" width="100" align="center">物料编号</th>
         <th id="tuzhiName" field="tuzhiName" width="100" align="center">图纸名称</th>
         <th id="tuzhiId" field="tuzhiId" width="100" align="center">图纸编号</th>
@@ -161,12 +156,12 @@
     <div id="tb1">
         <fieldset style="border-color: #E7F0FF">
             <legend></legend>
-            &nbsp;&nbsp;物料编号:&nbsp;<input type="text" id="wuliaoSearch" name="wuliaoId"
+            &nbsp;&nbsp;物料编号:&nbsp;<input type="text" id="wuliaoSearch" name="wuliaoId" autocomplete="off"
                                      size="15" onkeydown="if(event.keyCode==13) sousuo()"/>
             &nbsp;&nbsp;<a href="javascript:sousuo()"
                            class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
             &nbsp;&nbsp;&nbsp;&nbsp;图纸所用展开工时：&nbsp; <input type="text" id="yuGuGongShi" name="yuGuGongShi"
-                                           size="15" />
+                                                           autocomplete="off"  size="15" />
                 &nbsp;&nbsp;<a href="javascript:auditPass()"
                            class="easyui-linkbutton" iconCls="icon-ok" plain="true">添加并保存大图信息</a>
         </fieldset>

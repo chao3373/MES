@@ -55,6 +55,7 @@ public class ProcessServiceImpl implements ProcessService {
 
     @Override
     public void deleteByIds(Integer[] ids) {
+        System.out.println("最终最终最终最终最终最终最终最终最终");
         for(int i = 0;i<ids.length;i++){
             processRepository.deleteById(ids[i]);
         }
@@ -63,5 +64,15 @@ public class ProcessServiceImpl implements ProcessService {
     @Override
     public List<Process> selectByName(String s) {
         return processRepository.selectByName(s);
+    }
+
+    @Override
+    public void setDuoXuan(Integer[] ids, String duoXuan) {
+        processRepository.setDuoXuan(ids,duoXuan);
+    }
+
+    @Override
+    public List<Process> findByName(String name) {
+        return processRepository.findByName(name);
     }
 }

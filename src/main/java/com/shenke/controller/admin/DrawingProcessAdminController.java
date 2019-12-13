@@ -64,13 +64,27 @@ public class DrawingProcessAdminController {
 
         int i = 1;
         for (DrawingProcess drawingProcess : plgList){
-            drawingProcess.setProcess(processService.findById(drawingProcess.getId()));
+            drawingProcess.setProcess(processService.findById(drawingProcess.getCode()));
             drawingProcess.setId(null);
             drawingProcess.setDrawing(drawingService.findById(drawingId));
             drawingProcess.setCode(i);
             i+=1;
             drawingProcessService.save(drawingProcess);
         }
+        map.put("success",true);
+        return map;
+    }
+
+    /**
+     * 通过小图纸对象id查找
+     * @param
+     * @return
+     */
+    @RequestMapping("/findByDrawingId")
+    public Map<String,Object> findByDrawingId(Integer id){
+        Map<String,Object> map = new HashMap<>();
+        List<DrawingProcess> list = drawingProcessService.findByDrawingId(drawingService.findById(id).getId());
+        map.put("rows",list);
         map.put("success",true);
         return map;
     }

@@ -18,4 +18,8 @@ public interface YuanLiaoRequireService {
      * @return
      */
     public List<YuanLiaoRequire> findBySaleListId(Integer id);
+
+    void deleteBySaleListId(Integer id);
+
+    void deleByWuliaoId(Integer id);
 }

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style type="text/css">
+        body {
+            background: white;
+            margin: 0px;
+            /*padding: 60px 100px 0 50px;*/
+            text-align: center;
+        }
+
+        table td {
+            /*border: 0px solid #000;*/
+            border: 1px solid #000;
+            font-size: 15px;
+            width: auto;
+            text-align: center;
+        }
+
+        table th {
+            border: 2px solid #000;
+        }
+
+        table {
+            border-collapse: collapse;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<OBJECT ID='WebBrowser' NAME="WebBrowser" WIDTH=0 HEIGHT=0
+        CLASSID='CLSID:8856F961-340A-11D0-A96B-00C04FD705A2'></OBJECT>
+<script type="text/javascript" src="/static/js/LodopFuncs.js"></script>
+<script type="text/javascript" src="../static/js/jquery.js"></script>
+<script type="text/javascript">
+    if (window.dialogArguments) {
+        document.write(window.dialogArguments.tableString);
+        /*document.write("<div style='height: 300px'></div>");
+        document.write(window.dialogArguments.tableString);*/
+    } else {
+        document.write(window.opener.tableString);
+        /* document.write("<div style='height: 300px'></div>");
+         document.write(window.opener.tableString);*/
+    }
+
+
+    window.print();
+    var timeId = setInterval(function () {
+        if (document.getElementsByTagName("img")) {
+            window.close();
+            clearInterval(timeId);
+        }
+    }, 1000);
+
+
+
+
+</script>
+</body>
+</html>

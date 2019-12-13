@@ -14,7 +14,7 @@ public interface ShengChanRepository extends JpaRepository<ShengChan,Integer> , 
      * "任务下发"界面显示的信息
      * @return
      */
-    @Query(value = "select * from  t_sheng_chan where state = '任务下发' and is_datu = 0 group by datu_code",nativeQuery = true)
+    @Query(value = "SELECT * FROM t_sheng_chan GROUP BY sale_list_id,biaoqian_code desc",nativeQuery = true)
     public List<ShengChan> listProduct();
 
     /**
@@ -22,18 +22,18 @@ public interface ShengChanRepository extends JpaRepository<ShengChan,Integer> , 
      * @param arr
      * @return
      */
-    @Query(value = "select * from  t_sheng_chan where state = '任务下发' and process_id in ?1 order by refer_date asc",nativeQuery = true)
+    @Query(value = "select * from  t_sheng_chan where state = '未生产' and process_id in ?1 order by refer_date asc",nativeQuery = true)
     public List<ShengChan> showInProcessProduct(Integer[] arr);
 
 
     /**
      * 查询前一工序的完成数量
-     * @param xiaotuCode
+     * @param biaoqianCode
      * @param i
      * @return
      */
-    @Query(value = "select accomplish_num from t_sheng_chan where xiaotu_code =?1 and code =?2",nativeQuery = true)
-    public Integer selectBeforeProcess(String xiaotuCode, int i);
+    @Query(value = "select accomplish_num from t_sheng_chan where biaoqian_code =?1 and code =?2",nativeQuery = true)
+    public Integer selectBeforeProcess(String biaoqianCode, int i);
 
 
     /**
@@ -109,4 +109,44 @@ public interface ShengChanRepository extends JpaRepository<ShengChan,Integer> , 
      */
     @Query(value = "select * from t_sheng_chan where state like ?1",nativeQuery = true)
     List<ShengChan> findByUserForState(String s);
+
+    /**
+     * 通过salelistId 查询大图生产情况
+     * @param id
+     * @return
+     */
+    @Query(value = "select * from (select * from t_sheng_chan where sale_list_id = ?1 and is_datu = 0) as a where state ='不可生产'",nativeQuery = true)
+    List<ShengChan> findBySaleListIdAboutDatu(Integer id);
+
+    /**
+     * 通过salelistId 查询小图生产情况
+     * @param id
+     * @return
+     */
+    @Query(value = "select * from (select * from t_sheng_chan where sale_list_id = ?1 and is_datu = 1) as b where state = '未生产' or state like '%生产中%'",nativeQuery = true)
+    List<ShengChan> findBySaleListIdAboutXiaotu(Integer id);
+
+    /**
+     * 通过salelistId修改大图的状态  （从“不可生产”---> “未生产”）
+     * @param saleListId
+     */
+    @Modifying
+    @Query(value = "update t_sheng_chan set state = '未生产' where sale_list_id = ?1 and is_datu = 0",nativeQuery = true)
+    void updateDatuState(Integer saleListId);
+
+    /**
+     * 通过工序id删除
+     * @param ids
+     */
+    @Modifying
+    @Query(value = "delete from t_sheng_chan where process_id in ?1",nativeQuery = true)
+    void deleteByProcessIds(Integer[] ids);
+
+    /**
+     * 销售订单追踪界面根据saleList 的 id 查找该id下所有的工序信息
+     * @param id
+     * @return
+     */
+    @Query(value = "select * from  t_sheng_chan where sale_list_id = ?1",nativeQuery = true)
+    List<ShengChan> findBySaleList(Integer id);
 }

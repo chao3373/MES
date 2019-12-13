@@ -17,10 +17,8 @@ public class WuliaoServiceImpl implements WuliaoService {
     private WuliaoRepository wuliaoRepository;
 
     @Override
-    public void save(List<Wuliao> list) {
-        for(Wuliao wuliao: list){
-            wuliaoRepository.save(wuliao);
-        }
+    public void save(Wuliao wuliao) {
+        wuliaoRepository.save(wuliao);
     }
 
     @Override
@@ -41,6 +39,11 @@ public class WuliaoServiceImpl implements WuliaoService {
     @Override
     public void deleteByBigDrawingId(Integer id) {
         wuliaoRepository.deleteByBigDrawingId(id);
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        wuliaoRepository.deleteById(id);
     }
 
 

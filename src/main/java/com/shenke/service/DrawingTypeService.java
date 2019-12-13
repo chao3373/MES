@@ -21,4 +21,14 @@ public interface DrawingTypeService {
 
 
     void deleteByBigDrawingId(Integer id);
+
+    /**
+     * 按照id删除
+     * @param id
+     */
+    void deleteById(Integer id);
+
+    DrawingType findById(Integer id);
+
+    void save(DrawingType drawingType);
 }

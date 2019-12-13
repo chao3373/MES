@@ -17,4 +17,6 @@ public interface UserProductService {
 
 
     List<UserProduct> findAll();
+
+    void deleteByProcessIds(Integer[] ids);
 }

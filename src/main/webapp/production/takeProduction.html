@@ -31,7 +31,7 @@
                         field: "dingdanhao",
                         width: "150",
                         align: "center",
-                        title: "销售单号",
+                        title: "订单编号",
                         formatter:function (val, row) {
                             console.log(row)
                             if(row.ruKu.saleList != null){
@@ -58,23 +58,10 @@
                         field: "wuliaohao",
                         width: "150",
                         align: "center",
-                        title: "大图",
+                        title: "物料编号",
                         formatter: function (val,row ) {
                             if(row.ruKu.bigDrawing != null ){
                                 return row.ruKu.bigDrawing.wuliaoId;
-                            }
-                            else {
-                                return "";
-                            }
-                        }
-                    }, {
-                        field: "tuzhihao",
-                        width: "150",
-                        align: "center",
-                        title: "小图",
-                        formatter: function (val,row ) {
-                            if(row.ruKu.drawing != null){
-                                return row.ruKu.drawing.wuliaoId;
                             }
                             else {
                                 return "";
@@ -135,7 +122,7 @@
                         field: "dingdanhao",
                         width: "150",
                         align: "center",
-                        title: "销售单号",
+                        title: "订单编号",
                         formatter:function (val, row) {
                             console.log(row)
                             if(row.ruKu.saleList != null){
@@ -162,23 +149,10 @@
                         field: "wuliaohao",
                         width: "150",
                         align: "center",
-                        title: "大图",
+                        title: "物料编号",
                         formatter: function (val,row ) {
                             if(row.ruKu.bigDrawing != null ){
                                 return row.ruKu.bigDrawing.wuliaoId;
-                            }
-                            else {
-                                return "";
-                            }
-                        }
-                    }, {
-                        field: "tuzhihao",
-                        width: "150",
-                        align: "center",
-                        title: "小图",
-                        formatter: function (val,row ) {
-                            if(row.ruKu.drawing != null){
-                                return row.ruKu.drawing.wuliaoId;
                             }
                             else {
                                 return "";

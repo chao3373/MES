@@ -10,4 +10,6 @@ public interface BigDrawingProcessService {
     void save(BigDrawingProcess bigDrawingProcess);
 
     List<BigDrawingProcess> findByBigDrawingId(Integer id);
+
+    void deleteByProcessIds(Integer[] ids);
 }

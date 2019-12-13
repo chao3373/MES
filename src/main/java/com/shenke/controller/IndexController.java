@@ -61,11 +61,6 @@ public class IndexController {
     @RequestMapping("/admin/daochu")
     public Map<String, Object> daochu(String a, String title) throws Exception {
         Map<String, Object> map = new HashMap<>();
-        System.out.println("((((((((((((((((导出)))))))))))))");
-        System.out.println(a);
-        System.out.println(a.getClass());
-        System.out.println(title);
-        System.out.println("((((((((((((((((导出)))))))))))))");
         DaochuUtil.daochuExcel(a, title);
         map.put("success", true);
         return map;

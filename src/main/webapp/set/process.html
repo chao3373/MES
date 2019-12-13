@@ -29,6 +29,8 @@
             <a href="javascript:openGoodsModifyDialog()" class="easyui-linkbutton" iconCls="icon-edit"
                plain="true">修改</a>
             <a href="javascript:deleteGoods()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+            <a href="javascript:duoXuan(1)" class="easyui-linkbutton" iconCls="icon-remove" plain="true">多选</a>
+            <a href="javascript:duoXuan(2)" class="easyui-linkbutton" iconCls="icon-remove" plain="true">取消多选</a>
         </div>
         <div>
             &nbsp;工序名称：&nbsp;<input type="text" id="name" size="20"
@@ -99,14 +101,14 @@
         $("#dg").datagrid({
             url: "/admin/process/list",
             columns: [[
-                {field: 'cb', title: 'id', width: 20, checkbox: "true", align: 'center'},
+                {field: 'cb', title: 'cb', width: 20, checkbox: "true", align: 'center'},
                 {field: 'id', title: 'id', width: 100, align: 'center', hidden: "true"},
                 {field: 'name', title: '工序名称', width: 100, align: 'center'},
+                {field: 'duoXuan', title: '是否为多选工序', width: 100, align: 'center'},
                 {
                     field: 'processGroup', title: '所属工序组', width: 100, align: 'center',
                     formatter: function (value, row, index) {
                         if (row.processGroup) {
-                            console.log(row)
                             return row.processGroup.processGroup;
                         }
                         return "";
@@ -116,13 +118,42 @@
         });
         $("#tree").tree({
             onClick: function (node) {
-                console.log(node)
+                console.log(node);
                 $("#del").linkbutton("enable");
                 loadDg(node.id);
             }
         });
     });
 
+
+    //工序多选、取消多选操作
+    function duoXuan(i) {
+        var duoXuan = "";
+        if(i == 1){
+            duoXuan = "是";
+        }else {
+            duoXuan = "否";
+        }
+
+        var rows = $("#dg").datagrid("getSelections");
+        var arr = [];
+        for(var i=0;i<rows.length;i++){
+            arr.push(rows[i].id);
+        }
+        var Ids = arr.join(",");
+        $.post("/admin/process/duoXuan",{
+            Ids:Ids,
+            duoXuan:duoXuan
+        },function (result) {
+            if(result.success){
+                $.messager.alert("系统提示","操作成功！");
+                $("#dg").datagrid("reload");
+            }else {
+                $.messager.alert("系统提示","操作失败！");
+                return;
+            }
+        })
+    }
     //加载部门信息
     function loadDep() {
         $.ajax({
@@ -165,6 +196,7 @@
 
     //关闭添加部门信息
     function closeGoodsTypeDialog() {
+
         $("#dlg").dialog("close");
     }
 
@@ -194,13 +226,9 @@
             url: "/admin/process/findByPGId",
             data: {id: id},
             success: function (result) {
-
                 console.log(result)
-
-                if (result.success) {
+                    console.log(result.rows)
                     $("#dg").datagrid("loadData", result.rows);
-                    $("#dg").datagrid("reload")
-                }
             }
         });
     }
@@ -215,15 +243,21 @@
 
     //关闭添加员工面板
     function closeGoodsDialog() {
+        $("#processName").val("");
         $("#dlg2").dialog("close");
     }
 
     //保存员工信息
     function saveGoods() {
-       /* $("#fm2").form("submit", {
-            url: "/admin/process/save",
-            success: function (result) {
-                if (result) {
+        $.post("/admin/process/save",{
+            id:$("#processGroup").combobox("getValue"),
+            name : $("#processName").val()
+        },function (result) {
+            if (result.success) {
+                if(result.error){
+                    $.messager.alert("系统提示",result.error);
+                    return;
+                }else {
                     initDlg2();
                     closeGoodsDialog();
                     if ($("#tree").tree("getSelected")) {
@@ -233,25 +267,10 @@
                     $("#dg").datagrid("reload");
                 }
             }
-        });*/
-
-        $.post("/admin/process/save",{
-            id:$("#processGroup").combobox("getValue"),
-            name : $("#processName").val()
-        },function (result) {
-            if (result) {
-                initDlg2();
-                closeGoodsDialog();
-                if ($("#tree").tree("getSelected")) {
-                    loadDg($("#tree").tree("getSelected").id);
-                    return;
-                }
-                $("#dg").datagrid("reload");
-            }
         },"json");
     }
 
-    //删除选中的员工信息
+    //删除选中的工序信息
     function deleteGoods() {
         var rows = $("#dg").datagrid("getSelections");
         var ids = [];
@@ -267,7 +286,8 @@
                         url: "/admin/process/deleteByIds",
                         data: {ids: idArr},
                         success: function (result) {
-                            loadDg($("#tree").tree("getSelected").id);
+                            // loadDg($("#tree").tree("getSelected").id);
+                            $("#dg").datagrid("reload")
                         }
                     })
 

@@ -25,4 +25,14 @@ public class YuanLiaoRequireServiceImpl implements YuanLiaoRequireService {
     public List<YuanLiaoRequire> findBySaleListId(Integer id) {
         return yuanLiaoRequireRepository.findBySaleListId(id);
     }
+
+    @Override
+    public void deleteBySaleListId(Integer id) {
+        yuanLiaoRequireRepository.deleteBySaleListId(id);
+    }
+
+    @Override
+    public void deleByWuliaoId(Integer id) {
+        yuanLiaoRequireRepository.deleteByWuliaoId(id);
+    }
 }

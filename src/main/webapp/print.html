@@ -6,7 +6,7 @@
         body {
             background: white;
             margin: 0px;
-            padding: 60px 100px 0 50px;
+            /*padding: 60px 100px 0 50px;*/
             text-align: center;
         }
 
@@ -40,10 +40,9 @@
         document.write(window.dialogArguments.tableString);*/
     } else {
         document.write(window.opener.tableString);
-       /* document.write("<div style='height: 300px'></div>");
-        document.write(window.opener.tableString);*/
+        /* document.write("<div style='height: 300px'></div>");
+         document.write(window.opener.tableString);*/
     }
-
     /*if (window.dialogArguments) {
         var index = window.dialogArguments.tableString.lastIndexOf(">");
         var num = window.dialogArguments.tableString.substring(index+1)
@@ -62,7 +61,6 @@
             document.write("<div style='page-break-after: always;'></div>");
         }
     }*/
-
     window.print();
     var timeId = setInterval(function () {
         if (document.getElementsByTagName("img")) {
@@ -72,24 +70,7 @@
     }, 1000);
 
 
-    // window.onload = function () {
-    //     var LODOP = getLodop(document.getElementById('LODOP_OB'), document.getElementById('LODOP_EM'));
-    //     prn3_preview();
-    //     var timeId = setInterval(function () {
-    //         if (document.getElementsByTagName("img")) {
-    //             window.close();
-    //             clearInterval(timeId);
-    //         }
-    //     }, 1000);
-    //
-    //     //直接打印
-    //     function prn3_preview() {
-    //         LODOP = getLodop();
-    //         LODOP.PRINT_INIT("打印控件功能演示_Lodop功能_全页");
-    //         LODOP.ADD_PRINT_HTM(0, 0, "100%", "100%", document.documentElement.innerHTML);
-    //         LODOP.PRINT();
-    //     };
-    // }
+
 </script>
 </body>
 </html>

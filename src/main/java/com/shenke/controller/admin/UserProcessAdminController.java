@@ -1,5 +1,7 @@
 package com.shenke.controller.admin;
 
+import com.shenke.entity.Process;
+import com.shenke.entity.User;
 import com.shenke.entity.UserProcess;
 import com.shenke.service.ProcessService;
 import com.shenke.service.UserProcessService;
@@ -8,7 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -40,4 +45,22 @@ public class UserProcessAdminController {
         return map;
     }
 
+    @RequestMapping("/processListByUser")
+    public List<Process> processListByUser(HttpSession session,String q){
+        User user = (User) session.getAttribute("currentUser"); //获取当前登录用户对象
+        if(q == null){
+            q = "";
+        }
+        List<UserProcess> list = userProcessService.processListByUser("%"+q+"%",user.getId());
+        List<Process> list1 = new ArrayList<>();
+
+        for (UserProcess userProcess : list){
+            list1.add(userProcess.getProcess());
+        }
+
+        System.out.println("***************************");
+        System.out.println(list1);
+        System.out.println("***************************");
+        return list1;
+    }
 }

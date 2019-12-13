@@ -49,6 +49,31 @@ public class SaleListAdminController {
      * 保存添加订单
      * @return
      */
+
+    @RequestMapping("/aaa")
+    public Map<String,Object> aaa(){
+        Map<String,Object> map = new HashMap<>();
+        StringBuffer code = new StringBuffer("FX");
+        String a = saleListService.selectMaxOutCode();
+        if(a!=null){
+            code.append(StringUtil.formatCode(a));
+        }else{
+            code.append("00000001");
+        }
+
+        for(int i = 0 ; i < 3 ;i ++){
+            String bianma = code.toString();
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println(bianma);
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            code = new StringBuffer("FX");
+            code = code.append(StringUtil.formatCode(bianma));
+        }
+        map.put("aaa",code.toString());
+        return map;
+    }
+
+
     @RequestMapping("/save")
     public Map<String, Object> save(String data) throws Exception {
         Map<String,Object> map = new HashMap<>();
@@ -56,12 +81,26 @@ public class SaleListAdminController {
         List<SaleList> plgList = gson.fromJson(data, new TypeToken<List<SaleList>>() {
         }.getType());
 
+        //设置发货编码
+        StringBuffer code = new StringBuffer("FX");
+        String outCode = saleListService.selectMaxOutCode();
+        if(outCode!=null){
+            code.append(StringUtil.formatCode(outCode));
+        }else{
+            code.append("00000001");
+        }
        for(SaleList saleList : plgList){
+
+           String bianma = code.toString();
+
+           saleList.setOutCode(bianma);
            saleList.setState("下单");
            if(bigDrawingService.findByWuLiaoId(saleList.getWuliaoId())!=null){
                saleList.setCunzai(saleListService.findCunZaiByWuliaoId(saleList.getWuliaoId()));
            }
            saleList.setRemark(0);
+           code = new StringBuffer("FX");
+           code = code.append(StringUtil.formatCode(bianma));
         }
         saleListService.save(plgList);
         map.put("success",true);
@@ -251,12 +290,8 @@ public class SaleListAdminController {
      * @return
      */
     @RequestMapping("/dingDanZhuiZong")
-    public Map<String,Object> dingDanZhuiZong(SaleList saleList,String saleDated,Integer yaoqiu){
-        Map<String,Object> map = new HashMap<>();//此处的要求为同样的查询字段但是要求不相同
-        List<SaleList> list = saleListService.dingDanZhuiZong(saleList,saleDated,yaoqiu);
-        map.put("success",true);
-        map.put("rows",list);
-        return map;
+    public Map<String,Object> dingDanZhuiZong(SaleList saleList,String saleDated,String referDated,Integer page, Integer rows){
+        return saleListService.dingDanZhuiZong(saleList,saleDated,referDated,page,rows);
     }
 
     @RequestMapping("/setStateByIds")
@@ -278,6 +313,32 @@ public class SaleListAdminController {
     public Map<String,Object> findBySaleNumber(String saleNumber){
         Map<String,Object> map = new HashMap<>();
         map.put("rows",saleListService.findBySaleNumber("%"+saleNumber+"%"));
+        System.out.println("**********************************");
+        System.out.println(map);
+        System.out.println("**********************************");
+        return map;
+    }
+
+    /**
+     * 信息录入界面根据销售单号查询
+     * @param saleNumber
+     * @return
+     */
+    @RequestMapping("/findBySaleNumberXinxiLuRu")
+    public Map<String,Object> findBySaleNumberXinxiLuRu(String saleNumber){
+        Map<String,Object> map = new HashMap<>();
+        List<SaleList> list = saleListService.findBySaleNumberXinxiLuRu("%"+saleNumber+"%");
+        for (SaleList saleList : list){
+            BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(saleList.getWuliaoId());
+            List<BigDrawingProcess> bdpList = bigDrawingProcessService.findByBigDrawingId(bigDrawing.getId());
+            StringBuffer sb = new StringBuffer();
+
+            for (BigDrawingProcess bigDrawingProcess : bdpList){
+                sb.append(","+bigDrawingProcess.getProcess().getName());
+            }
+            saleList.setGongxus(sb.toString().replaceFirst(",",""));
+        }
+        map.put("rows",list);
         return map;
     }
 
@@ -288,7 +349,8 @@ public class SaleListAdminController {
     @RequestMapping("/setOpenTime")
     public Map<String,Object> setOpenTime(){
         Map<String,Object> map = new HashMap<>();
-        map.put("rows",saleListService.setOpenTime());
+        List<SaleList> list = saleListService.setOpenTime();
+        map.put("rows",list);
         return  map;
     }
 
@@ -298,16 +360,15 @@ public class SaleListAdminController {
      * @return
      */
     @RequestMapping("/baoCunOpenTime")
-    public Map<String,Object> baoCunOpenTime(Integer []ids,Double yuGuGongShi,String []wuliaoIds){
+    public Map<String,Object> baoCunOpenTime(Double yuGuGongShi,String []wuliaoIds){
         Map<String,Object> map = new HashMap<>();
 
         for (int i=0;i<wuliaoIds.length;i++){
             saleListService.baoCunOpenTime(yuGuGongShi,wuliaoIds[i]);
         }
 
-        for (int i= 0;i<ids.length;i++){
-            saleListService.setCunZai(ids[i],"分配工时");
-        }
+        saleListService.setCunZaiByWuliaoIds(wuliaoIds,"分配工时");
+
         map.put("success",true);
         return map;
     }
@@ -347,13 +408,17 @@ public class SaleListAdminController {
     /**
      * 图纸展开完成
      * @param wuliaoId
-     * @param id
      * @return
      */
     @RequestMapping("/finishOpen")
-    public Map<String,Object> finishOpen(String wuliaoId,Integer id){
+    public Map<String,Object> finishOpen(String wuliaoId){
         Map<String,Object> map = new HashMap<>();
-        saleListService.setCunZai(id,"存在");
+        List<SaleList> list = saleListService.findByWuliaoIdTuzhiOpen(wuliaoId);
+        for(SaleList saleList : list){
+            saleList.setCunzai("存在");
+        }
+        System.out.println("11111111111111111111111111111111111111111111111111s");
+        saleListService.save(list);
         map.put("success",true);
         return map;
     }
@@ -363,15 +428,26 @@ public class SaleListAdminController {
      * @return
      */
     @RequestMapping("/setOpenState")
-    public Map<String,Object> setOpenState(Integer id, String state, HttpSession session){
+    public Map<String,Object> setOpenState(String wuliaoId, String state, HttpSession session){
         Map<String,Object> map = new HashMap<>();
         if(state != ""){
             User user = (User) session.getAttribute("currentUser"); //获取当前登录用户对象
             state = state + "：" +user.getTrueName();
-        }
 
-        saleListService.setOpenState(id,state);
-        map.put("success",true);
+            List<SaleList> list = saleListService.findByOpenState(state);
+
+            if(list.size() != 0){
+                map.put("success",true);
+                map.put("error","您有正在展开的图纸！");
+
+            }else {
+                saleListService.setOpenState(wuliaoId,state);
+                map.put("success",true);
+            }
+        }else {
+            saleListService.setOpenState(wuliaoId,state);
+            map.put("success",true);
+        }
         return map;
     }
 
@@ -385,6 +461,60 @@ public class SaleListAdminController {
         Map<String,Object> map = new HashMap<>();
         User user = (User) session.getAttribute("currentUser");
         map.put("user",user.getTrueName());
+        return map;
+    }
+
+    //查找
+    @RequestMapping("/findAboutNoSaleNumber")
+    public Map<String,Object> findAboutNoSaleNumber(SaleList saleList,String saleDateCha,String referDateCha){
+        Map<String,Object> map = new HashMap<>();
+        List<SaleList> list = saleListService.findAboutNoSaleNumber(saleList,saleDateCha,referDateCha);
+        map.put("rows",list);
+        map.put("success",true);
+        System.out.println("***********************8");
+        System.out.println(map);
+        System.out.println("***********************8");
+        return map;
+    }
+
+    /**
+     * 显示所有无订单
+     * @return
+     */
+    @RequestMapping("listAllNoSaleNumber")
+    public Map<String,Object> listAllNoSaleNumber(){
+        Map<String,Object> map = new HashMap<>();
+        map.put("rows",saleListService.listAllNoSaleNumber());
+        return map;
+    }
+
+    /**
+     * 替换订单编号
+     * @return
+     */
+    @RequestMapping("/updateSaleNumber")
+    public Map<String,Object> updateSaleNumber(String saleNumber,Integer id){
+        Map<String,Object> map = new HashMap<>();
+        saleListService.updateSaleNumber(saleNumber,id);
+        map.put("success",true);
+        return map;
+    }
+
+    /**
+     * 关于saleList对象的多条件查询
+     * @param
+     * @return
+     */
+    @RequestMapping("/selectAboutSaleList")
+    public Map<String,Object> selectAboutSaleList(SaleList saleList,String data){
+        Map<String,Object> map = new HashMap<>();
+        System.out.println("******************************");
+        System.out.println(saleList);
+        System.out.println(data);
+        System.out.println("******************************");
+        List<SaleList> list = saleListService.selectAboutSaleList(saleList);
+
+        map.put("rows",list);
         return map;
     }
 }

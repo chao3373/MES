@@ -9,15 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface RuKuRepository extends JpaRepository<RuKu,Integer> , JpaSpecificationExecutor<RuKu> {
-
-    /**
-     * 通过小图编码查询
-     * @param xiaotuCode
-     * @return
-     */
-    @Query(value = "select * from t_ru_ku where xiaotu_code = ?1",nativeQuery = true)
-    RuKu findOneByxiaotuCode(String xiaotuCode);
-
     /**
      * 查询状态为准备入库的信息
      * @return
@@ -43,9 +34,9 @@ public interface RuKuRepository extends JpaRepository<RuKu,Integer> , JpaSpecifi
 
     /**
      * 通过大图图纸查找
-     * @param datuCode
+     * @param outCode
      * @return
      */
-    @Query(value = "select * from t_ru_ku where datu_code = ?1",nativeQuery = true)
-    List<RuKu> findByDatuCode(String datuCode);
+    @Query(value = "select * from t_ru_ku where out_code = ?1",nativeQuery = true)
+    List<RuKu> findByoutCode(String outCode);
 }

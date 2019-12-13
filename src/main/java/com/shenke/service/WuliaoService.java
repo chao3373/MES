@@ -5,7 +5,7 @@ import com.shenke.entity.Wuliao;
 import java.util.List;
 
 public interface WuliaoService {
-    public void save(List<Wuliao> list);
+    public void save(Wuliao wuliao);
 
     public List<Wuliao> findByBigDrawingId(Integer id);
 
@@ -14,4 +14,6 @@ public interface WuliaoService {
     void saveOld(Wuliao wuliao1);
 
     void deleteByBigDrawingId(Integer id);
+
+    void deleteById(Integer id);
 }

@@ -49,9 +49,15 @@ public class UserProductServiceImpl implements UserProductService {
                     }
 
                     if(userProduct.getbDate() != null){
+                        System.out.println("********************开始时间********************");
+                        System.out.println(userProduct.getbDate());
+                        System.out.println("********************开始时间********************");
                         predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("dateInProduct"),userProduct.getbDate()));
                     }
                     if(userProduct.geteDate() != null){
+                        System.out.println("********************结束时间********************");
+                        System.out.println(userProduct.geteDate());
+                        System.out.println("********************结束时间********************");
                         predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("dateInProduct"),userProduct.geteDate()));
                     }
                 }
@@ -64,6 +70,12 @@ public class UserProductServiceImpl implements UserProductService {
     @Override
     public List<UserProduct> findAll() {
         return userProductRespository.findAll();
+    }
+
+    @Override
+    public void deleteByProcessIds(Integer[] ids) {
+        System.out.println("1");
+        userProductRespository.deleteByProcessIds(ids);
     }
 
 

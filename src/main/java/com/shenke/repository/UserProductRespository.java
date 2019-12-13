@@ -19,4 +19,12 @@ public interface UserProductRespository extends JpaRepository<UserProduct,Intege
     @Query(value = "delete from  t_user_product where user_id = ?1",nativeQuery = true)
     public void delectByUserId(Integer id);
 
+
+    /**
+     * 根据工序id删除
+     * @param ids
+     */
+    @Modifying
+    @Query(value = "delete from t_user_product where process_id in ?1",nativeQuery = true)
+    void deleteByProcessIds(Integer[] ids);
 }

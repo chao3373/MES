@@ -59,38 +59,54 @@
 
         function loaddg2() {
             $("#dg2").datagrid({
-                url:"/admin/drawingType/findBySaleListId?id="+id,
+                url:"/admin/shengChan/findBySaleList?id="+id,
                 columns:[[
                     {
-                        field: 'id',
-                        title: '编号',
+                        field: 'bigdrawingId',
+                        title: '总图',
                         width: 100,
                         align: 'center',
-                        hidden:'true'
+                        formatter: function (value, rows) {
+                            if(rows.bigDrawing){
+                                return rows.bigDrawing.wuliaoId;
+                            }
+                            else
+                                return '';
+                        }
                     },{
                         field: 'drawingId',
-                        title: '小图纸编号',
+                        title: '分图',
                         width: 100,
                         align: 'center',
                         formatter: function (value, rows) {
                             if(rows.drawing){
-                                return rows.drawing.drawingId;
+                                return rows.drawing.wuliaoId;
                             }
                             else
                                 return '';
                         }
                     },{
-                        field: 'drawingName',
-                        title: '小图纸名称',
+                        field: 'processId',
+                        title: '工序',
                         width: 100,
                         align: 'center',
                         formatter: function (value, rows) {
-                            if(rows.drawing){
-                                return rows.drawing.name;
+                            if(rows.process){
+                                return rows.process.name;
                             }
                             else
                                 return '';
                         }
+                    },{
+                        field: 'num',
+                        title: '下单数',
+                        width: 100,
+                        align: 'center'
+                    },{
+                        field: 'accomplishNum',
+                        title: '完成数量',
+                        width: 100,
+                        align: 'center'
                     },{
                         field: 'state',
                         title: '状态',
@@ -103,7 +119,7 @@
 
         function load() {
             $("#dg").datagrid({
-                url:"/admin/saleList/findAll",
+                url:"/admin/saleList/dingDanZhuiZong",
                 columns: [[
                     {
                         field: 'id',
@@ -131,16 +147,6 @@
                         width: 100,
                         align: 'center'
                     }, {
-                        field: 'tuzhiId',
-                        title: '图纸编号',
-                        width: 100,
-                        align: 'center'
-                    }, {
-                        field: 'tuzhiName',
-                        title: '图纸名称',
-                        width: 100,
-                        align: 'center'
-                    }, {
                         field: 'xiangmuId',
                         title: '项目编号',
                         width: 100,
@@ -161,8 +167,8 @@
                         width: 100,
                         align: 'center'
                     }, {
-                        field: 'prepareTime',
-                        title: '准备工时',
+                        field: 'num',
+                        title: '数量',
                         width: 100,
                         align: 'center'
                     }, {
@@ -337,7 +343,7 @@
 </head>
 <body style="margin: 1px" class="easyui-layout">
 <div data-options="region:'center'" style="padding: 10px; border: 1px;">
-    <table id="dg" class="easyui-datagrid"
+    <table id="dg" class="easyui-datagrid" pagination="true"
            rownumbers="true" singleSelect="true"
            toolbar="#tb" fit="true">
     </table>
@@ -346,13 +352,13 @@
             <table>
                 <tr>
                     <td>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;订&nbsp;单&nbsp;号： <input name="SaleNumber" id="saleNumber" style="width: 130px"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;订单编号： <input name="SaleNumber" id="saleNumber" style="width: 130px"/>
                     </td>
                     <td>
                         &nbsp;&nbsp;&nbsp;&nbsp;申请单号： <input name="ShenqingNumber" id="shenqingNumber" style="width: 130px"/>
                     </td>
                     <td>
-                        &nbsp;&nbsp;&nbsp;&nbsp;项目号： <input name="XiangmuId" id="xiangmuId" style="width: 130px"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;项目编号： <input name="XiangmuId" id="xiangmuId" style="width: 130px"/>
                     </td>
 
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:search()"
@@ -361,17 +367,15 @@
                 </tr>
                 <tr>
                     <td>
-                        &nbsp;&nbsp;&nbsp;&nbsp;图纸编号： <input name="TuzhiId" id="tuzhiId" style="width: 130px"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;物料编号： <input name="WuliaoId" id="wuliaoId" style="width: 130px"/>
                     </td>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;销售日期： <input type="text" id="aleDate" name="saleDated"
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;下单日期： <input type="text" id="saleDate" name="saleDated"
+                                                            class="easyui-datebox"
+                                                            demandd="true" data-options="editable:false" size="15"/>
+                    </td><td>&nbsp;&nbsp;&nbsp;&nbsp;交货日期： <input type="text" id="referDate" name="referDated"
                                                             class="easyui-datebox"
                                                             demandd="true" data-options="editable:false" size="15"/>
                     </td>
-                    <td>
-                        &nbsp;&nbsp;&nbsp;&nbsp;物料号： <input name="WuliaoId" id="wuliaoId" style="width: 130px"/>
-                    </td>
-                    <!--后台需要的yaoqiu的值-->
-                    &nbsp;&nbsp;&nbsp;&nbsp;<input type="hidden" name="yaoqiu" id="yaoqiu"/>
                     <td>
                         &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:refresh()" class="easyui-linkbutton"
                                                    iconCls="icon-reload">刷新</a>
@@ -383,7 +387,7 @@
 </div>
 
 <div id="dlg" class="easyui-dialog" buttons="#dlg-buttons"
-     style="width: 400px; height: 250px; padding: 10px 20px" closed="true">
+     style="width: 690px; height: 280px; padding: 10px 20px" closed="true">
     <table id="dg2" class="easyui-datagrid"
            rownumbers="true" singleSelect="true" fit="true">
     </table>

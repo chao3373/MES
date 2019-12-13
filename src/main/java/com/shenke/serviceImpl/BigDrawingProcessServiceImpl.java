@@ -30,4 +30,10 @@ public class BigDrawingProcessServiceImpl implements BigDrawingProcessService {
     public List<BigDrawingProcess> findByBigDrawingId(Integer id) {
         return bigDrawingProcessRepository.findByBigDrawingId(id);
     }
+
+    @Override
+    public void deleteByProcessIds(Integer[] ids) {
+        System.out.println("5");
+        bigDrawingProcessRepository.deleteByProcessIds(ids);
+    }
 }

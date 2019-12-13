@@ -30,4 +30,15 @@ public class UserProcessServiceImpl implements UserProcessService {
     public List<UserProcess> findByUserId(Integer id) {
         return userProcessRepository.findByUserId(id);
     }
+
+    @Override
+    public List<UserProcess> processListByUser(String s, Integer id) {
+        return userProcessRepository.processListByUser(s,id);
+    }
+
+    @Override
+    public void deleteByProcessIds(Integer[] ids) {
+        System.out.println("3");
+        userProcessRepository.deleteByProcessIds(ids);
+    }
 }

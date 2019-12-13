@@ -3,9 +3,7 @@ package com.shenke.controller.admin;
 import com.shenke.entity.Log;
 import com.shenke.entity.Process;
 import com.shenke.entity.ProcessGroup;
-import com.shenke.service.LogService;
-import com.shenke.service.ProcessGroupService;
-import com.shenke.service.ProcessService;
+import com.shenke.service.*;
 import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +25,21 @@ public class ProcessGroupAdminController {
 
     @Resource
     private LogService logService;
+
+    @Resource
+    private ShengChanService shengChanService;
+
+    @Resource
+    private UserProductService userProductService;
+
+    @Resource
+    private UserProcessService userProcessService;
+
+    @Resource
+    private DrawingProcessService drawingProcessService;
+
+    @Resource
+    private BigDrawingProcessService bigDrawingProcessService;
 
     /***
      * 查询所有部门信息
@@ -68,6 +81,16 @@ public class ProcessGroupAdminController {
         Map<String, Object> map = new HashMap<>();
         List<Process> list = processService.findByPGId(id);
         if (list.size() > 0) {
+            Integer []a = new Integer[list.size()];
+            Integer i = 0;
+            for (Process process : list){
+                a[i] = process.getId();
+            }
+            userProductService.deleteByProcessIds(a);
+            shengChanService.deleteByProcessIds(a);
+            userProcessService.deleteByProcessIds(a);
+            drawingProcessService.deleteByProcessIds(a);
+            bigDrawingProcessService.deleteByProcessIds(a);
             processService.deleteByPGId(id);
         }
         processGroupService.deleteById(id);

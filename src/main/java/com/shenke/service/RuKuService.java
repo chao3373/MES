@@ -6,8 +6,6 @@ import java.util.List;
 
 public interface RuKuService {
 
-    public RuKu findOneByxiaotuCode(String xiaotuCode);
-
     public void save(RuKu ruku);
 
     public List<RuKu> list();
@@ -18,5 +16,5 @@ public interface RuKuService {
 
     RuKu findBySaleListId(Integer saleListId);
 
-    public List<RuKu> findByDatuCode(String datuCode);
+    public List<RuKu> findByoutCode(String outCode);
 }

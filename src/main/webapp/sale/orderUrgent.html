@@ -17,6 +17,7 @@
     <script type="text/javascript">
 
         $(document).ready(function() {
+            show();
             load();
             $('#dg').datagrid({
                 rowStyler: function (index, row) {
@@ -122,6 +123,53 @@
             },"json")
         }
 
+        //设置是否显示工时
+        function isShow() {
+            $("#dlg").dialog("open").dialog("setTitle","设置");
+        }
+
+        //保存设置
+        function save() {
+            console.log($("#isShow").is(':checked'));
+
+            var show;
+            if($("#isShow").is(':checked')){
+               show = 0;
+            }else{
+                show = 1;
+            }
+            $.post("/admin/showGongShi/updateShowGongShi",{
+                show:show
+            },function (result) {
+                if(result.success){
+                    $.messager.alert("系统提示","操作成功！");
+                    close();
+                }else {
+                    $.messager.alert("系统提示","操作失败！");
+                }
+            })
+        }
+
+        //关闭设置窗口
+        function close() {
+            $("#dlg").dialog("close");
+        }
+
+
+        function show() {
+            $.post("/admin/showGongShi/select",
+                function (result) {
+                    if(result.success){
+                        if(result.show == 0){
+                            $("#isShow").prop("checked", true);
+                        }else {
+                            $("#isShow").prop("checked", false);
+                        }
+                    }
+                }
+            )
+        }
+
     </script>
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
@@ -155,7 +203,27 @@
                            class="easyui-linkbutton" iconCls="icon-no" plain="true"><span style="background: #b58106;color:white">订单暂停</span></a>
             &nbsp;&nbsp;<a href="javascript:order(0)"
                            class="easyui-linkbutton" iconCls="icon-refresh" plain="true">订单恢复</a>
+            &nbsp;&nbsp;<a href="javascript:isShow()"
+                           class="easyui-linkbutton" iconCls="icon-help" plain="true">设置是否显示工时</a>
         </fieldset>
+    </div>
+
+    <!--添加完成数量对话框-->
+    <div id="dlg" class="easyui-dialog" style="width: 300px;height: 150px;"
+         closed="true" buttons="#dlg-buttons">
+        <form id="fm" method="post" enctype="multipart/form-data">
+            <table cellspacing="8px">
+                <tr>
+                    <td style="font-size: 15px">显示准备、操作工时</td>
+                    <td><input id="isShow" type="checkbox"/></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <!-- 对话框按钮 -->
+    <div id="dlg-buttons">
+        <a href="javascript:save()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+        <a href="javascript:close()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
     </div>
 </body>
 </html>

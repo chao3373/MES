@@ -45,7 +45,7 @@ public class BigDrawingProcessAdminController {
             System.out.println("********************************");
             System.out.println(bigDrawingProcess);
             System.out.println("********************************");
-            bigDrawingProcess.setProcess(processService.findById(bigDrawingProcess.getId()));
+            bigDrawingProcess.setProcess(processService.findById(bigDrawingProcess.getCode()));
             bigDrawingProcess.setId(null);
             bigDrawingProcess.setZbGongShi(bigDrawingProcess.getZbGongShi());
             bigDrawingProcess.setBigDrawing(bigDrawing);
@@ -53,6 +53,20 @@ public class BigDrawingProcessAdminController {
             i+=1;
             bigDrawingProcessService.save(bigDrawingProcess);
         }
+        map.put("success",true);
+        return map;
+    }
+
+    /**
+     * 通过大图纸对象id查找
+     * @param wuliaoId
+     * @return
+     */
+    @RequestMapping("/findByBigDrawingId")
+    public Map<String,Object> findByBigDrawingId(String wuliaoId){
+        Map<String,Object> map = new HashMap<>();
+        List<BigDrawingProcess> list = bigDrawingProcessService.findByBigDrawingId(bigDrawingService.findByWuLiaoId(wuliaoId).getId());
+        map.put("rows",list);
         map.put("success",true);
         return map;
     }
