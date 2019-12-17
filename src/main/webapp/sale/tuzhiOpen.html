@@ -87,6 +87,17 @@
 
         $(document).ready(function () {
 
+            /*$('#dg').datagrid({
+                rowStyler: function (index, row) {
+                    if (row.remark == "2") {
+                        return 'background: #CC2222;color:white'
+                    }
+                    if (row.remark == "1") {
+                        return 'background: #a333c8;color:white'
+                    }
+                }
+            });*/
+
             display();
 
             load();
@@ -401,7 +412,7 @@
                 return;
             }
             if($("#addSon").datagrid("getRows").length == 0){
-                $.messager.alert("系统提示","请添加小图纸");
+                //$.messager.alert("系统提示","请添加小图纸");
                 return;
             }
             var wuliaoId = Row.wuliaoId;
@@ -575,7 +586,7 @@
         //保存物料信息
         function saveWuliao() {
             if(Row==null){
-                $.messager.alert("系统提示","请选择大图信息！");
+                //$.messager.alert("系统提示","请选择大图信息！");
                 return;
             }
 
@@ -746,6 +757,9 @@
         //结束计时
         function stop() {
             display();
+            OK();
+            saveWuliao();
+
             $.post("/admin/saleList/setOpenState",{
                 wuliaoId:Row.wuliaoId,
                 state:""
@@ -813,11 +827,7 @@
             var row = $("#dg").datagrid("getSelected");
             var rows = $("#addSon").datagrid("getRows");
             var rowRight = $("#addSonRight").datagrid("getRows");
-            //判断有没选中订单信息
-            if(row == null){
-                $.messager.alert("系统提示","请选择一条订单信息");
-                return;
-            }
+
             if(rows.length == 0 || rowRight.length == 0){
                 $.messager.confirm("系统提示","<span style='color:red'>"+"信息未添加完整，是否继续添加？"+"</span>", function(r){
                     if (r){
@@ -988,8 +998,8 @@
                                          class="easyui-linkbutton" iconCls="icon-add" plain="true">EXCEL导入子图</a>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:xiugaiTuzhi()" id="xiugaiTuzhi"
                                          class="easyui-linkbutton" iconCls="icon-reload" plain="true">修改</a>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:OK()" id="OK"
-                                         class="easyui-linkbutton" iconCls="icon-save" plain="true">保存</a>
+        <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:OK()" id="OK"
+                                         class="easyui-linkbutton" iconCls="icon-save" plain="true">保存</a>-->
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:shanchu()" id="shanchu"
                                          class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
     </div>
@@ -1012,8 +1022,8 @@
            iconCls="icon-remove" plain="true">删除</a>
       <!--  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:xiugaiWuliao()" class="easyui-linkbutton" id="xiugaiWuliao"
            iconCls="icon-reload"plain="true">修改</a>-->
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:saveWuliao()" class="easyui-linkbutton" id="saveWuLiao"
-           iconCls="icon-ok"plain="true">保存</a>
+        <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:saveWuliao()" class="easyui-linkbutton" id="saveWuLiao"
+           iconCls="icon-ok"plain="true">保存</a>-->
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:red'>注意：此处添加的物料数量为一套的数量！</span>
     </div>
 </div>

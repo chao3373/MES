@@ -95,8 +95,8 @@ public class SaleListServiceImpl implements SaleListService {
     }
 
     @Override
-    public void setRemark(Integer id, Integer remark) {
-        saleListRepository.setRemark(id,remark);
+    public void setRemark(Integer []Ids, Integer remark) {
+        saleListRepository.setRemark(Ids,remark);
     }
 
     @Override
@@ -117,6 +117,8 @@ public class SaleListServiceImpl implements SaleListService {
         System.out.println("******************************************");
 
         String selectSqlStar = "select " +
+                "id," +
+                "remark," +
                 "sale_number as saleNumber," +
                 "hang_hao as hangHao," +
                 "wuliao_id as wuliaoId," +
@@ -395,6 +397,11 @@ public class SaleListServiceImpl implements SaleListService {
     @Override
     public List<SaleList> findBySaleNumberXinxiLuRu(String s) {
         return saleListRepository.findBySaleNumberXinxiLuRu(s);
+    }
+
+    @Override
+    public Integer[] findRemark() {
+        return saleListRepository.findRemark();
     }
 
 

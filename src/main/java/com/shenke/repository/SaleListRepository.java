@@ -81,12 +81,12 @@ public interface SaleListRepository  extends JpaRepository<SaleList, Integer>, J
 
     /**
      * 设置订单备注
-     * @param id
+     * @param
      * @param remark
      */
     @Modifying
-    @Query(value = "update t_sale_list set remark =?2 where id =?1",nativeQuery = true)
-    public void setRemark(Integer id,Integer remark);
+    @Query(value = "update t_sale_list set remark = ?2 where id in ?1",nativeQuery = true)
+    public void setRemark(Integer []Ids,Integer remark);
 
     /**
      * 根据销售单号查询
@@ -223,4 +223,11 @@ public interface SaleListRepository  extends JpaRepository<SaleList, Integer>, J
      */
     @Query(value = "select * from  t_sale_list where sale_number like ?1 and cunzai = '存在' and state = '下单'",nativeQuery = true)
     List<SaleList> findBySaleNumberXinxiLuRu(String s);
+
+    /**
+     * 查找remark<0的saleList
+     * @return
+     */
+    @Query(value = "select id from t_sale_list where remark < 0",nativeQuery = true)
+    Integer[] findRemark();
 }

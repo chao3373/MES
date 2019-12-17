@@ -30,7 +30,7 @@ public interface ShengChanService {
      * "工序加工" 界面显示
      * @param arr
      */
-    public List<ShengChan> showInProcessProduct(Integer[] arr);
+    public List<ShengChan> showInProcessProduct(Integer[] Arr,Integer []arr);
 
     /**
      * 查找此工序可以生产的件数（即前一工序已生产的件数）
@@ -125,4 +125,6 @@ public interface ShengChanService {
      * @return
      */
     List<ShengChan> findBySaleList(Integer id);
+
+    List<ShengChan> findByXiaotuhao(Integer id);
 }

@@ -245,14 +245,9 @@ public class SaleListAdminController {
      * @return
      */
     @RequestMapping("/setRemark")
-    public Map<String,Object> setRemark(String Ids,Integer remark){
-
+    public Map<String,Object> setRemark(Integer []Ids,Integer remark){
         Map<String,Object> map = new HashMap<>();
-        String idsStr[] = Ids.split(",");
-        for(int i=0;i<idsStr.length;i++){
-            saleListService.setRemark(Integer.parseInt(idsStr[i]),remark);
-        }
-
+        saleListService.setRemark(Ids,remark);
         map.put("success",true);
         return map;
     }

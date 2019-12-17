@@ -19,11 +19,19 @@ public interface ShengChanRepository extends JpaRepository<ShengChan,Integer> , 
 
     /**
      * "工序加工" 界面显示
-     * @param arr
+     * @param
      * @return
      */
     @Query(value = "select * from  t_sheng_chan where state = '未生产' and process_id in ?1 order by refer_date asc",nativeQuery = true)
-    public List<ShengChan> showInProcessProduct(Integer[] arr);
+    public List<ShengChan> showInProcessProduct(Integer[] Arr);
+
+    /**
+     * "工序加工" 界面显示
+     * @param arr
+     * @return
+     */
+    @Query(value = "select * from  t_sheng_chan where state = '未生产' and process_id in ?1 and sale_list_id not in ?2 order by refer_date asc",nativeQuery = true)
+    public List<ShengChan> showInProcessProductZanTing(Integer[] Arr,Integer []arr);
 
 
     /**
@@ -149,4 +157,13 @@ public interface ShengChanRepository extends JpaRepository<ShengChan,Integer> , 
      */
     @Query(value = "select * from  t_sheng_chan where sale_list_id = ?1",nativeQuery = true)
     List<ShengChan> findBySaleList(Integer id);
+
+
+    /**
+     * 根据小图id查找
+     * @param id
+     * @return
+     */
+    @Query(value = "select * from t_sheng_chan where drawing_id = ?1",nativeQuery = true)
+    List<ShengChan> findByXiaotuhao(Integer id);
 }

@@ -79,10 +79,10 @@ public interface SaleListService {
 
     /**
      * 设置 订单备注
-     * @param id
+     * @param
      * @param remark
      */
-    public void setRemark(Integer id,Integer remark);
+    public void setRemark(Integer []Ids,Integer remark);
 
 
     List<SaleList> findAll();
@@ -168,4 +168,10 @@ public interface SaleListService {
      * @return
      */
     List<SaleList> findBySaleNumberXinxiLuRu(String s);
+
+    /**
+     * 查找remark<0的saleList
+     * @return
+     */
+    Integer[] findRemark();
 }

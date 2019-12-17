@@ -25,6 +25,17 @@
                     }
                 }
             });
+
+            $('#dg').datagrid({
+                rowStyler: function (index, row) {
+                    if (row.saleList.remark == "2") {
+                        return 'background: #CC2222;color:white'
+                    }
+                    if (row.saleList.remark == "1") {
+                        return 'background: #a333c8;color:white'
+                    }
+                }
+            });
         });
 
 
@@ -178,7 +189,7 @@
 
          //打印
         function print(url,row) {
-            var url = "<img style='width:305px;height: 140%;' src='" + url + "'/>";
+            var url = "<img src='" + url + "'/>";<!--style='width:305px;height: 140%;'-->
             // url += result.url;
             // url += "'/>";
             tableString = "";

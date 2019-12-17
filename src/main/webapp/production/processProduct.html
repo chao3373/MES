@@ -18,6 +18,16 @@
 
         var user;
         $(document).ready(function() {
+            $('#dg').datagrid({
+                rowStyler: function (index, row) {
+                    if (row.saleList.remark == "2") {
+                        return 'background: #CC2222;color:white'
+                    }
+                    if (row.saleList.remark == "1") {
+                        return 'background: #a333c8;color:white'
+                    }
+                }
+            });
             loadUser();
             load();
             //焦点聚焦条码input

@@ -78,6 +78,16 @@
         $(document).ready(function () {
             loadDg();
 
+            $('#dg').datagrid({
+                rowStyler: function (index, row) {
+                    if (row.remark == "2") {
+                        return 'background: #CC2222;color:white'
+                    }
+                    if (row.remark == "1") {
+                        return 'background: #a333c8;color:white'
+                    }
+                }
+            });
 
             $("#dg2").datagrid({
                 onClickRow:function (index,row) {

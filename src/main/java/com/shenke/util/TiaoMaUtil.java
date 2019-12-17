@@ -54,8 +54,8 @@ public class TiaoMaUtil {
 
 
         //设置分辨率
-        final int dpi = 120;
-        // module宽度
+        final int dpi = 300;
+    /*    // module宽度
         final double moduleWidth = UnitConv.in2mm(1.2f / dpi);
         //设置两侧是否留白
         bean.doQuietZone(false);
@@ -64,7 +64,7 @@ public class TiaoMaUtil {
         bean.getModuleWidth();
         bean.getBarHeight();
 
-        System.out.println("********************************");
+        System.out.println("********************************");*/
 
 
 

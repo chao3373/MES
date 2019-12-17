@@ -43,6 +43,9 @@ public class ShengChanAdminController {
     @Resource
     private BigDrawingProcessService bigDrawingProcessService;
 
+    @Resource
+    private DrawingService drawingService;
+
 
    /* @RequestMapping("/save")
     public Map<String, Object> save(String wuliaoId, Integer id) {
@@ -266,7 +269,10 @@ public class ShengChanAdminController {
             Integer []Arr = new  Integer[list1.size()];
             list1.toArray(Arr);
 
-            List<ShengChan> list2 = shengChanService.showInProcessProduct(Arr);
+            //订单暂停 订单删除的id数组
+            Integer []arr  = saleListService.findRemark();
+
+            List<ShengChan> list2 = shengChanService.showInProcessProduct(Arr,arr);
 
             for(ShengChan shengChan : list2){
                 if(shengChan.getCode() == 1){
@@ -493,6 +499,20 @@ public class ShengChanAdminController {
         for (int i = 0;i<Ids.length;i++){
             shengChanService.updatState(Ids[i],"未生产");
         }
+        map.put("success",true);
+        return map;
+    }
+
+
+    /**
+     * 根据小图号查找
+     * @param xiaotuhao
+     * @return
+     */
+    @RequestMapping("/findByXiaotuhao")
+    public Map<String,Object> findByXiaotuhao(String xiaotuhao){
+        Map<String,Object> map = new HashMap<>();
+        map.put("rows",shengChanService.findByXiaotuhao(drawingService.findByWuliaoId(xiaotuhao).getId()));
         map.put("success",true);
         return map;
     }

@@ -32,8 +32,15 @@ public class ShengChanServiceImpl implements ShengChanService {
     }
 
     @Override
-    public List<ShengChan> showInProcessProduct(Integer[] arr) {
-        return shengChanRepository.showInProcessProduct(arr);
+    public List<ShengChan> showInProcessProduct(Integer[] Arr , Integer []arr) {
+        if(arr.length == 0){
+            return shengChanRepository.showInProcessProduct(Arr);
+        }else {
+            return shengChanRepository.showInProcessProductZanTing(Arr,arr);
+        }
+
+
+//        return shengChanRepository.showInProcessProduct(Arr,arr);
     }
 
     @Override
@@ -110,5 +117,10 @@ public class ShengChanServiceImpl implements ShengChanService {
     @Override
     public List<ShengChan> findBySaleList(Integer id) {
         return shengChanRepository.findBySaleList(id);
+    }
+
+    @Override
+    public List<ShengChan> findByXiaotuhao(Integer id) {
+        return shengChanRepository.findByXiaotuhao(id);
     }
 }
