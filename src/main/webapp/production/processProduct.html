@@ -566,7 +566,7 @@
             <option value="生产中">生产中</option>
         </select>-->
         &nbsp;&nbsp;条形码：&nbsp; <input  type="text" id="tiaoma"  name="tiaoma"  size="15" autocomplete="off"
-                                 onkeydown="if(event.keyCode==13) sousuo()" />
+                                 onkeydown="if(event.keyCode==13) sousuo()" oninput="sousuo()" />
         &nbsp;&nbsp;<a href="javascript:sousuo()"
                        class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
         &nbsp;&nbsp;<a href="javascript:refresh()"

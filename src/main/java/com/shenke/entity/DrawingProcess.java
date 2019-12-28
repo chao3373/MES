@@ -26,6 +26,16 @@ public class DrawingProcess {
 
     private Double czGongShi; // 操作工时
 
+    private Integer num; // num来源于 drawingType中一个大图对应几个小图
+
+    public Integer getNum() {
+        return num;
+    }
+
+    public void setNum(Integer num) {
+        this.num = num;
+    }
+
     public Double getZbGongShi() {
         return zbGongShi;
     }
@@ -83,6 +93,7 @@ public class DrawingProcess {
                 ", code=" + code +
                 ", zbGongShi=" + zbGongShi +
                 ", czGongShi=" + czGongShi +
+                ", num=" + num +
                 '}';
     }
 }

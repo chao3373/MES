@@ -8,6 +8,7 @@ import com.shenke.entity.ShengChan;
 import com.shenke.service.RuKuService;
 import com.shenke.service.SaleListService;
 import com.shenke.service.ShengChanService;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +41,35 @@ public class RuKuAdminController {
         }.getType());
 
         for (ShengChan shengChan : plgList){
+            SaleList saleList = shengChan.getSaleList();
+            List<ShengChan> list = shengChanService.findBySaleList(saleList.getId());
+            Integer n = 0;
+            for(ShengChan shengChan1 : list){
+                System.out.println(shengChan1.getState());
+                System.out.println(shengChan1.getState().equals("生产完成"));
+                if(!shengChan1.getState().equals("生产完成")){
+                    n = 1;
+                }
+            }
+            System.out.println("************************");
+            System.out.println(n);
+            System.out.println("************************");
+            if(n == 0 && n != 1){
+                System.out.println("******************************");
+                System.out.println("到这到这");
+                System.out.println("******************************");
+                RuKu ruKu = new RuKu();
+                ruKu.setNum(saleList.getNum());
+                ruKu.setRukuNum(0);
+                ruKu.setState("准备入库");
+                ruKu.setOrderNum(saleList.getNum());
+                ruKu.setSaleList(saleList);
+                ruKu.setOutCode(saleList.getOutCode());
+                ruKuService.save(ruKu);
+            }
+        }
+
+        /*for (ShengChan shengChan : plgList){
             Integer saleListId = shengChan.getSaleList().getId();
             RuKu ruKu = ruKuService.findBySaleListId(saleListId);
             SaleList saleList =shengChan.getSaleList();
@@ -48,8 +78,8 @@ public class RuKuAdminController {
             //判断大图是否可以修改状态为“未生产”
             List<ShengChan> datu = shengChanService.findBySaleListIdAboutDatu(saleListId);
             List<ShengChan> xiaotu = shengChanService.findBySaleListIdAboutXiaotu(saleListId);
-            Integer m ;
-            Integer n ;
+            Integer m;
+            Integer n;
             if(datu.size() == 0){
                 m=1; // 大图已开始生产
             }else {
@@ -76,7 +106,7 @@ public class RuKuAdminController {
                 ruKu1.setNum(minNum);
                 ruKu1.setRukuNum(0);
                 ruKu1.setState("准备入库");
-                ruKu1.setOrderNum(saleList.getNum());
+                ruKu1.setOrderNum(shengChan.getNum());
                 ruKu1.setSaleList(saleList);
                 ruKu1.setOutCode(saleList.getOutCode());
                 ruKuService.save(ruKu1);
@@ -84,7 +114,7 @@ public class RuKuAdminController {
                     saleListService.setState(shengChan.getSaleList().getId(),"生产完成");
                 }
             }
-        }
+        }*/
         map.put("success",true);
         return map;
     }

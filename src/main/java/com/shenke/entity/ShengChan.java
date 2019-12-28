@@ -41,7 +41,7 @@ public class ShengChan {
 
     private Integer accomplishNum; //完成数量
 
-    private Integer num;//下单数量
+    private Integer num;// 总数量
 
     private Integer allowNum; //允许生产数量（上一工序生产完成数量）
 

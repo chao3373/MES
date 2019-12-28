@@ -85,6 +85,7 @@ public class ProcessGroupAdminController {
             Integer i = 0;
             for (Process process : list){
                 a[i] = process.getId();
+                i=i+1;
             }
             userProductService.deleteByProcessIds(a);
             shengChanService.deleteByProcessIds(a);

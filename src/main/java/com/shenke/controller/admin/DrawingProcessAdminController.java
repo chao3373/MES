@@ -55,7 +55,7 @@ public class DrawingProcessAdminController {
     private BigDrawingProcessService bigDrawingProcessService;
 
     @RequestMapping("/addProcess")
-    public Map<String,Object> addProcess(String data,Integer drawingId){
+    public Map<String,Object> addProcess(String data,Integer drawingId,Integer num){
         Map<String,Object> map = new HashMap<>();
         drawingProcessService.deleteByDrawingId(drawingId);
         Gson gson = new Gson();
@@ -68,6 +68,7 @@ public class DrawingProcessAdminController {
             drawingProcess.setId(null);
             drawingProcess.setDrawing(drawingService.findById(drawingId));
             drawingProcess.setCode(i);
+            drawingProcess.setNum(num);
             i+=1;
             drawingProcessService.save(drawingProcess);
         }

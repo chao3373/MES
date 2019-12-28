@@ -355,11 +355,19 @@ public class SaleListAdminController {
      * @return
      */
     @RequestMapping("/baoCunOpenTime")
-    public Map<String,Object> baoCunOpenTime(Double yuGuGongShi,String []wuliaoIds){
+    public Map<String,Object> baoCunOpenTime(Double yuGuGongShi,String data){
         Map<String,Object> map = new HashMap<>();
 
-        for (int i=0;i<wuliaoIds.length;i++){
-            saleListService.baoCunOpenTime(yuGuGongShi,wuliaoIds[i]);
+        Gson gson = new Gson();
+        List<SaleList> plgList = gson.fromJson(data, new TypeToken<List<SaleList>>() {
+        }.getType());
+
+        String []wuliaoIds = new String[plgList.size()];
+        Integer i = 0;
+        for (SaleList saleList : plgList){
+            saleListService.baoCunOpenTime(yuGuGongShi,saleList);
+            wuliaoIds[i] = saleList.getWuliaoId();
+            i=i+1;
         }
 
         saleListService.setCunZaiByWuliaoIds(wuliaoIds,"分配工时");

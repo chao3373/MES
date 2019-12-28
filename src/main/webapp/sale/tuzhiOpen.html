@@ -715,7 +715,7 @@
                                 wuliaoId:Row.wuliaoId
                             },function (result) {
                                 if(result.success){
-                                    $.messager.alert("系统提示","图纸展开开始");
+                                    //$.messager.alert("系统提示","图纸展开开始");
                                     show();
                                     $('#dg').datagrid({
                                         rowStyler:function(index,row){
@@ -739,7 +739,7 @@
                 return;
             }else if(Row.openState == "展开中："+user){
                 console.log(33 )
-                $.messager.alert("系统提示","图纸展开开始");
+                //$.messager.alert("系统提示","图纸展开开始");
                 show();
                 $('#dg').datagrid({
                     rowStyler:function(index,row){
@@ -770,7 +770,7 @@
                         wuliaoId:Row.wuliaoId
                     },function (result) {
                         if(result.success){
-                            alert("图纸展开结束");
+                            //alert("图纸展开结束");
                             window.location.reload();
                         }else {
                             $.messager.alert("系统提示","操作失败");
@@ -839,7 +839,7 @@
                             wuliaoId:row.wuliaoId
                         },function (result) {
                             if(result.success){
-                                alert("保存成功！");
+                                //alert("保存成功！");
                                 window.location.reload();
                             }
                             else {
@@ -854,7 +854,7 @@
                     wuliaoId:row.wuliaoId
                 },function (result) {
                     if(result.success){
-                        alert("保存成功！");
+                        //alert("保存成功！");
                         window.location.reload();
                     }
                     else {

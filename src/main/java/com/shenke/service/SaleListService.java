@@ -99,7 +99,7 @@ public interface SaleListService {
     public java.util.Date findminReferDate(String wuliaoId);
 
     //保存展开工时
-    public void baoCunOpenTime(Double yuGuGongShi,String wuliaoId);
+    public void baoCunOpenTime(Double yuGuGongShi,SaleList saleList);
 
     /**
      * 图纸展开界面显示

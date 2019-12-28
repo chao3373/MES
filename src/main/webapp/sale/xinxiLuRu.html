@@ -387,6 +387,7 @@
             var drawingId=$("#drawingId").val();
 
             console.log(drawingId)
+            console.log($("#addSon").datagrid("getSelected"))
 
             if(drawingId == ''){ //保存大图工序
                 $.ajax({
@@ -414,7 +415,8 @@
                     url:"/admin/drawingProcess/addProcess",
                     data:{
                         data: JSON.stringify($('#dg3').datagrid("getRows")),
-                        drawingId:drawingId
+                        drawingId:drawingId,
+                        num:$("#addSon").datagrid("getSelected").num
                     },
                     dataType:"json",
                     success:function (result) {
@@ -429,7 +431,6 @@
                     }
                 })
             }
-
 
 
         }
@@ -606,7 +607,7 @@
     </script>
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
-<div region="north" style="height: 300px">
+<div region="north" style="height: 450px">
     <table id="dg" class="easyui-datagrid"
            fitColumns="false" rownumbers="true" singleSelect="true" fit="true"
            toolbar="#tb1" split="true">

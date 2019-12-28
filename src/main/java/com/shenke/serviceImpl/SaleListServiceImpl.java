@@ -187,9 +187,11 @@ public class SaleListServiceImpl implements SaleListService {
     }
 
     @Override
-    public void baoCunOpenTime(Double yuGuGongShi,String wuliaoId) {
+    public void baoCunOpenTime(Double yuGuGongShi,SaleList saleList) {
         BigDrawing bigDrawing = new BigDrawing();
-        bigDrawing.setWuliaoId(wuliaoId);
+        bigDrawing.setWuliaoId(saleList.getWuliaoId());
+        bigDrawing.setTuZhiName(saleList.getTuzhiName());
+        bigDrawing.setTuZhiId(saleList.getTuzhiId());
         bigDrawing.setYuGuGongShi(yuGuGongShi);
 
         bigDrawingRepository.save(bigDrawing);

@@ -155,18 +155,38 @@ public class ShengChanAdminController {
         List<List<DrawingProcess>> list1 = new ArrayList<>();
         for(DrawingType drawingType : list){
             //判断数量若大于1 则进入循环
-            if(drawingType.getNum() != 1){
+           /* if(drawingType.getNum() != 1){
                 for(int i=0;i<drawingType.getNum();i++){
                     list1.add(drawingProcessService.findByDrawingId(drawingType.getDrawing().getId()));
                 }
             }else {
                 list1.add(drawingProcessService.findByDrawingId(drawingType.getDrawing().getId()));
-            }
-
+            }*/
+            List<DrawingProcess> list2 = drawingProcessService.findByDrawingId(drawingType.getDrawing().getId());
+            list1.add(list2);
         }
         //生成小图工序
         for (List<DrawingProcess> list2 : list1){
-//            String tz = "TZ" + new Date().getTime();
+            String tz = "" + new Date().getTime();
+            for(DrawingProcess drawingProcess : list2){
+                ShengChan shengChan = new ShengChan();
+                shengChan.setBiaoqianCode(tz);
+                shengChan.setSaleList(saleList);
+                shengChan.setBigDrawing(bigDrawing);
+                shengChan.setDrawing(drawingProcess.getDrawing());
+                shengChan.setProcess(drawingProcess.getProcess());
+                shengChan.setCode(drawingProcess.getCode());
+                shengChan.setAccomplishNum(0);
+                shengChan.setState("未生产");
+                shengChan.setNum(saleList.getNum() * drawingProcess.getNum());
+                shengChan.setReferDate(saleList.getReferDate());
+                shengChan.setZbGongShi(drawingProcess.getZbGongShi());
+                shengChan.setCzGongShi(drawingProcess.getCzGongShi());
+                shengChan.setIsDatu(1);
+                shengChanService.save(shengChan);
+            }
+        }
+    /*    for (List<DrawingProcess> list2 : list1){
             String tz = "" + new Date().getTime();
             for(DrawingProcess drawingProcess : list2){
                 ShengChan shengChan = new ShengChan();
@@ -185,7 +205,7 @@ public class ShengChanAdminController {
                 shengChan.setIsDatu(1);
                 shengChanService.save(shengChan);
             }
-        }
+        }*/
         //生成大图工序
         List<BigDrawingProcess> list2 = bigDrawingProcessService.findByBigDrawingId(bigDrawing.getId());
         //若有大图工序则添加

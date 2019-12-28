@@ -131,12 +131,24 @@
                                 return '';
                             }
                         }
-                    }, {
+                    },{
                         field: "num",
                         title: "数量",
                         width: "80",
                         align: "center"
-                    }, {
+                    },{
+                        field: "sumNum",
+                        title: "总数量",
+                        width: "80",
+                        align: "center",
+                        formatter:function (row, val) {
+                            if(val.shengChan){
+                                return val.shengChan.num;
+                            }else {
+                                return "";
+                            }
+                        }
+                    },{
                         field: "zbGongShi",
                         title: "准备工时",
                         width: "80",

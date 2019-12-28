@@ -96,16 +96,36 @@
                 return;
             }
 
-            var arr2 = [];
+        /*    var arr2 = [];
             for(var i=0;i<rows.length;i++){
                 arr2.push(rows[i].wuliaoId)
             }
 
-            var wuliaoIds = arr2.join(",");
+            var wuliaoIds = arr2.join(",");*/
+
+            $.ajax({
+                type:"post",
+                url:"/admin/saleList/baoCunOpenTime",
+                data:{
+                    yuGuGongShi:$("#yuGuGongShi").val(),
+                    data: JSON.stringify(rows)
+                },
+                dataType:"json",
+                success:function (result) {
+                    if(result.success){
+                        $.messager.alert("系统提示","添加成功！");
+                        $("#yuGuGongShi").val('');
+                        $("#dg").datagrid("reload");
+                    }
+                    else {
+                        $.messager.alert("系统提示","添加失败!")
+                    }
+                }
+            });
 
 
 
-            $.post("/admin/saleList/baoCunOpenTime",
+        /*    $.post("/admin/saleList/baoCunOpenTime",
                 {
                     yuGuGongShi:$("#yuGuGongShi").val(),
                     wuliaoIds:wuliaoIds
@@ -119,7 +139,7 @@
                         $.messager.alert("系统提示","添加失败!")
                     }
                 },"json");
-            //$("#yuGuGongShi").val('');
+            //$("#yuGuGongShi").val('');*/
 
 
         }
