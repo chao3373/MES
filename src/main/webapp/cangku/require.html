@@ -533,6 +533,7 @@
             var Ids = arr.join(",");
 
             var data = [];
+            var i = 0;
             $.ajax({
                 type:"post",
                 async:false,
@@ -541,13 +542,20 @@
                 dataType:"json",
                 success:function (result) {
                     if(result.success){
-                        data = result.data;
+                        if(result.error){
+                            $.messager.alert("系统提示",result.error);
+                            // return;
+                            i=1;
+                        }else {
+                            data = result.data;
+                        }
                     }
                 }
             });
-
+            if(i==1){
+                return;
+            }
             var fields = $("#addSon").datagrid('getColumnFields');
-            console.log(fields)
             var datagridTitle = new Array();
             for (var i = 0; i < fields.length; i++) {
                 console.log(i)
@@ -592,7 +600,6 @@
                     if(result.success){
                         $.messager.alert("系统提示","导出成功");
                     }
-                    return;
                 }
             });
 

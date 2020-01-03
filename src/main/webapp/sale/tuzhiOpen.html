@@ -828,6 +828,16 @@
             var rows = $("#addSon").datagrid("getRows");
             var rowRight = $("#addSonRight").datagrid("getRows");
 
+            if(row == null){
+                $.messager.alert("系统提示","请选择一条信息！");
+                return;
+            }
+
+            if(row.openState != null && row.openState.substring(0,3) == "展开中"){
+                $.messager.alert("系统提示","您有图纸正在展开！");
+                return;
+            }
+
             if(rows.length == 0 || rowRight.length == 0){
                 $.messager.confirm("系统提示","<span style='color:red'>"+"信息未添加完整，是否继续添加？"+"</span>", function(r){
                     if (r){

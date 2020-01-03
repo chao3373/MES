@@ -54,7 +54,7 @@ public class RuKuAdminController {
             System.out.println("************************");
             System.out.println(n);
             System.out.println("************************");
-            if(n == 0 && n != 1){
+            if(n == 0 ){
                 System.out.println("******************************");
                 System.out.println("到这到这");
                 System.out.println("******************************");

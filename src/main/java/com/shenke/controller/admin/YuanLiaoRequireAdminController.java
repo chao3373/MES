@@ -105,7 +105,6 @@ public class YuanLiaoRequireAdminController {
                 yuanLiaoRequireService.save(yuanLiaoRequire);
             }
         }
-
         return map;
     }
 
@@ -113,19 +112,32 @@ public class YuanLiaoRequireAdminController {
     public Map<String,Object> findByIds(Integer []Ids){
         Map<String,Object> map = new HashMap<>();
         List<List<YuanLiaoRequire>> list = new ArrayList<>();
+        Integer m = 0;
         for(int i = 0;i<Ids.length;i++){
-            list.add(yuanLiaoRequireService.findBySaleListId(Ids[i]));
+            List<YuanLiaoRequire> list1 = yuanLiaoRequireService.findBySaleListId(Ids[i]);
+            //判断是不是每一个id下面都有物料明细 若不是 则 跳出循环
+            if(list1.size() == 0){
+                map.put("success",true);
+                map.put("error","无物料明细可导出！");
+                m = 1;
+                break;
+            }else {
+                list.add(list1);
+            }
+
         }
-        for(List<YuanLiaoRequire> list1 : list){
-            YuanLiaoRequire yuanLiaoRequire = new YuanLiaoRequire();
-            Wuliao wuliao = new Wuliao();
-            wuliao.setName("订单号：");
-            wuliao.setGuiGe(list1.get(1).getSaleList().getSaleNumber());
-            yuanLiaoRequire.setWuliao(wuliao);
-            list1.add(0,yuanLiaoRequire);
+        if(m == 0){
+            for(List<YuanLiaoRequire> list1 : list){
+                YuanLiaoRequire yuanLiaoRequire = new YuanLiaoRequire();
+                Wuliao wuliao = new Wuliao();
+                wuliao.setName("订单号：");
+                wuliao.setGuiGe(list1.get(1).getSaleList().getSaleNumber());
+                yuanLiaoRequire.setWuliao(wuliao);
+                list1.add(0,yuanLiaoRequire);
+            }
+            map.put("success",true);
+            map.put("data",list);
         }
-        map.put("success",true);
-        map.put("data",list);
         return map;
     }
 }
