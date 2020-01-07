@@ -79,6 +79,12 @@
 
         function saveSaleGoods() {
             var row = $("#dg").datagrid("getRows");
+
+            if(row.length == 0){
+                $.messager.alert("系统提示","请添加订单！");
+                return;
+            }
+
             $.ajax({
                 type:"post",
                 url:"/admin/saleList/save",

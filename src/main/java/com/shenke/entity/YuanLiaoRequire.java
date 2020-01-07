@@ -30,13 +30,13 @@ public class YuanLiaoRequire {
 
     private String state; //状态
 
-    private Integer sumNum;//总件数
+    private Double sumNum;//总件数
 
-    public Integer getSumNum() {
+    public Double getSumNum() {
         return sumNum;
     }
 
-    public void setSumNum(Integer sumNum) {
+    public void setSumNum(Double sumNum) {
         this.sumNum = sumNum;
     }
 

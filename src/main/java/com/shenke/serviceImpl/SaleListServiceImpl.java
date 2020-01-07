@@ -119,6 +119,8 @@ public class SaleListServiceImpl implements SaleListService {
         String selectSqlStar = "select " +
                 "id," +
                 "remark," +
+                "tuzhi_name as tuzhiName," +
+                "tuzhi_id as tuzhiId," +
                 "sale_number as saleNumber," +
                 "hang_hao as hangHao," +
                 "wuliao_id as wuliaoId," +
@@ -148,13 +150,13 @@ public class SaleListServiceImpl implements SaleListService {
             sql += "and xiangmu_id = '" + saleList.getXiangmuId() + "'";
         }
         if(StringUtil.isNotEmpty(saleList.getWuliaoId())){
-            sql += "and wuliao_id like '%"+ saleList.getWuliaoId() +"%'";
+            sql += "and wuliao_id = '"+ saleList.getWuliaoId() +"'";
         }
         if(StringUtil.isNotEmpty(saleDated)){
             sql += "and sale_date = '" + saleDated + "'";
         }
         if(StringUtil.isNotEmpty(referDated)){
-            sql += "and refer_date '" + referDated + "'";
+            sql += "and refer_date = '" + referDated + "'";
         }
 
         System.out.println("查询所有的sql语句：");
@@ -199,7 +201,25 @@ public class SaleListServiceImpl implements SaleListService {
 
     @Override
     public List<SaleList> showTuZhiOpen() {
-        return saleListRepository.showTuZhiOpen();
+        String selectSqlStart = "select id, " +
+                "sale_number as saleNumber," +
+                "xiangmu_id as xiangmuId," +
+                "shenqing_number as shenqingNumber," +
+                "wuliao_id as wuliaoId," +
+                "tuzhi_name as tuzhiName," +
+                "tuzhi_id as tuzhiId," +
+                "num," +
+                "sale_date as saleDate," +
+                "refer_date as referDate," +
+                "open_state as openState," +
+                "count(*) as count " +
+                " from t_sale_list where cunzai = '分配工时' and" +
+                " state = '下单' group by wuliao_id order by sale_date ASC ";
+
+        LogUtil.printLog("===图纸展开查询===");
+        LogUtil.printLog("查询所有信息语句：" + selectSqlStart);
+        List result = GetResultUtils.getResult(selectSqlStart, entityManager);
+        return result;
     }
 
     @Override
@@ -404,6 +424,48 @@ public class SaleListServiceImpl implements SaleListService {
     @Override
     public Integer[] findRemark() {
         return saleListRepository.findRemark();
+    }
+
+    @Override
+    public Map<String,Object> showInFaHuoMa(Integer page, Integer rows) {
+        String selectSqlStart = "select " +
+                "id," +
+                "hang_hao as hangHao," +
+                "out_code as outCode," +
+                "sale_number as saleNumber," +
+                "state," +
+                "kucunzuzhi," +
+                "wuliao_id as wuliaoId," +
+                "tuzhi_name as tuzhiName," +
+                "tuzhi_id as tuzhiId," +
+                "num," +
+                "sale_date as saleDate," +
+                "refer_date as referDate," +
+                "xiangmu_id as xiangmuId," +
+                "shenqing_number as shenqingNumber " +
+                " from t_sale_list order by id desc ";
+
+        String pg = "";
+        if (page != null && rows != null) {
+            pg += " LIMIT " + (page - 1) * rows + ", " + rows;
+        }
+
+        LogUtil.printLog("===查询===");
+        LogUtil.printLog("查询所有信息语句：" + selectSqlStart + pg);
+        List result = GetResultUtils.getResult(selectSqlStart + pg, entityManager);
+
+        //查询总条数
+        Integer count = GetResultUtils.getInteger("select count(id) from t_sale_list ", entityManager);
+        Map<String,Object> map = new HashMap<>();
+        map.put("rows",result);
+        map.put("total",count);
+
+        return  map;
+    }
+
+    @Override
+    public List<SaleList> tuzhiOpenChakan(String wuliaoId) {
+        return saleListRepository.tuzhiOpenChakan(wuliaoId);
     }
 
 

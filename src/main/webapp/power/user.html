@@ -170,6 +170,9 @@
 			}
 		});
 		$("#yonghu").val(id);
+		$("#saveProcess").show();
+		$("#saveBestProcess").hide();
+
 	}
 
 	//保存工序
@@ -189,14 +192,6 @@
 				closesaveProcessDialog();
 				$.messager.alert("系统提示","添加成功");
 				$("#dg").datagrid("reload");
-				/*var row = $("#addSon").datagrid("getRows");
-                var m=0;
-                for (var i = 0; i < row.length; i++){
-                    if(row[i].gongxus != null){
-                        m+=1;
-                    }
-                }
-                console.log(m)*/
 
 			}else{
 				$.messager.alert("系统提示","添加失败");
@@ -207,6 +202,52 @@
 	function closesaveProcessDialog(){
 		$("#dlg3").dialog("close");
 	}
+
+	//最优工序
+	function bestProcess(val, row) {
+		if(row.process){
+			return row.process.name;
+		}else {
+			return "";
+		}
+	}
+
+	function addBestProcess() {
+		var row = $("#dg").datagrid("getSelected");
+		if(row == null){
+			$.messager.alert("系统提示","请选择一个用户");
+			return;
+		}
+		$("#dlg3").dialog("open").dialog("setTitle","设置最优工序");
+		$("#dg3").datagrid({
+			singleSelect:'true',
+			url:'/admin/process/list'
+		});
+
+		// $("#saveBestProcess").attr("style","display:block");
+		$("#saveProcess").hide();
+		$("#saveBestProcess").show();
+	}
+
+	function saveBestProcess() {
+		var row = $("#dg").datagrid("getSelected");
+		var processId = $("#dg3").datagrid("getSelected").id;
+		$.post("/admin/user/saveBestProcess",{
+			id:row.id,
+			processId:processId
+		},function (result) {
+			if(result.success){
+				$.messager.alert("系统提示","保存成功");
+				$("#dlg3").dialog("close");
+				$("#dg").datagrid("reload");
+			}else {
+				$.messager.alert("系统提示","保存失败");
+			}
+		})
+
+	}
+
+
 	
 	
 </script>
@@ -224,6 +265,7 @@
 			<th field="aa" width="50" align="center" formatter="formatEdit">角色设置</th>
 			<th field="gongxus" width="150" align="center">擅长工序</th>
 			<th field="choose" width="50" align="center" formatter="gongxuEdit">工序设置</th>
+			<th field="bestProcess" width="50" align="center" formatter="bestProcess">最优工序</th>
 		</thead>
 	</table>
 	
@@ -233,6 +275,7 @@
 			<a href="javascript:openUserAddDialog()" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a>
 			<a href="javascript:openUserModifyDialog()" class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a>
 			<a href="javascript:deleteUser()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+			<a href="javascript:addBestProcess()" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加最优工序</a>
 		</div>
 		<div>
 			&nbsp;用户名：&nbsp;<input type="text" id="s_userName" size="20" onkeydown="if(event.keyCode==13) searchUser()"/>
@@ -312,7 +355,8 @@
 	</div>
 	<!-- 对话框按钮2 -->
 	<div id="dlg-buttons3">
-		<a href="javascript:saveProcess()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+		<a href="javascript:saveProcess()"  id="saveProcess" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+		<a href="javascript:saveBestProcess()" id="saveBestProcess" class="easyui-linkbutton" iconCls="icon-ok" >保存最优工序</a>
 		<a href="javascript:closesaveProcessDialog()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
 	</div>
 

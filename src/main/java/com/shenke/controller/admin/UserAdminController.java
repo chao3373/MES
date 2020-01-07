@@ -45,7 +45,9 @@ public class UserAdminController {
 
 	@Resource
 	private UserProductService userProductService;
-	
+
+	@Resource
+	private ProcessService processService;
 	
 	/**
 	 * 分页查询用户信息
@@ -207,6 +209,26 @@ public class UserAdminController {
 		System.out.println(userService.combobox("%" + q + "%"));
 		System.out.println("***************************************");
 		return userService.combobox("%" + q + "%");
+	}
+
+	/**
+	 * 保存员工最优工序
+	 * @return
+	 */
+	@RequestMapping("/saveBestProcess")
+	@ResponseBody
+	public Map<String,Object> saveBestProcess(Integer id,Integer processId){
+		Map<String,Object> map = new HashMap<>();
+		if(id == null || processId == null){
+			return map;
+		}
+		User user = userService.findById(id);
+		Process process = processService.findById(processId);
+
+		user.setProcess(process);
+		userService.save(user);
+		map.put("success",true);
+		return map;
 	}
 
 

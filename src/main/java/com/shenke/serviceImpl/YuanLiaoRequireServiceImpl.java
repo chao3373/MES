@@ -18,6 +18,9 @@ public class YuanLiaoRequireServiceImpl implements YuanLiaoRequireService {
 
     @Override
     public void save(YuanLiaoRequire yuanLiaoRequire) {
+        System.out.println("+_+_+_+_+_+_+_+_+_+_+_+__+_+");
+        System.out.println("kankan到这了吗");
+        System.out.println("+_+_+_+_+_+_+_+_+_+_+_+__+_+");
         yuanLiaoRequireRepository.save(yuanLiaoRequire);
     }
 

@@ -13,7 +13,7 @@ public interface RuKuRepository extends JpaRepository<RuKu,Integer> , JpaSpecifi
      * 查询状态为准备入库的信息
      * @return
      */
-    @Query(value = "select * from t_ru_ku where state = '准备入库'",nativeQuery = true)
+    @Query(value = "select * from t_ru_ku where state = '未完成'",nativeQuery = true)
     public List<RuKu> list();
 
     /**

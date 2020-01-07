@@ -240,10 +240,8 @@ public class ShengChanAdminController {
      * @return
      */
     @RequestMapping("/listProduct")
-    public Map<String,Object> listProduct(){
-        Map<String,Object> map = new HashMap<>();
-        map.put("rows",shengChanService.listProduct());
-        return map;
+    public Map<String,Object> listProduct(Integer page, Integer rows,String saleNumber,String wuliaoId){
+        return shengChanService.listProduct(page,rows,saleNumber,wuliaoId);
     }
 
     /**
@@ -260,6 +258,20 @@ public class ShengChanAdminController {
         Map<String,Object> map = new HashMap<>();
         TiaoMaUtil.generateFile(code,"D:/tm/" + code + ".png");
         map.put("url","/tm/" + code + ".png");
+        map.put("success",true);
+        return map;
+    }
+
+    @RequestMapping("/tiaomas")
+    public Map<String,Object> tiaomas(String []Codes){
+        Map<String,Object> map = new HashMap<>();
+        //List list = new ArrayList();
+        for (int i=0;i<Codes.length;i++){
+
+            TiaoMaUtil.generateFile(Codes[i],"D:/tm/" + Codes[i] + ".png");
+            //list.add("/tm/" + Codes[i] + ".png");
+        }
+        //map.put("urls",list);
         map.put("success",true);
         return map;
     }
@@ -414,7 +426,8 @@ public class ShengChanAdminController {
 
             Integer sumNum = num + shengChan.getAccomplishNum();
             shengChanService.updateAccomplishNum(Ids[i], sumNum);
-            if(sumNum == shengChan.getNum()){
+
+            if(sumNum.equals(shengChan.getNum())){
                 shengChanService.updatState(Ids[i],"生产完成");
             }else {
                 shengChanService.updatState(Ids[i],"未生产");

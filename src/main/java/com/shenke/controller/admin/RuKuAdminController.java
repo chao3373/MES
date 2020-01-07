@@ -41,7 +41,31 @@ public class RuKuAdminController {
         }.getType());
 
         for (ShengChan shengChan : plgList){
-            SaleList saleList = shengChan.getSaleList();
+            Integer saleListId = shengChan.getSaleList().getId();
+            RuKu ruKu = ruKuService.findBySaleListId(saleListId);
+            SaleList saleList =shengChan.getSaleList();
+            Integer minAccomplishNum = shengChanService.findMinAccomplishNumBySaleListId(saleListId);
+
+            if (ruKu != null) {
+                ruKu.setNum(minAccomplishNum);
+                ruKuService.save(ruKu);
+                if(ruKu.getNum() == ruKu.getOrderNum()){
+                    saleListService.setState(shengChan.getSaleList().getId(),"生产完成");
+                }
+            } else {
+                RuKu ruKu1 = new RuKu();
+                ruKu1.setNum(minAccomplishNum);
+                ruKu1.setFahuoNum(0);
+                ruKu1.setState("未完成");
+                ruKu1.setOrderNum(saleList.getNum());
+                ruKu1.setSaleList(saleList);
+                ruKu1.setOutCode(saleList.getOutCode());
+                ruKuService.save(ruKu1);
+                if(ruKu1.getNum() == ruKu1.getOrderNum()){
+                    saleListService.setState(shengChan.getSaleList().getId(),"生产完成");
+                }
+            }
+            /*SaleList saleList = shengChan.getSaleList();
             List<ShengChan> list = shengChanService.findBySaleList(saleList.getId());
             Integer n = 0;
             for(ShengChan shengChan1 : list){
@@ -66,7 +90,7 @@ public class RuKuAdminController {
                 ruKu.setSaleList(saleList);
                 ruKu.setOutCode(saleList.getOutCode());
                 ruKuService.save(ruKu);
-            }
+            }*/
         }
 
         /*for (ShengChan shengChan : plgList){
@@ -150,9 +174,14 @@ public class RuKuAdminController {
      * @return
      */
     @RequestMapping("/ruku")
-    public Map<String,Object> ruku(Integer id){
+    public Map<String,Object> ruku(Integer id,Integer num){
         Map<String,Object> map = new HashMap<>();
-        ruKuService.updateState(id);
+        RuKu ruKu = ruKuService.findById(id);
+        ruKu.setFahuoNum(ruKu.getFahuoNum()+num);
+        if(ruKu.getOrderNum() == ruKu.getFahuoNum()){
+            ruKu.setState("完成");
+        }
+        ruKuService.save(ruKu);
         map.put("success",true);
         return map;
     }

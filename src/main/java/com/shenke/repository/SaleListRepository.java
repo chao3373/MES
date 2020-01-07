@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Date;
 import java.util.List;
@@ -230,4 +231,12 @@ public interface SaleListRepository  extends JpaRepository<SaleList, Integer>, J
      */
     @Query(value = "select id from t_sale_list where remark < 0",nativeQuery = true)
     Integer[] findRemark();
+
+
+    /**
+     * 图纸展开界面点击物料号显示被groupBy的信息
+     * @return
+     */
+    @Query(value = "select * from t_sale_list where wuliao_id = ?1 and cunzai = '分配工时' and  state = '下单'",nativeQuery = true)
+    List<SaleList> tuzhiOpenChakan(String wuliaoId);
 }

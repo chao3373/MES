@@ -39,6 +39,10 @@ public class User {
 	@Transient
 	private String gongxus;//擅长的工序
 
+	@JoinColumn
+	@ManyToOne
+	private Process process; //最优工序
+
 	@Override
 	public String toString() {
 		return "User{" +
@@ -51,7 +55,16 @@ public class User {
 				", remarks='" + remarks + '\'' +
 				", roles='" + roles + '\'' +
 				", gongxus='" + gongxus + '\'' +
+				", process=" + process +
 				'}';
+	}
+
+	public Process getProcess() {
+		return process;
+	}
+
+	public void setProcess(Process process) {
+		this.process = process;
 	}
 
 	public String getGongxus() {

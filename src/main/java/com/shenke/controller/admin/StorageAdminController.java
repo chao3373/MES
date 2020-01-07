@@ -45,63 +45,27 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/save")
-    public Map<String,Object> save(Integer id){
+    public Map<String,Object> save(Integer id,Integer num){
         Map<String,Object> map = new HashMap<>();
         RuKu ruKu = ruKuService.findById(id);
 
+        StringBuffer code = new StringBuffer("FN");
+        String outCode = storageService.selectMaxOutCode();
+        if(outCode!=null){
+            code.append(StringUtil.formatCode(outCode));
+        }else{
+            code.append("00000001");
+        }
+
         Storage storage = new Storage();
-        storage.setRuKuDate(new Date());
-        storage.setRuKu(ruKu);
+        storage.setFahuoDate(new Date());
         storage.setSaleList(ruKu.getSaleList());
-        storage.setState("入库");
+        storage.setNum(num);
+        storage.setFahuoNumber(code.toString());
         storageService.save(storage);
 
         saleListService.setState(ruKu.getSaleList().getId(),"入库");
 
-        map.put("success",true);
-        return map;
-    }
-
-    /**
-     * 更新状态
-     * @param Ids
-     * @param state
-     * @return
-     */
-    @RequestMapping("/updateState")
-    public Map<String,Object> updateState(Integer []Ids,String state){
-        Map<String,Object> map = new HashMap<>();
-        storageService.updateState(Ids,state);
-        map.put("success",true);
-        return map;
-    }
-
-    /**
-     * 根据状态查找
-     * @param state
-     * @return
-     */
-    @RequestMapping("/findByState")
-    public Map<String,Object> findByState(String state){
-        Map<String,Object> map = new HashMap<>();
-        map.put("rows",storageService.findByState(state));
-        return map;
-    }
-
-    /**
-     * 产品出库
-     * @param Ids
-     * @return
-     */
-    @RequestMapping("/chuku")
-    public Map<String,Object> chuku(Integer []Ids){
-        Map<String,Object> map = new HashMap<>();
-        for (int i= 0;i<Ids.length;i++){
-            Storage storage = storageService.findById(Ids[i]);
-            storage.setState("出库");
-            storage.setChuKuDate(new Date());
-            storageService.save(storage);
-        }
         map.put("success",true);
         return map;
     }
@@ -116,17 +80,17 @@ public class StorageAdminController {
      * @Date:
      */
     @RequestMapping("/detail")
-    public Map<String, Object> detail(String date) throws ParseException {
-        System.out.println(date);
+    public Map<String, Object> detail(String fahuoDate,String fahuoNumber) throws ParseException {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> map1 = new HashMap<>();
-        if (StringUtil.isNotEmpty(date)) {
-            map1.put("date", date);
+        if (StringUtil.isNotEmpty(fahuoDate)) {
+            map1.put("date", fahuoDate);
         } else {
             map1.put("date", null);
         }
-        map.put("success", true);
+        map1.put("fahuoNumber",fahuoNumber);
         List<Storage> storageList = storageService.detail(map1);
+        map.put("success", true);
         map.put("rows", storageList);
         return map;
     }

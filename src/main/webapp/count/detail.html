@@ -37,16 +37,18 @@
 
         function addSelect() {
             json = {};
-            if ($("#chuKuDate").datebox("getValue")) {
-                json.date = $("#chuKuDate").datebox("getValue");
+            if ($("#fahuoDate").datebox("getValue")) {
+                json.fahuoDate = $("#fahuoDate").datebox("getValue");
+            }
+            if($("#fahuoNumber").val() != ""){
+                json.fahuoNumber = $("#fahuoNumber").val();
             }
 
         }
 
         //刷新
         function resett() {
-            $("#chuKuDate").datebox("reset");
-            $("#dg").datagrid("reload");
+            window.location.reload();
         }
 
         $(document).ready(function () {
@@ -60,8 +62,8 @@
                         title: "订单编号",
                         formatter:function (val, row) {
                             console.log(row)
-                            if(row.ruKu.saleList != null){
-                                return row.ruKu.saleList.saleNumber;
+                            if(row.saleList != null){
+                                return row.saleList.saleNumber;
                             }
                             else {
                                 return "";
@@ -73,8 +75,8 @@
                         align: "center",
                         title: "项目号",
                         formatter: function (val,row ) {
-                            if(row.ruKu.saleList != null){
-                                return row.ruKu.saleList.xiangmuId;
+                            if(row.saleList != null){
+                                return row.saleList.xiangmuId;
                             }
                             else {
                                 return "";
@@ -110,13 +112,65 @@
                         field: "num",
                         width: "150",
                         align: "center",
-                        title: "数量",
-                        formatter:function (val, row) {
-                            if (row.ruKu != null){
-                                return row.ruKu.num;
-                            }
-                            else
+                        title: "数量"
+                    },{
+                        field: "fahuoDate",
+                        width: "150",
+                        align: "center",
+                        title: "发货日期",
+                        formatter: function (value, row, index) {
+                            if (row) {
+                                var date = new Date(row.fahuoDate);
+                                var o = {
+                                    "M+": date.getMonth() + 1,                 //月份
+                                    "d+": date.getDate(),                    //日
+                                    "h+": date.getHours(),                   //小时
+                                    "m+": date.getMinutes(),                 //分
+                                    "s+": date.getSeconds(),                 //秒
+                                    "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+                                    "S": date.getMilliseconds()             //毫秒
+                                };
+                                if (/(y+)/.test("yyyy-MM-dd hh:mm:ss"))
+                                    var fmt = "yyyy-MM-dd hh:mm:ss".replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+                                for (var k in o)
+                                    if (new RegExp("(" + k + ")").test(fmt))
+                                        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                                return fmt;
+                            } else {
                                 return "";
+                            }
+                        }
+                    }, {
+                        field: "fahuoNumber",
+                        width: "150",
+                        align: "center",
+                        title: "发货单号"
+                    },{
+                        field: "referDate",
+                        width: "150",
+                        align: "center",
+                        title: "交货日期",
+                        formatter: function (value, row, index) {
+                            if (row) {
+                                var date = new Date(row.saleList.referDate);
+                                var o = {
+                                    "M+": date.getMonth() + 1,                 //月份
+                                    "d+": date.getDate(),                    //日
+                                    "h+": date.getHours(),                   //小时
+                                    "m+": date.getMinutes(),                 //分
+                                    "s+": date.getSeconds(),                 //秒
+                                    "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+                                    "S": date.getMilliseconds()             //毫秒
+                                };
+                                if (/(y+)/.test("yyyy-MM-dd hh:mm:ss"))
+                                    var fmt = "yyyy-MM-dd hh:mm:ss".replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+                                for (var k in o)
+                                    if (new RegExp("(" + k + ")").test(fmt))
+                                        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                                return fmt;
+                            } else {
+                                return "";
+                            }
                         }
                     }
                 ]]
@@ -305,7 +359,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/admin/daochu?title=出库明细",
+                url: "/admin/daochu?title=发货明细",
                 data: {a : jsonarr},
                 success: function (result) {
                     if(result.success){
@@ -330,9 +384,11 @@
         <form id="fm" method="post">
             <table cellspacing="8px">
                 <tr>
-                    <td>出库时间：<input type="text" id="chuKuDate" name="chuKuDate"
+                    <td>发货时间：<input type="text" id="fahuoDate" name="fahuoDate"
                                     class="easyui-datebox"
                                     demandd="true" data-options="editable:false" size="10"/>
+                    </td>
+                    <td>发货单号：<input type="text" id="fahuoNumber" name="fahuoNumber" size="10"/>
                     </td>
                     <td>
                         <a class="easyui-linkbutton" iconCls="icon-search" href="javascript:loaddg()">查询</a>

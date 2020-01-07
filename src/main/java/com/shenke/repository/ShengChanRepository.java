@@ -14,7 +14,7 @@ public interface ShengChanRepository extends JpaRepository<ShengChan,Integer> , 
      * "任务下发"界面显示的信息
      * @return
      */
-    @Query(value = "SELECT * FROM t_sheng_chan GROUP BY sale_list_id,biaoqian_code desc",nativeQuery = true)
+    @Query(value = "SELECT * FROM t_sheng_chan GROUP BY sale_list_id,biaoqian_code desc ORDER BY sale_list_id DESC",nativeQuery = true)
     public List<ShengChan> listProduct();
 
     /**
@@ -98,7 +98,7 @@ public interface ShengChanRepository extends JpaRepository<ShengChan,Integer> , 
      * @param id
      * @return
      */
-    @Query(value = "select min(accomplish_num) from t_sheng_chan where sale_list_id = ?1",nativeQuery = true)
+    @Query(value = "select min(accomplish_num) from t_sheng_chan where sale_list_id = ?1 and is_datu = 0",nativeQuery = true)
     Integer findMinAccomplishNumBySaleListId(Integer id);
 
     /**

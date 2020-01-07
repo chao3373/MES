@@ -23,7 +23,7 @@ public class RuKu {
 
     private Integer num; // 数量
 
-    private Integer rukuNum;//入库数量
+    private Integer fahuoNum;//入库数量
 
     private String state;//状态
 
@@ -68,12 +68,12 @@ public class RuKu {
         this.num = num;
     }
 
-    public Integer getRukuNum() {
-        return rukuNum;
+    public Integer getFahuoNum() {
+        return fahuoNum;
     }
 
-    public void setRukuNum(Integer rukuNum) {
-        this.rukuNum = rukuNum;
+    public void setFahuoNum(Integer fahuoNum) {
+        this.fahuoNum = fahuoNum;
     }
 
     public String getState() {
@@ -92,7 +92,7 @@ public class RuKu {
                 ", outCode='" + outCode + '\'' +
                 ", orderNum=" + orderNum +
                 ", num=" + num +
-                ", rukuNum=" + rukuNum +
+                ", fahuoNum=" + fahuoNum +
                 ", state='" + state + '\'' +
                 '}';
     }

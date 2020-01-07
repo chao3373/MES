@@ -26,46 +26,15 @@ public class UserProductAdminController {
     private UserProductService userProductService;
 
     @RequestMapping("/list")
-    public Map<String,Object> list(Integer process_id,String user_trueName,String btime,String etime) throws ParseException {
-        UserProduct userProduct = new UserProduct();
+    public Map<String,Object> list(Integer process_id,String user_trueName,String btime,String etime,Integer page,Integer rows) {
 
-        if(process_id != null){
-            userProduct.setProcessId(process_id);
-        }
-
-        if(StringUtil.isNotEmpty(user_trueName)){
-            userProduct.setUserName(user_trueName);
-        }
-
-        if(StringUtil.isNotEmpty(etime) && StringUtil.isNotEmpty(btime)){
-
-            /*SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date eDate = sdf.parse(etime);
-            Date bDate = sdf.parse(btime);
-*/
-            java.util.Date start = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(btime + " 00:00:00");
-            java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(etime + " 23:59:59");
-
-            userProduct.setbDate(start);
-            userProduct.seteDate(end);
-
-        }
-
-        Map<String,Object> map = new HashMap<>();
-        List<UserProduct> list = userProductService.list(userProduct);
-
-        Double sumGongshi = 0.00;
-        Double sumNum = 0.00;
-        for(UserProduct userProduct1 : list){
-            sumGongshi = sumGongshi + (userProduct1.getZbGongShi() + userProduct1.getCzGongShi()) * userProduct1.getNum();
-            sumNum = sumNum + userProduct1.getNum();
-
-        }
-        map.put("sumGongshi",sumGongshi);
-        map.put("sumNum",sumNum);
-        map.put("rows",list);
-        System.out.println(map);
-        return map;
+        System.out.println("+++++++++++++++++++++++++++++");
+        System.out.println(process_id);
+        System.out.println(user_trueName);
+        System.out.println(btime);
+        System.out.println(etime);
+        System.out.println("+++++++++++++++++++++++++++++");
+        return userProductService.list(process_id,user_trueName,btime,etime,page,rows);
     }
 
     @RequestMapping("/findShengchan")

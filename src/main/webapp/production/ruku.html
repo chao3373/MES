@@ -63,7 +63,17 @@
                         field: "orderNum",
                         width: "150",
                         align: "center",
-                        title: "订单数量"
+                        title: "下单数量"
+                    }, {
+                        field: "num",
+                        width: "150",
+                        align: "center",
+                        title: "已生产完成数量"
+                    },  {
+                        field: "fahuoNum",
+                        width: "150",
+                        align: "center",
+                        title: "已发货数量"
                     },{
                         field: "saleDate",
                         width: "150",
@@ -136,21 +146,45 @@
 
 
         //入库
-        function ruku() {
-            var row = $("#dg").datagrid("getSelected");
+        var row;
+        function fahuo() {
+            row = $("#dg").datagrid("getSelected");
+            if(row == null){
+                $.messager.alert("系统提示","请选择要发货的订单！");
+                return;
+            }
+            $("#dlg").dialog("open").dialog("setTitle","添加数量");
+
+        }
+
+        function save() {
+
+            var num = $("#num").val();
+            if(num == ""){
+                $.messager.alert("系统提示","请输入数量");
+                return;
+            }
+            if(num > (row.num - row.fahuoNum)){
+                $.messager.alert("系统提示","输入数量有误！");
+                return;
+            }
+
             $.post("/admin/ruKu/ruku",{
-                id:row.id
+                id:row.id,
+                num:num
             },function (result) {
                 if(result.success){
                     $("#dg").datagrid("reload");
                     $.post("/admin/storage/save",{
-                        id:row.id
+                        id:row.id,
+                        num:num
                     },function (result) {
                         if(result.success){
-                            $.messager.alert("系统提示","入库成功");
+                            $.messager.alert("系统提示","操作成功");
+                            $("#dlg").dialog("close");
                             refresh();
                         }else {
-                            $.messager.alert("系统提示","入库失败");
+                            $.messager.alert("系统提示","失败");
                         }
                     })
                 }
@@ -183,10 +217,29 @@
                            class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
             &nbsp;&nbsp;<a href="javascript:refresh()"
                            class="easyui-linkbutton" iconCls="icon-refresh" plain="true">刷新</a>
-            &nbsp;&nbsp;<a href="javascript:ruku()"
-                           class="easyui-linkbutton" iconCls="icon-redo" plain="true">入库</a>
+            &nbsp;&nbsp;<a href="javascript:fahuo()"
+                           class="easyui-linkbutton" iconCls="icon-redo" plain="true">发货</a>
         </fieldset>
     </div>
 
+    <!--添加发货数量对话框-->
+    <div id="dlg" class="easyui-dialog" style="width: 300px;height: 150px;"
+         closed="true" buttons="#dlg-buttons">
+        <input type="hidden" id="drawingId" name="drawingId"/>
+        <form id="fm" method="post" enctype="multipart/form-data">
+            <table cellspacing="8px">
+                <tr>
+                    <td>数量：</td>
+                    <td><input type="text" id="num" name="num" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1)
+                    {this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"/></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <!-- 对话框按钮 -->
+    <div id="dlg-buttons">
+        <a href="javascript:save()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+        <a href="javascript:close()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
+    </div>
 </body>
 </html>

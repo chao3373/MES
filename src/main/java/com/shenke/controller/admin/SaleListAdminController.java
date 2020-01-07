@@ -82,7 +82,7 @@ public class SaleListAdminController {
         }.getType());
 
         //设置发货编码
-        StringBuffer code = new StringBuffer("FX");
+        StringBuffer code = new StringBuffer("FH");
         String outCode = saleListService.selectMaxOutCode();
         if(outCode!=null){
             code.append(StringUtil.formatCode(outCode));
@@ -433,8 +433,8 @@ public class SaleListAdminController {
     @RequestMapping("/setOpenState")
     public Map<String,Object> setOpenState(String wuliaoId, String state, HttpSession session){
         Map<String,Object> map = new HashMap<>();
-        if(state != ""){
-            User user = (User) session.getAttribute("currentUser"); //获取当前登录用户对象
+        User user = (User) session.getAttribute("currentUser"); //获取当前登录用户对象
+        if(state.equals("展开中")){
             state = state + "：" +user.getTrueName();
 
             List<SaleList> list = saleListService.findByOpenState(state);
@@ -448,7 +448,7 @@ public class SaleListAdminController {
                 map.put("success",true);
             }
         }else {
-            saleListService.setOpenState(wuliaoId,state);
+            saleListService.setOpenState(wuliaoId,state+"："+user.getTrueName());
             map.put("success",true);
         }
         return map;
@@ -463,7 +463,11 @@ public class SaleListAdminController {
     public Map<String,Object> dangqianUser(HttpSession session){
         Map<String,Object> map = new HashMap<>();
         User user = (User) session.getAttribute("currentUser");
+        System.out.println("**************++++++***************");
+        System.out.println(user.getProcess());
+        System.out.println("**************++++++***************");
         map.put("user",user.getTrueName());
+        map.put("bestProcess",user.getProcess());
         return map;
     }
 
@@ -518,6 +522,30 @@ public class SaleListAdminController {
         List<SaleList> list = saleListService.selectAboutSaleList(saleList);
 
         map.put("rows",list);
+        return map;
+    }
+
+    /**
+     * 发货条码界面显示
+     * @param page
+     * @param rows
+     * @return
+     */
+    @RequestMapping("/showInFaHuoMa")
+    public Map<String,Object> showInFaHuoMa(Integer page, Integer rows){
+        return saleListService.showInFaHuoMa(page,rows);
+    }
+
+
+    /**
+     * 图纸展开界面点击物料号显示被groupBy的信息
+     * @return
+     */
+    @RequestMapping("/tuzhiOpenChakan")
+    public Map<String,Object> tuzhiOpenChakan(String wuliaoId){
+        Map<String,Object> map = new HashMap<>();
+        map.put("rows",saleListService.tuzhiOpenChakan(wuliaoId));
+        map.put("success",true);
         return map;
     }
 }

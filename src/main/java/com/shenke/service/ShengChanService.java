@@ -1,6 +1,7 @@
 package com.shenke.service;
 
 import com.shenke.entity.ShengChan;
+import java.util.Map;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
@@ -24,7 +25,7 @@ public interface ShengChanService {
      * “生产任务”  界面显示
      * @return
      */
-    public List<ShengChan> listProduct();
+    public Map<String,Object> listProduct(Integer page, Integer rows,String saleNumber,String wuliaoId);
 
     /**
      * "工序加工" 界面显示

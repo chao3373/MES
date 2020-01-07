@@ -17,33 +17,13 @@ public class Storage {
 
     @JoinColumn
     @ManyToOne
-    private RuKu ruKu; // 入库 对象
-
-    @JoinColumn
-    @ManyToOne
     private SaleList saleList; //订单  对象
 
-    private Date ruKuDate; // 入库时间
+    private Date fahuoDate; //发货时间
 
-    private Date chuKuDate; //  出库时间
+    private Integer num; //发货数量
 
-    private String state; //状态
-
-    public SaleList getSaleList() {
-        return saleList;
-    }
-
-    public void setSaleList(SaleList saleList) {
-        this.saleList = saleList;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
+    private String fahuoNumber; // 发货单号
 
     public Integer getId() {
         return id;
@@ -53,39 +33,46 @@ public class Storage {
         this.id = id;
     }
 
-    public RuKu getRuKu() {
-        return ruKu;
+    public SaleList getSaleList() {
+        return saleList;
     }
 
-    public void setRuKu(RuKu ruKu) {
-        this.ruKu = ruKu;
+    public void setSaleList(SaleList saleList) {
+        this.saleList = saleList;
     }
 
-    public Date getRuKuDate() {
-        return ruKuDate;
+    public Date getFahuoDate() {
+        return fahuoDate;
     }
 
-    public void setRuKuDate(Date ruKuDate) {
-        this.ruKuDate = ruKuDate;
+    public void setFahuoDate(Date fahuoDate) {
+        this.fahuoDate = fahuoDate;
     }
 
-    public Date getChuKuDate() {
-        return chuKuDate;
+    public Integer getNum() {
+        return num;
     }
 
-    public void setChuKuDate(Date chuKuDate) {
-        this.chuKuDate = chuKuDate;
+    public void setNum(Integer num) {
+        this.num = num;
+    }
+
+    public String getFahuoNumber() {
+        return fahuoNumber;
+    }
+
+    public void setFahuoNumber(String fahuoNumber) {
+        this.fahuoNumber = fahuoNumber;
     }
 
     @Override
     public String toString() {
         return "Storage{" +
                 "id=" + id +
-                ", ruKu=" + ruKu +
                 ", saleList=" + saleList +
-                ", ruKuDate=" + ruKuDate +
-                ", chuKuDate=" + chuKuDate +
-                ", state='" + state + '\'' +
+                ", fahuoDate=" + fahuoDate +
+                ", num=" + num +
+                ", fahuoNumber=" + fahuoNumber +
                 '}';
     }
 }

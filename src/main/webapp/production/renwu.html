@@ -14,6 +14,7 @@
     <script type="text/javascript"
             src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="/static/js/date.js"></script>
+    <script type="text/javascript" src="/js/fenye.js"></script>
     <script type="text/javascript">
 
         $(document).ready(function() {
@@ -28,10 +29,10 @@
 
             $('#dg').datagrid({
                 rowStyler: function (index, row) {
-                    if (row.saleList.remark == "2") {
+                    if (row.remark == "2") {
                         return 'background: #CC2222;color:white'
                     }
-                    if (row.saleList.remark == "1") {
+                    if (row.remark == "1") {
                         return 'background: #a333c8;color:white'
                     }
                 }
@@ -41,9 +42,12 @@
 
         function load(){
             $("#dg").datagrid({
-                url:"/admin/shengChan/listProduct",
                 columns:[[
                     {
+                        field: 'cb',
+                        checkbox: "true",
+                        align: "center"
+                    },{
                         field: "id",
                         width: "150",
                         align: "center",
@@ -53,67 +57,27 @@
                         field:"saleNumber",
                         title:"订单编号",
                         width: "150",
-                        align: "center",
-                        formatter:function (val, row) {
-                            if(row.saleList){
-                                return row.saleList.saleNumber;
-                            }
-                            else {
-                                return '';
-                            }
-                        }
+                        align: "center"
                     },{
                         field: "datu",
                         title:"总图物料编号",
                         width: "150",
-                        align: "center",
-                        formatter:function (val, row) {
-                            if(row.bigDrawing){
-                                return row.bigDrawing.wuliaoId;
-                            }
-                            else {
-                                return '';
-                            }
-                        }
+                        align: "center"
                     },{
                         field: "tuzhimingcheng",
                         title:"图纸名称",
                         width: "150",
-                        align: "center",
-                        formatter:function (val, row) {
-                            if(row.saleList){
-                                return row.saleList.tuzhiName;
-                            }
-                            else {
-                                return '';
-                            }
-                        }
+                        align: "center"
                     },{
                         field: "xaiotu",
                         title:"分图物料编号",
                         width: "150",
-                        align: "center",
-                        formatter:function (val, row) {
-                            if(row.drawing){
-                                return row.drawing.wuliaoId;
-                            }
-                            else {
-                                return '';
-                            }
-                        }
+                        align: "center"
                     },{
                         field: "xiangmuhao",
                         title:"项目号",
                         width: "150",
-                        align: "center",
-                        formatter:function (val, row) {
-                            if(row.saleList){
-                                return row.saleList.xiangmuId;
-                            }
-                            else {
-                                return '';
-                            }
-                        }
+                        align: "center"
                     },{
                         field: "num",
                         title:"数量",
@@ -125,8 +89,8 @@
                         align: "center",
                         title: "接单日期",
                         formatter: function (value, row, index) {
-                            if (row.saleList) {
-                                var date = new Date(row.saleList.saleDate);
+                            if (row.saleDate) {
+                                var date = new Date(row.saleDate);
                                 var o = {
                                     "M+": date.getMonth() + 1,                 //月份
                                     "d+": date.getDate(),                    //日
@@ -193,7 +157,7 @@
 
         //打印条码
         function tiaoma(index) {
-                var rowDg = $("#dg").datagrid("getRows")[index];
+            var rowDg = $("#dg").datagrid("getRows")[index];
             $.post("/admin/shengChan/tiaoma",{
                 code:rowDg.biaoqianCode
             },function (result) {
@@ -207,14 +171,13 @@
 
          //打印
         function print(url,row) {
-            var url = "<img src='" + url + "'/>";<!--style='width:305px;height: 140%;'-->
-            // url += result.url;
-            // url += "'/>";
+            var url = "<img src='" + url + "' style='width: min-content;height: 100px'/>";
             tableString = "";
             tableString += "<div id='tab' style='text-align: center;width: 100%;font-size: 100px; font-weight: 900;'>";
             tableString +="<table style='width: 21%;font-size 80px;text-align: center; margin: auto' >";
             tableString +="<tr><td style='text-align: center;'>" + url;
             tableString += "</td></tr>";
+            tableString +="<tr><td style='font-size: 8px'>项目号："+row.xiangmuhao+"&nbsp;&nbsp;申请单号："+row.shenqingNumber+"</td></tr>";
             tableString +="<tr><td style='font-size: 8px'>数量："+row.num+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;交期："+row.referDate.substring(0,10)+"</td></tr>";
             // tableString +="<tr><td>交期："+row.referDate.substring(0,10)+"</td></tr>";
             tableString +="</table></div>";
@@ -234,24 +197,84 @@
             }
         }
 
+        //批量打印条码
+        function piliang() {
+            var rows = $("#dg").datagrid("getSelections");
+            var arr = [];
+            for (var i=0;i<rows.length;i++){
+                arr.push(rows[i].biaoqianCode);
+            }
+            var Codes = arr.join(",");
+            $.post("/admin/shengChan/tiaomas",{
+                Codes:Codes
+            },function (result) {
+                if(result.success){
+                    prints(rows);
+                    $("#dg").datagrid("reload");
+                }
+            },"json");
+        }
+
+        function prints(rows) {
+            t = "";
+            var m = 0;
+            for (var i=0;i<rows.length;i++){
+                var url = "<img src='/tm/" + rows[i].biaoqianCode + ".png' style='width: min-content;height: 100px'/>";<!--style='width:305px;height: 140%;'-->
+                t += "<div id='tab' style='text-align: center;width: 100%;font-size: 100px; font-weight: 900;margin-top: 15px'>";
+                t +="<table style='width: 21%;font-size 80px;text-align: center; margin: auto' >";
+                t +="<tr><td style='text-align: center;'>" + url;
+                t += "</td></tr>";
+                t +="<tr><td style='font-size: 8px'>项目号："+rows[i].xiangmuhao+"&nbsp;&nbsp;申请单号："+rows[i].shenqingNumber+"</td></tr>";
+                t +="<tr><td style='font-size: 8px'>数量："+rows[i].num+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;交期："+rows[i].referDate.substring(0,10)+"</td></tr>";
+                // tableString +="<tr><td>交期："+row.referDate.substring(0,10)+"</td></tr>";
+                t +="</table></div>";
+                t +="<div style='page-break-after: always;'></div>";
+                m=m+1;
+            }
+
+            if(m == rows.length){
+                tableString = t;
+                if (window.showModalDialog) {
+                    window.showModalDialog(
+                        // "/production/print.html",
+                        "..\\printBiaoqian.html",
+                        tableString,
+                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                } else {
+                    window.open(
+                        "..\\printBiaoqian.html",
+                        // "/production/print.html",
+                        tableString,
+                        "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+                }
+            }
+
+        }
+
 
         //点击搜索
-        function sousuo() {
-            console.log($("#xuanze").combobox("getText"))
-            $('#dg').datagrid({
-                url: '/admin/shengChan/selectRenwu',
-                queryParams: {
-                    xuanze: $("#xuanze").combobox("getValue"),
-                    code: $("#bianma").val()
-                }
-            });
+        function searchSale() {
+            var obj = {};
+            if($("#saleNumber").val()){
+                obj.saleNumber = $("#saleNumber").val();
+            }
+            if($("#wuliaoId").val()){
+                obj.wuliaoId = $("#wuliaoId").val();
+            }
+
+            $("#dg").datagrid("load",obj);
+        }
+
+        //刷新
+        function reload() {
+            window.location.reload();
         }
 
     </script>
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
-       <table id="dg" class="easyui-datagrid"
-              fitColumns="false" rownumbers="true" singleSelect="true" fit="true"
+       <table id="dg" class="easyui-datagrid" pagination="true" url="/admin/shengChan/listProduct"
+              fitColumns="false" rownumbers="true" singleSelect="false" fit="true"
               toolbar="#tb1" split="true">
        </table>
 
@@ -265,9 +288,9 @@
                               class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
                &nbsp;&nbsp;<a href="javascript:reload()"
                               class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+               &nbsp;&nbsp;<a href="javascript:piliang()"
+                              class="easyui-linkbutton" iconCls="icon-print" plain="true">批量打印</a>
            </fieldset>
        </div>
-
-
 </body>
 </html>

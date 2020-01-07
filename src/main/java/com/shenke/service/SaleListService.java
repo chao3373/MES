@@ -105,7 +105,7 @@ public interface SaleListService {
      * 图纸展开界面显示
      * @return
      */
-    public List<SaleList> showTuZhiOpen();
+    public List showTuZhiOpen();
 
     //设置存在状态
     public void setCunZai(Integer id,String cunzai);
@@ -174,4 +174,16 @@ public interface SaleListService {
      * @return
      */
     Integer[] findRemark();
+
+    /**
+     * 发货码界面显示
+     * @return
+     */
+    Map<String,Object> showInFaHuoMa(Integer page, Integer rows);
+
+    /**
+     * 图纸展开界面点击物料号显示被groupBy的信息
+     * @return
+     */
+    List<SaleList> tuzhiOpenChakan(String wuliaoId);
 }

@@ -1,7 +1,5 @@
 package com.shenke.entity;
 
-
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -24,7 +22,7 @@ public class Wuliao {
 
     private String guiGe; //规格
 
-    private Integer num; //数量
+    private Double num; //数量
 
     private String changJia; //厂家
 
@@ -70,11 +68,11 @@ public class Wuliao {
         this.guiGe = guiGe;
     }
 
-    public Integer getNum() {
+    public Double getNum() {
         return num;
     }
 
-    public void setNum(Integer num) {
+    public void setNum(Double num) {
         this.num = num;
     }
 
@@ -93,7 +91,7 @@ public class Wuliao {
                 ", bigDrawing=" + bigDrawing +
                 ", name='" + name + '\'' +
                 ", guiGe='" + guiGe + '\'' +
-                ", num=" + num +
+                ", num='" + num + '\'' +
                 ", changJia='" + changJia + '\'' +
                 ", remark='" + remark + '\'' +
                 '}';

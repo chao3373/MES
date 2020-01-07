@@ -83,9 +83,21 @@
             return val.trueName + "&nbsp;(" + val.userName + ")&nbsp;";
         }
 
-
-
+        var user = "";
         $(document).ready(function () {
+            loadDG2();
+
+            //获取当前用户
+
+            $.ajax({
+                type:"post",
+                async:false,
+                url:"/admin/saleList/dangqianUser",
+                dataType:"json",
+                success:function (result) {
+                    user = result.user;
+                }
+            });
 
             /*$('#dg').datagrid({
                 rowStyler: function (index, row) {
@@ -123,7 +135,16 @@
                         field: 'wuliaoId',
                         title: '物料编号',
                         width: 100,
-                        align: 'center'
+                        align: 'center',
+                        formatter:function (val, row) {
+                            if(row.count > 1){
+                                var str = '<a href="javascript:chakan()" id="chakan" name="chakan" class="easyui-linkbutton"><span style="color: white;background: red">'+val+'</span></a>';
+                                return str;
+                            }else {
+                                return val;
+                            }
+
+                        }
                     }, {
                         field: "tuzhiName",
                         width: "150",
@@ -309,6 +330,85 @@
                 }
             });
         });
+
+        //若是group by的行点击显示所有行
+        function chakan() {
+            var row;
+            if(Row == undefined){
+                row = $("#dg").datagrid("getSelected");
+            }else {
+                row = Row;
+            }
+            $.post("/admin/saleList/tuzhiOpenChakan",{
+                wuliaoId:row.wuliaoId
+            },function (result) {
+                if(result.success){
+                    $("#dlg").dialog("open").dialog("setTitle","查看详细信息");
+                    $("#dg2").datagrid("loadData",result.rows);
+                }
+            })
+
+        }
+
+        function loadDG2() {
+            $("#dg2").datagrid({
+                columns: [[
+                    {
+                        field: 'id',
+                        title: 'id',
+                        width: 100,
+                        hidden: 'true',
+                        align: 'center'
+                    },{
+                        field: 'saleNumber',
+                        title: '订单编号',
+                        width: 120,
+                        align: 'center'
+                    },{
+                        field: 'xiangmuId',
+                        title: '项目号',
+                        width: 120,
+                        align: 'center'
+                    },{
+                        field: 'wuliaoId',
+                        title: '物料编号',
+                        width: 130,
+                        align: 'center'
+                    },{
+                        field: 'num',
+                        title: '数量',
+                        width: 50,
+                        align: 'center'
+                    }, {
+                        field: "referDate",
+                        width: "150",
+                        align: "center",
+                        title: "交货日期",
+                        formatter: function (value, row, index) {
+                            if (value) {
+                                var date = new Date(value);
+                                var o = {
+                                    "M+": date.getMonth() + 1,                 //月份
+                                    "d+": date.getDate(),                    //日
+                                    "h+": date.getHours(),                   //小时
+                                    "m+": date.getMinutes(),                 //分
+                                    "s+": date.getSeconds(),                 //秒
+                                    "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+                                    "S": date.getMilliseconds()             //毫秒
+                                };
+                                if (/(y+)/.test("yyyy-MM-dd hh:mm:ss"))
+                                    var fmt = "yyyy-MM-dd hh:mm:ss".replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+                                for (var k in o)
+                                    if (new RegExp("(" + k + ")").test(fmt))
+                                        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                                return fmt;
+                            } else {
+                                return "";
+                            }
+                        }
+                }]]
+            })
+        }
 
         //弹出的对话框中的值
         function load(){
@@ -599,6 +699,9 @@
                 },
                 dataType:"json",
                 success:function (result) {
+                    console.log("图纸图纸图纸图纸")
+                    console.log(result)
+                    console.log("图纸图纸图纸图纸")
                     if (result.success) {
                         $.post("/admin/yuanLiaoRequire/save",{
                             num:Row.num,
@@ -679,28 +782,13 @@
         //开始计时
         var Row;
         function start() {
-
-            //获取当前用户
-            var user = "";
-            $.ajax({
-                type:"post",
-                async:false,
-                url:"/admin/saleList/dangqianUser",
-                dataType:"json",
-                success:function (result) {
-                    user = result.user;
-                }
-            });
-
             Row = $("#dg").datagrid("getSelected");
 
             if(Row == null){
                 $.messager.alert("系统提示","请选择一条信息");
                 return;
             }
-            console.log(Row.openState);
-            if(Row.openState == "" || Row.openState == null){
-                console.log(11)
+            if(Row.openState == "" || Row.openState == null || Row.openState.substring(0,4) == "展开结束"){
                 $.post("/admin/saleList/setOpenState",{
                     wuliaoId:Row.wuliaoId,
                     state:"展开中"
@@ -762,7 +850,7 @@
 
             $.post("/admin/saleList/setOpenState",{
                 wuliaoId:Row.wuliaoId,
-                state:""
+                state:"展开结束"
             },function (result) {
                 if(result.success){
                     $.post("/admin/bigdrawing/jiShi",{
@@ -835,6 +923,13 @@
 
             if(row.openState != null && row.openState.substring(0,3) == "展开中"){
                 $.messager.alert("系统提示","您有图纸正在展开！");
+                return;
+            }
+            if(row.openState == null){
+                return;
+            }
+
+            if(row.openState.substring(0,4) != "展开结束"){
                 return;
             }
 
@@ -924,6 +1019,7 @@
                         num:$("#num").val()
                     }
                 })
+                closeXiuGaiXiaotu();
             }else {
                 $.post("/admin/drawingType/xiugai",{
                     id:row.id,
@@ -962,7 +1058,7 @@
     </script>
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
-<div region="north" style="height: 300px">
+<div region="north" split="true" style="height: 300px">
     <table id="dg" class="easyui-datagrid"
            fitColumns="false" rownumbers="true" singleSelect="true" fit="true"
            toolbar="#tb1" split="true">
@@ -1004,8 +1100,8 @@
     <div>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:add()" id="add"
                                          class="easyui-linkbutton" iconCls="icon-add" plain="true">手动添加子图</a>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:toLead()" id="toLead"
-                                         class="easyui-linkbutton" iconCls="icon-add" plain="true">EXCEL导入子图</a>
+        <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:toLead()" id="toLead"
+                                         class="easyui-linkbutton" iconCls="icon-add" plain="true">EXCEL导入子图</a>-->
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:xiugaiTuzhi()" id="xiugaiTuzhi"
                                          class="easyui-linkbutton" iconCls="icon-reload" plain="true">修改</a>
         <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:OK()" id="OK"
@@ -1057,8 +1153,8 @@
             </tr>
             <tr>
                 <td>数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量：</td>
-                <td><input type="text" id="num" name="num"
-                           class="easyui-validatebox" required="true" /></td>
+                <td><input type="text" id="num" name="num" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1)
+                    {this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"/></td>
             </tr>
         </table>
     </form>
@@ -1185,5 +1281,12 @@
     <a href="javascript:closeXiuGaiWuliao()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
 </div>
 
+<!--显示与该物料号相关的所有的订单信息-->
+<div id="dlg" class="easyui-dialog"
+     style="width: 690px; height: 280px; padding: 10px 20px" closed="true">
+    <table id="dg2" class="easyui-datagrid"
+           rownumbers="true" singleSelect="true" fit="true">
+    </table>
+</div>
 </body>
 </html>

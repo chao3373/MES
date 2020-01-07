@@ -34,21 +34,6 @@ public class StorageServiceImpl implements StorageService {
 
 
     @Override
-    public Storage findById(Integer id) {
-        return storageRepository.findById(id).get();
-    }
-
-    @Override
-    public void updateState(Integer[] ids, String state) {
-        storageRepository.updateState(ids,state);
-    }
-
-    @Override
-    public List<Storage> findByState(String state) {
-        return storageRepository.findByState(state);
-    }
-
-    @Override
     public List<Storage> detail(Map<String, Object> map) {
         return storageRepository.findAll(new Specification<Storage>() {
             public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -64,17 +49,22 @@ public class StorageServiceImpl implements StorageService {
                         Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(ed);
                         System.out.println(star);
                         System.out.println(end);
-                        predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("chuKuDate"), star));
-                        predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("chuKuDate"), end));
+                        predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("fahuoDate"), star));
+                        predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("fahuoDate"), end));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
                 }
-
-                predicate.getExpressions().add(cb.equal(root.get("state"), "出库"));
-
+                if(StringUtil.isNotEmpty((String)map.get("fahuoNumber"))){
+                    predicate.getExpressions().add(cb.equal(root.get("fahuoNumber"),map.get("fahuoNumber")));
+                }
                 return predicate;
             }
         });//, new Sort(Sort.Direction.ASC, "peasant", "name", "model", "price", "length", "color", "realityweight"));
+    }
+
+    @Override
+    public String selectMaxOutCode() {
+        return storageRepository.selectMaxOutCode();
     }
 }

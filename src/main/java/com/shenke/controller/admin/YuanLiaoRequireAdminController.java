@@ -45,6 +45,8 @@ public class YuanLiaoRequireAdminController {
         List<Wuliao> list = wuliaoService.findByBigDrawingId(bigDrawing.getId());
         List<SaleList> lists = saleListService.findByWuliaoIdTuzhiOpen(wuliaoId);
 
+        System.out.println("到这了吗");
+
         for(SaleList saleList : lists){
             yuanLiaoRequireService.deleteBySaleListId(saleList.getId());
             for (Wuliao wuliao : list){
@@ -59,9 +61,6 @@ public class YuanLiaoRequireAdminController {
                 yuanLiaoRequireService.save(yuanLiaoRequire);
             }
         }
-
-
-
         map.put("success",true);
         return map;
     }
@@ -124,14 +123,13 @@ public class YuanLiaoRequireAdminController {
             }else {
                 list.add(list1);
             }
-
         }
         if(m == 0){
             for(List<YuanLiaoRequire> list1 : list){
                 YuanLiaoRequire yuanLiaoRequire = new YuanLiaoRequire();
                 Wuliao wuliao = new Wuliao();
                 wuliao.setName("订单号：");
-                wuliao.setGuiGe(list1.get(1).getSaleList().getSaleNumber());
+                wuliao.setGuiGe(list1.get(0).getSaleList().getSaleNumber());
                 yuanLiaoRequire.setWuliao(wuliao);
                 list1.add(0,yuanLiaoRequire);
             }
