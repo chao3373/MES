@@ -1,8 +1,10 @@
 package com.shenke.controller.admin;
 
+import com.shenke.entity.Log;
 import com.shenke.entity.Process;
 import com.shenke.entity.User;
 import com.shenke.entity.UserProcess;
+import com.shenke.service.LogService;
 import com.shenke.service.ProcessService;
 import com.shenke.service.UserProcessService;
 import com.shenke.service.UserService;
@@ -29,18 +31,29 @@ public class UserProcessAdminController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private LogService logService;
+
     @RequestMapping("/addProcess")
     public Map<String,Object> addProcess(Integer []processIds,Integer yonghu){
         Map<String,Object> map = new HashMap<>();
         userProcessService.deleteByUserId(yonghu);
+
+        String userName = "";
+        String gongxu = "";
         if (processIds!=null) {
+            User user = userService.findById(yonghu);
             for (int i = 0; i < processIds.length; i++) {
                 UserProcess userProcess = new UserProcess();
-                userProcess.setProcess(processService.findById(processIds[i]));
-                userProcess.setUser(userService.findById(yonghu));
+                Process process = processService.findById(processIds[i]);
+                userProcess.setProcess(process);
+                userProcess.setUser(user);
                 userProcessService.save(userProcess);
+                gongxu = gongxu + process.getName() + ",";
             }
+            userName = user.getTrueName();
         }
+        logService.save(new Log(Log.UPDATE_ACTION,"给" + userName+"添加工序："+gongxu));
         map.put("success",true);
         return map;
     }

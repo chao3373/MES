@@ -46,6 +46,9 @@ public class ShengChanAdminController {
     @Resource
     private DrawingService drawingService;
 
+    @Resource
+    private LogService logService;
+
 
    /* @RequestMapping("/save")
     public Map<String, Object> save(String wuliaoId, Integer id) {
@@ -403,9 +406,6 @@ public class ShengChanAdminController {
     @RequestMapping("/updateAccomplishNum")
     public Map<String,Object> updateAccomplishNum(Integer []Ids,Integer num,HttpSession session){
         Map<String,Object> map = new HashMap<>();
-        System.out.println("******************************");
-        System.out.println(Ids);
-        System.out.println("******************************");
         for(int i = 0;i<Ids.length;i++){
             ShengChan shengChan = shengChanService.findOne(Ids[i]);
             String biaoqianCode = shengChan.getBiaoqianCode();
@@ -449,6 +449,7 @@ public class ShengChanAdminController {
 
             userProductService.save(userProduct);
 
+            logService.save(new Log(Log.UPDATE_ACTION,"工序生产 提交完成数："+num+";IDS"+Arrays.toString(Ids)));
             map.put("id",Ids);
             map.put("num",num);
             map.put("success",true);
@@ -512,12 +513,24 @@ public class ShengChanAdminController {
         }else {
             for(int i = 0;i<Ids.length;i++){
                 ShengChan shengChan = shengChanService.findOne(Ids[i]);
+
+                if(shengChan.getCode() == 1){
+                    shengChan.setAllowNum(shengChan.getNum() - shengChan.getAccomplishNum());
+                }else {
+                    if(shengChanService.selectBeforeProcess(shengChan.getBiaoqianCode(),shengChan.getCode()-1) == shengChan.getNum()){
+                        shengChan.setAllowNum(shengChan.getNum() - shengChan.getAccomplishNum());
+                    }else {
+                        shengChan.setAllowNum(shengChanService.selectBeforeProcess(shengChan.getBiaoqianCode(),shengChan.getCode()-1) - shengChan.getAccomplishNum());
+                    }
+                }
+
                 shengChan.setStartDate(new Date());
                 shengChan.setState(state);
                 shengChanService.save(shengChan);
             }
             map.put("success",true);
         }
+        logService.save(new Log(Log.UPDATE_ACTION,"工序生产点击‘开始生产’,状态为："+state+";IDS:"+Arrays.toString(Ids)));
         return map;
     }
 
@@ -533,6 +546,7 @@ public class ShengChanAdminController {
             shengChanService.updatState(Ids[i],"未生产");
         }
         map.put("success",true);
+        logService.save(new Log(Log.UPDATE_ACTION,"工序生产点击‘取消生产’;IDS:"+Arrays.toString(Ids)));
         return map;
     }
 

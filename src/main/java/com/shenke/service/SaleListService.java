@@ -179,7 +179,7 @@ public interface SaleListService {
      * 发货码界面显示
      * @return
      */
-    Map<String,Object> showInFaHuoMa(Integer page, Integer rows);
+    Map<String,Object> showInFaHuoMa(Integer page, Integer rows,String saleNumber,String wuliaoId);
 
     /**
      * 图纸展开界面点击物料号显示被groupBy的信息

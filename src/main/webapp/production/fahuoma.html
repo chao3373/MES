@@ -252,15 +252,20 @@
 
 
         //点击搜索
-        function sousuo() {
-            console.log($("#xuanze").combobox("getText"))
-            $('#dg').datagrid({
-                url: '/admin/shengChan/selectRenwu',
-                queryParams: {
-                    xuanze: $("#xuanze").combobox("getValue"),
-                    code: $("#bianma").val()
-                }
-            });
+        function searchSale() {
+            var obj = {};
+            if($("#saleNumber").val()){
+                obj.saleNumber = $("#saleNumber").val();
+            }
+            if($("#wuliaoId").val()){
+                obj.wuliaoId = $("#wuliaoId").val();
+            }
+            $("#dg").datagrid("load",obj);
+        }
+
+        //刷新
+        function reload() {
+            window.location.reload();
         }
 
     </script>
@@ -274,12 +279,12 @@
        <!-- dg顶部工具栏 -->
        <div id="tb1">
            <fieldset style="border-color: #E7F0FF">
-               <!--&nbsp;订单号&nbsp; <input type="text" id="saleNumber" size="15" autocomplete="off"/>
+               &nbsp;订单号&nbsp; <input type="text" id="saleNumber" size="15" autocomplete="off"/>
                &nbsp;&nbsp;&nbsp;物料编号&nbsp; <input type="text" id="wuliaoId" size="15" autocomplete="off"/>
                &nbsp;&nbsp;<a href="javascript:searchSale()"
                               class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
                &nbsp;&nbsp;<a href="javascript:reload()"
-                              class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>-->
+                              class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
                &nbsp;&nbsp;<a href="javascript:piliang()"
                               class="easyui-linkbutton" iconCls="icon-print" plain="true">批量打印</a>
            </fieldset>

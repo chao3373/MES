@@ -214,7 +214,7 @@ public class SaleListServiceImpl implements SaleListService {
                 "open_state as openState," +
                 "count(*) as count " +
                 " from t_sale_list where cunzai = '分配工时' and" +
-                " state = '下单' group by wuliao_id order by sale_date ASC ";
+                " state = '下单' group by wuliao_id order by refer_date ASC ";
 
         LogUtil.printLog("===图纸展开查询===");
         LogUtil.printLog("查询所有信息语句：" + selectSqlStart);
@@ -427,7 +427,7 @@ public class SaleListServiceImpl implements SaleListService {
     }
 
     @Override
-    public Map<String,Object> showInFaHuoMa(Integer page, Integer rows) {
+    public Map<String,Object> showInFaHuoMa(Integer page, Integer rows,String saleNumber,String wuliaoId) {
         String selectSqlStart = "select " +
                 "id," +
                 "hang_hao as hangHao," +
@@ -443,16 +443,26 @@ public class SaleListServiceImpl implements SaleListService {
                 "refer_date as referDate," +
                 "xiangmu_id as xiangmuId," +
                 "shenqing_number as shenqingNumber " +
-                " from t_sale_list order by id desc ";
+                " from t_sale_list where true " ;
+
+        String selectSqlEnd = " order by id desc ";
 
         String pg = "";
         if (page != null && rows != null) {
             pg += " LIMIT " + (page - 1) * rows + ", " + rows;
         }
 
+        String sql = "";
+        if(StringUtil.isNotEmpty(saleNumber)){
+            sql += " and sale_number = '" + saleNumber +"'";
+        }
+        if(StringUtil.isNotEmpty(wuliaoId)){
+            sql += " and wuliao_id = '" + wuliaoId + "'";
+        }
+
         LogUtil.printLog("===查询===");
-        LogUtil.printLog("查询所有信息语句：" + selectSqlStart + pg);
-        List result = GetResultUtils.getResult(selectSqlStart + pg, entityManager);
+        LogUtil.printLog("查询所有信息语句：" + selectSqlStart + sql + selectSqlEnd + pg);
+        List result = GetResultUtils.getResult(selectSqlStart + sql + selectSqlEnd + pg, entityManager);
 
         //查询总条数
         Integer count = GetResultUtils.getInteger("select count(id) from t_sale_list ", entityManager);

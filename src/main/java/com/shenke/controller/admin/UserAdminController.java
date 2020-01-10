@@ -97,17 +97,20 @@ public class UserAdminController {
 	public Map<String, Object> saveRoleSet(String roleIds, Integer userId) {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		userRoleService.deleteByUserId(userId);
+		String jueSe = "";
 		if (StringUtil.isNotEmpty(roleIds)) {
 			String roleIdStr[] = roleIds.split(",");
 			for (int i = 0; i < roleIdStr.length; i++) {
+				Role role = roleService.findById(Integer.parseInt(roleIdStr[i]));
 				UserRole userRole = new UserRole();
 				userRole.setUser(userService.findById(userId));
-				userRole.setRole(roleService.findById(Integer.parseInt(roleIdStr[i])));
+				userRole.setRole(role);
+				jueSe = jueSe + role.getName() + ",";
 				userRoleService.save(userRole);
 			}
 		}
 		resultMap.put("success", true);
-		logService.save(new Log(Log.UPDATE_ACTION, "保存用户角色设置"));
+		logService.save(new Log(Log.UPDATE_ACTION, "给"+userService.findById(userId).getTrueName()+"设置角色为："+jueSe));
 		return resultMap;
 	}
 	
@@ -228,6 +231,7 @@ public class UserAdminController {
 		user.setProcess(process);
 		userService.save(user);
 		map.put("success",true);
+		logService.save(new Log(Log.UPDATE_ACTION,"给["+user.getTrueName()+"]设置最优工序："+process.getName()));
 		return map;
 	}
 

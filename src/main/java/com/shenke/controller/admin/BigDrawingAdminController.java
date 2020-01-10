@@ -3,8 +3,10 @@ package com.shenke.controller.admin;
 
 import com.shenke.entity.BigDrawing;
 import com.shenke.entity.Log;
+import com.shenke.entity.OpenTimeCount;
 import com.shenke.service.BigDrawingService;
 import com.shenke.service.LogService;
+import com.shenke.service.OpenTimeCountService;
 import com.shenke.util.GetFileName;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +35,9 @@ public class BigDrawingAdminController {
 
     @Resource
     private LogService logService;
+
+    @Resource
+    private OpenTimeCountService openTimeCountService;
     /**
      * 查询所有图纸信息
      *
@@ -180,7 +185,7 @@ public class BigDrawingAdminController {
      * @return
      */
     @RequestMapping("/jiShi")
-    public Map<String,Object> jiShi(Integer code,String wuliaoId){
+    public Map<String,Object> jiShi(Integer code,String wuliaoId,String user){
         Map<String,Object> map = new HashMap<>();
 
         BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(wuliaoId);
@@ -201,6 +206,16 @@ public class BigDrawingAdminController {
                     bigDrawing.setShiJiGongShi(d/60000);
                 }
                 bigDrawingService.save(bigDrawing);
+
+                OpenTimeCount openTimeCount = new OpenTimeCount();
+                openTimeCount.setStartDate(bigDrawing.getStartDate());
+                openTimeCount.setStopDate(bigDrawing.getStopDate());
+                openTimeCount.setUserName(user);
+                openTimeCount.setWuliaoId(wuliaoId);
+                openTimeCount.setYuGuGongShi(bigDrawing.getYuGuGongShi());
+                openTimeCount.setShiJiGongShi(bigDrawing.getShiJiGongShi());
+                System.out.println(openTimeCount);
+                openTimeCountService.save(openTimeCount);
             }
         }
         map.put("success",true);
@@ -230,6 +245,15 @@ public class BigDrawingAdminController {
         bigDrawingService.updateTime(time,id);
         map.put("success",true);
         return map;
+    }
+
+    /**
+     * 查询关于员工展开工时
+     * @return
+     */
+    @RequestMapping("/selectOpenTime")
+    public Map<String,Object> selectOpenTime(String userName,String wuliaoId,String btime,String etime,Integer page,Integer rows){
+        return openTimeCountService.selectOpenTime(userName,wuliaoId,btime,etime,page,rows);
     }
 
 

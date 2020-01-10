@@ -1,6 +1,8 @@
 package com.shenke.controller.admin;
 
+import com.shenke.entity.Log;
 import com.shenke.entity.ShowGongShi;
+import com.shenke.service.LogService;
 import com.shenke.service.ShowGongShiService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +19,9 @@ public class ShowGongShiAdminController {
     @Resource
     private ShowGongShiService showGongShiService;
 
+    @Resource
+    private LogService logService;
+
     /**
      * 设置是否显示工时
      * @param show
@@ -26,6 +31,13 @@ public class ShowGongShiAdminController {
     public Map<String,Object> updateShowGongShi(Integer show){
         Map<String,Object> map = new HashMap<>();
         showGongShiService.updateShowGongShi(show);
+        String xianshi = "";
+        if(show == 0){
+            xianshi = "显示";
+        }else if (show == 1){
+            xianshi = "取消显示";
+        }
+        logService.save(new Log(Log.UPDATE_ACTION,"设置工序加工界面"+xianshi+"操作、准备工时"));
         map.put("success",true);
         return map;
     }

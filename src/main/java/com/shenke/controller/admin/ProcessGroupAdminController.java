@@ -110,7 +110,6 @@ public class ProcessGroupAdminController {
         if (StringUtil.isEmpty(s)){
             s = "";
         }
-        logService.save(new Log(Log.SEARCH_ACTION, "模糊查询所有部门信息"));
         return processGroupService.findBytext("%" + s + "%");
     }
 

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>生产情况</title>
+    <title>展开工时统计</title>
     <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/bootstrap/easyui.css"></link>
     <link rel="stylesheet" type="text/css"
           href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
@@ -53,18 +53,6 @@
 
         $(document).ready(function () {
             load();
-            /*$.ajax({
-                type: "POST",
-                url: "/admin/userProduct/list",
-                success:function (result) {
-                    if (result){
-                        $("#dg").datagrid("loadData", result.rows);
-                        $("#sumGongShi").text(result.sumGongshi);
-                        $("#sumNum").text(result.sumNum);
-                    }
-                }
-            })*/
-
         });
 
 
@@ -73,62 +61,27 @@
             $("#dg").datagrid({
                 columns: [[
                     {
-                        field: "saleNumber",
-                        title: "订单编号",
-                        width: "140",
-                        align: "center"
-                    }, {
-                        field: "xiangmuhao",
-                        title: "项目号",
-                        width: "100",
-                        align: "center"
-                    }, {
-                        field: "datu",
-                        title: "总图物料编号",
+                        field: "wuliaoId",
+                        title: "物料编号",
                         width: "110",
                         align: "center"
-                    }, {
-                        field: "xiaotu",
-                        title: "分图物料编号",
-                        width: "110",
-                        align: "center"
-                    }, {
-                        field: "gongxu",
-                        title: "工序",
-                        width: "90",
-                        align: "center"
-                    }, {
-                        field: "gongxuzu",
-                        title: "工序组",
-                        width: "90",
-                        align: "center"
                     },{
-                        field: "num",
-                        title: "数量",
-                        width: "80",
-                        align: "center"
-                    },{
-                        field: "sumNum",
-                        title: "总数量",
-                        width: "80",
-                        align: "center"
-                    },{
-                        field: "zbGongShi",
-                        title: "准备工时",
-                        width: "80",
-                        align: "center"
-                    }, {
-                        field: "czGongShi",
-                        title: "操作工时",
-                        width: "80",
-                        align: "center"
-                    }, {
-                        field: "user",
+                        field: "userName",
                         title: "生产员工",
                         width: "80",
                         align: "center"
+                    },{
+                        field: "yuGuGongShi",
+                        title: "预估工时",
+                        width: "80",
+                        align: "center"
+                    },{
+                        field: "shiJiGongShi",
+                        title: "实际工时",
+                        width: "80",
+                        align: "center"
                     }, {
-                        field: 'dateStartProduct',
+                        field: 'startDate',
                         title: '开始时间',
                         width: 140,
                         align: 'center',
@@ -155,7 +108,7 @@
                             }
                         }
                     }, {
-                        field: 'dateInProduct',
+                        field: 'stopDate',
                         title: '结束时间',
                         width: 140,
                         align: 'center',
@@ -204,58 +157,55 @@
              });*/
 
             $("#dg").datagrid({
-                url: '/admin/userProduct/list',
+                url: '/admin/bigdrawing/selectOpenTime',
                 queryParams: {
-                    "process_id": $("#s_process").combobox("getValue"),
-                    "user_trueName": $("#s_trueName").val(),
-                    "btime": $("#s_btime").datetimebox("getValue"),
-                    "etime": $("#s_etime").datetimebox("getValue"),
-                    "processGroup":$("#processGroup").combobox("getValue")
+                    "wuliaoId": $("#wuliaoId").val(),
+                    "userName": $("#userName").val(),
+                    "btime": $("#btime").datetimebox("getValue"),
+                    "etime": $("#etime").datetimebox("getValue"),
                 },
                 onLoadSuccess:function (data) {
-                    $("#sumGongShi").text("总工时："+data.sumGongShi);
-                    $("#sumNum").text("总数量："+data.sumNum);
+                    $("#sumShiJiGongShi").text("实际总展开工时："+data.sumShiJiGongShi.toFixed(2));
+                    $("#sumYuGuGongShi").text("预估总展开工时："+data.sumYuGuGongShi.toFixed(2));
                 }
             });
+            /* var obj = {};
+             if($("#s_process").combobox("getValue")){
+                 obj.process_id = $("#s_process").combobox("getValue");
+             }
+             if($("#processGroup").combobox("getValue")){
+                 obj.processGroup = $("#processGroup").combobox("getValue");
+             }
+             if($("#s_trueName").val()){
+                 obj.user_trueName = $("#s_trueName").val();
+             }
+             if($("#s_btime").datetimebox("getValue")){
+                 obj.btime = $("#s_btime").datetimebox("getValue");
+             }
+             if($("#s_etime").datetimebox("getValue")){
+                 obj.etime = $("#s_etime").datetimebox("getValue")
+             }
 
-          /* var obj = {};
-           if($("#s_process").combobox("getValue")){
-               obj.process_id = $("#s_process").combobox("getValue");
-           }
-           if($("#processGroup").combobox("getValue")){
-               obj.processGroup = $("#processGroup").combobox("getValue");
-           }
-           if($("#s_trueName").val()){
-               obj.user_trueName = $("#s_trueName").val();
-           }
-           if($("#s_btime").datetimebox("getValue")){
-               obj.btime = $("#s_btime").datetimebox("getValue");
-           }
-           if($("#s_etime").datetimebox("getValue")){
-               obj.etime = $("#s_etime").datetimebox("getValue")
-           }
+              /!* $("#dg").datagrid("load",obj);*!/
 
-            /!* $("#dg").datagrid("load",obj);*!/
-
-            $.post("/admin/userProduct/list",{
-                data:obj
-            },function (result) {
-                console.log(result)
-                $("#sumGongShi").text("总工时："+result.sumGongShi);
-                $("#sumNum").text("总数量："+result.sumNum);
-                $("#dg").datagrid("loadData",result.rows);
-            })*/
+              $.post("/admin/userProduct/list",{
+                  data:obj
+              },function (result) {
+                  console.log(result)
+                  $("#sumGongShi").text("总工时："+result.sumGongShi);
+                  $("#sumNum").text("总数量："+result.sumNum);
+                  $("#dg").datagrid("loadData",result.rows);
+              })*/
 
             //$("#dg").datagrid("load",obj);
 
         }
 
-
     </script>
 </head>
 <body style="margin: 1px" class="easyui-layout">
 <div data-options="region:'center'" style="padding: 10px; border: 1px;">
-    <table id="dg" class="easyui-datagrid" pagination="true" url="/admin/userProduct/list"
+    <table id="dg" class="easyui-datagrid" pagination="true" url="/admin/bigdrawing/selectOpenTime"
            rownumbers="true" singleSelect="true"
            toolbar="#tb" fit="true">
     </table>
@@ -263,38 +213,33 @@
         <form id="fm">
             <table>
                 <tr>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;生产员工： <input type="text" id="s_trueName" style="width: 130px"/>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;生产员工： <input type="text" id="userName" style="width: 130px"/>
                     </td>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;工序： <input class="easyui-combobox" id="s_process"
-                                                           style="width: 100px;" data-options="panelHeight:'auto',
-                valueField:'id',textField:'name',url:'/admin/process/processCombobox'"/>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;物料编号： <input type="text" id="wuliaoId" style="width: 130px"/>
                     </td>
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:search()"
                                                    class="easyui-linkbutton" iconCls="icon-search">查询</a>
-                        &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:refresh()" class="easyui-linkbutton"
-                                                   iconCls="icon-reload">刷新</a>
+
                     </td>
                     <td>
-                        <span id="sumGongShi" style="color:red;font-size: 20px;font-weight: 500"></span>
+                        <span id="sumShiJiGongShi" style="color:red;font-size: 20px;font-weight: 500"></span>
                     </td>
 
                 </tr>
                 <tr>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;生产日期：&nbsp;<input
-                            type="text" id="s_btime" class="easyui-datebox"
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;展开日期：&nbsp;<input
+                            type="text" id="btime" class="easyui-datebox"
                             demandd="true" size="15"/></td>
                     <td>
                         &nbsp;&nbsp;-&nbsp;&nbsp;
-                        <input type="text" id="s_etime" class="easyui-datebox"
+                        <input type="text" id="etime" class="easyui-datebox"
                                demandd="true" size="15"/></td>
-
                     <td>
-                        &nbsp;&nbsp;&nbsp;&nbsp;工序组：<input class="easyui-combobox" id="processGroup"
-                                       style="width: 130px;" data-options="panelHeight:'auto',
-                                valueField:'id',textField:'processGroup',url:'/admin/processGroup/down'"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:refresh()" class="easyui-linkbutton"
+                                                   iconCls="icon-reload">刷新</a>
                     </td>
                     <td>
-                        <span id="sumNum" style="color: red; font-size: 20px;font-weight: 500"></span>
+                        <span id="sumYuGuGongShi" style="color: red; font-size: 20px;font-weight: 500"></span>
                     </td>
                 </tr>
             </table>

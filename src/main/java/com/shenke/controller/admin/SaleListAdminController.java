@@ -53,7 +53,7 @@ public class SaleListAdminController {
     @RequestMapping("/aaa")
     public Map<String,Object> aaa(){
         Map<String,Object> map = new HashMap<>();
-        StringBuffer code = new StringBuffer("FX");
+        StringBuffer code = new StringBuffer("FH");
         String a = saleListService.selectMaxOutCode();
         if(a!=null){
             code.append(StringUtil.formatCode(a));
@@ -66,7 +66,7 @@ public class SaleListAdminController {
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!");
             System.out.println(bianma);
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            code = new StringBuffer("FX");
+            code = new StringBuffer("FH");
             code = code.append(StringUtil.formatCode(bianma));
         }
         map.put("aaa",code.toString());
@@ -99,7 +99,7 @@ public class SaleListAdminController {
                saleList.setCunzai(saleListService.findCunZaiByWuliaoId(saleList.getWuliaoId()));
            }
            saleList.setRemark(0);
-           code = new StringBuffer("FX");
+           code = new StringBuffer("FH");
            code = code.append(StringUtil.formatCode(bianma));
         }
         saleListService.save(plgList);
@@ -208,7 +208,9 @@ public class SaleListAdminController {
         Map<String,Object> map = new HashMap<>();
         saleListService.setState(id,state);
         map.put("success",true);
-        logService.save(new Log(Log.UPDATE_ACTION, "设置订单状态"));
+        if(state == "任务下发"){
+            logService.save(new Log(Log.UPDATE_ACTION, "任务下发，id:"+id));
+        }
         return map;
     }
 
@@ -248,6 +250,25 @@ public class SaleListAdminController {
     public Map<String,Object> setRemark(Integer []Ids,Integer remark){
         Map<String,Object> map = new HashMap<>();
         saleListService.setRemark(Ids,remark);
+        String jiaji = "";
+        switch (remark){
+            case -2 :
+                jiaji = "撤销订单";
+                break;
+            case -1:
+                jiaji = "订单暂停";
+                break;
+            case  0:
+                jiaji = "订单恢复";
+                break;
+            case 1:
+                jiaji = "订单加急";
+                break;
+            case 2:
+                jiaji = "重要订单";
+                break;
+        }
+        logService.save(new Log(Log.UPDATE_ACTION, "操作："+jiaji+";ID:"+Arrays.toString(Ids)));
         map.put("success",true);
         return map;
     }
@@ -371,6 +392,7 @@ public class SaleListAdminController {
         }
 
         saleListService.setCunZaiByWuliaoIds(wuliaoIds,"分配工时");
+        logService.save(new Log(Log.UPDATE_ACTION, "添加预估工时："+yuGuGongShi+";物料号:"+Arrays.toString(wuliaoIds)));
 
         map.put("success",true);
         return map;
@@ -532,8 +554,8 @@ public class SaleListAdminController {
      * @return
      */
     @RequestMapping("/showInFaHuoMa")
-    public Map<String,Object> showInFaHuoMa(Integer page, Integer rows){
-        return saleListService.showInFaHuoMa(page,rows);
+    public Map<String,Object> showInFaHuoMa(Integer page, Integer rows,String saleNumber,String wuliaoId){
+        return saleListService.showInFaHuoMa(page,rows,saleNumber,wuliaoId);
     }
 
 

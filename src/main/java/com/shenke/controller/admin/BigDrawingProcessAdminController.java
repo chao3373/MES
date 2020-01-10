@@ -4,8 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shenke.entity.BigDrawing;
 import com.shenke.entity.BigDrawingProcess;
+import com.shenke.entity.Log;
+import com.shenke.entity.Process;
 import com.shenke.service.BigDrawingProcessService;
 import com.shenke.service.BigDrawingService;
+import com.shenke.service.LogService;
 import com.shenke.service.ProcessService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +32,9 @@ public class BigDrawingProcessAdminController {
     @Resource
     private ProcessService processService;
 
+    @Resource
+    private LogService logService;
+
     @RequestMapping("/addProcess")
     public Map<String,Object> addProcess(String data, String wuliaoId){
         Map<String,Object> map = new HashMap<>();
@@ -40,12 +46,15 @@ public class BigDrawingProcessAdminController {
         }.getType());
 
         int i = 1;
+        String gongxus = "";
         for (BigDrawingProcess bigDrawingProcess : plgList){
 
             System.out.println("********************************");
             System.out.println(bigDrawingProcess);
             System.out.println("********************************");
-            bigDrawingProcess.setProcess(processService.findById(bigDrawingProcess.getCode()));
+            Process process = processService.findById(bigDrawingProcess.getCode());
+            gongxus += process.getName()+",";
+            bigDrawingProcess.setProcess(process);
             bigDrawingProcess.setId(null);
             bigDrawingProcess.setZbGongShi(bigDrawingProcess.getZbGongShi());
             bigDrawingProcess.setBigDrawing(bigDrawing);
@@ -54,6 +63,7 @@ public class BigDrawingProcessAdminController {
             bigDrawingProcessService.save(bigDrawingProcess);
         }
         map.put("success",true);
+        logService.save(new Log(Log.UPDATE_ACTION,"(总图)物料号："+wuliaoId+";添加工序："+gongxus));
         return map;
     }
 

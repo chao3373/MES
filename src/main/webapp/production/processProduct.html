@@ -19,7 +19,6 @@
         var user;
         var bestProcess;
         $(document).ready(function() {
-
             //查看图纸
             $('#dg').datagrid({
                 onClickCell: function(index,field){
@@ -55,8 +54,8 @@
             //若有最优工序就进入最优工序
             if(bestProcess){
                 load();
-                // $('#name').combobox('setValue',bestProcess.id);
-                $("#name").combobox("select",bestProcess.id);
+                $('#name').combobox('setValue',bestProcess.id);
+
                 $("#dg").datagrid({
                     url: '/admin/shengChan/showInProcessProduct',
                     queryParams: {
@@ -546,8 +545,6 @@
                 $.messager.alert("系统提示","请先扫描条码！");
                 return;
             }
-            console.log(rows.state)
-            console.log(rows.state == "未生产")
             var m = 0;
             for(var i=0;i<rows.length;i++){
                 if(rows[i].state == "未生产"){

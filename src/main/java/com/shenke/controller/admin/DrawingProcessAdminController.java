@@ -6,6 +6,7 @@ import cn.hutool.json.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shenke.entity.*;
+import com.shenke.entity.Process;
 import com.shenke.service.*;
 import com.shenke.util.StringUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,21 +59,26 @@ public class DrawingProcessAdminController {
     public Map<String,Object> addProcess(String data,Integer drawingId,Integer num){
         Map<String,Object> map = new HashMap<>();
         drawingProcessService.deleteByDrawingId(drawingId);
+        Drawing drawing = drawingService.findById(drawingId);
         Gson gson = new Gson();
         List<DrawingProcess> plgList = gson.fromJson(data, new TypeToken<List<DrawingProcess>>() {
         }.getType());
 
         int i = 1;
+        String gongxus = "";
         for (DrawingProcess drawingProcess : plgList){
-            drawingProcess.setProcess(processService.findById(drawingProcess.getCode()));
+            Process process = processService.findById(drawingProcess.getCode());
+            gongxus += process.getName()+",";
+            drawingProcess.setProcess(process);
             drawingProcess.setId(null);
-            drawingProcess.setDrawing(drawingService.findById(drawingId));
+            drawingProcess.setDrawing(drawing);
             drawingProcess.setCode(i);
             drawingProcess.setNum(num);
             i+=1;
             drawingProcessService.save(drawingProcess);
         }
         map.put("success",true);
+        logService.save(new Log(Log.UPDATE_ACTION,"(分图)物料号："+drawing.getWuliaoId()+";添加工序："+gongxus));
         return map;
     }
 

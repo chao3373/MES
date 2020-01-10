@@ -41,13 +41,14 @@ public class UserProductServiceImpl implements UserProductService {
     }
 
     @Override
-    public Map<String,Object> list(Integer process_id,String user_trueName,String btime,String etime,Integer page,Integer rows) {
+    public Map<String,Object> list(Integer process_id,Integer processGroup,String user_trueName,String btime,String etime,Integer page,Integer rows) {
         String selectSqlStart = "select f.id as id," +
                 "a.sale_number as saleNumber," +
                 "a.xiangmu_id as xiangmuhao," +
                 "b.wuliao_id as datu," +
                 "c.wuliao_id as xiaotu," +
                 "g.name as gongxu," +
+                "h.process_group as gongxuzu," +
                 "g.id as process_id," +
                 "f.num," +
                 "e.num as sumNum," +
@@ -56,11 +57,11 @@ public class UserProductServiceImpl implements UserProductService {
                 "d.true_name as user," +
                 "f.date_start_product as dateStartProduct," +
                 "f.date_in_product as dateInProduct " +
-                " from t_sale_list as a , t_big_drawing as b," +
+                " from t_sale_list as a , t_big_drawing as b ," +
                 "t_user as d, t_sheng_chan as e, t_user_product as f left join " +
-                " t_drawing as c on f.drawing_id = c.id, t_process as g where " +
+                " t_drawing as c on f.drawing_id = c.id, t_process as g ,t_process_group as h where " +
                 "a.id = f.sale_list_id and b.id = f.big_drawing_id " +
-                "and d.id = f.user_id and e.id = f.sheng_chan_id and g.id = f.process_id ";
+                "and d.id = f.user_id and e.id = f.sheng_chan_id and g.id = f.process_id and g.process_group_id = h.id";
 
         String sql = "";
         String pg = "";
@@ -70,6 +71,9 @@ public class UserProductServiceImpl implements UserProductService {
 
         if(process_id != null){
             sql += " and g.id = " + process_id;
+        }
+        if(processGroup != null){
+            sql += " and h.id = " + processGroup;
         }
         if(StringUtil.isNotEmpty(user_trueName)){
             sql += " and d.true_name = '" + user_trueName + "'";

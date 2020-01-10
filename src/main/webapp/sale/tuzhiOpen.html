@@ -855,7 +855,8 @@
                 if(result.success){
                     $.post("/admin/bigdrawing/jiShi",{
                         code:2,
-                        wuliaoId:Row.wuliaoId
+                        wuliaoId:Row.wuliaoId,
+                        user:user
                     },function (result) {
                         if(result.success){
                             //alert("图纸展开结束");
@@ -1058,7 +1059,7 @@
     </script>
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
-<div region="north" split="true" style="height: 300px">
+<div region="north" split="true" style="height: 450px">
     <table id="dg" class="easyui-datagrid"
            fitColumns="false" rownumbers="true" singleSelect="true" fit="true"
            toolbar="#tb1" split="true">

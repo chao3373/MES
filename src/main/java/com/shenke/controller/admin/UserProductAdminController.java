@@ -26,15 +26,12 @@ public class UserProductAdminController {
     private UserProductService userProductService;
 
     @RequestMapping("/list")
-    public Map<String,Object> list(Integer process_id,String user_trueName,String btime,String etime,Integer page,Integer rows) {
+    public Map<String,Object> list(Integer process_id,Integer processGroup,String user_trueName,String btime,String etime,Integer page,Integer rows) {
 
         System.out.println("+++++++++++++++++++++++++++++");
-        System.out.println(process_id);
-        System.out.println(user_trueName);
-        System.out.println(btime);
-        System.out.println(etime);
+        System.out.println(processGroup);
         System.out.println("+++++++++++++++++++++++++++++");
-        return userProductService.list(process_id,user_trueName,btime,etime,page,rows);
+        return userProductService.list(process_id,processGroup,user_trueName,btime,etime,page,rows);
     }
 
     @RequestMapping("/findShengchan")
