@@ -151,46 +151,77 @@
         //替换
         function tihuan() {
             var rows = $("#dg").datagrid("getSelections");
-
             console.log($("#dg").datagrid("getRowIndex",rows[0]));
-            if(rows.length>2 || rows.length==0){
+            if(rows.length != 2){
                 $.messager.alert("系统提示","请选择两行信息进行替换操作！");
                 return ;
             }
-            $.post("/admin/saleList/tiHuanNoSaleNumber",{
-                data:JSON.stringify(rows)
-            },function (result) {
-                if(result.success){
-                    if(result.error){
-                        $.messager.alert("系统提示",result.error);
-                        return;
-                    }else {
-                        $.messager.alert("系统提示","替换成功");
-                        for(var i=0;i<rows.length;i++){
-                            $("#dg").datagrid("deleteRow",$("#dg").datagrid("getRowIndex",rows[i]));
+            $.ajax({
+                type:"post",
+                url:"/admin/saleList/tiHuanNoSaleNumber",
+                data:{
+                    data:JSON.stringify(rows)
+                },
+                dataType:"json",
+                success:function (result) {
+                    if(result.success){
+                        if(result.error){
+                            $.messager.alert("系统提示",result.error);
+                            return;
+                        }else {
+                            $.messager.alert("系统提示","替换成功");
+                            for(var i=0;i<rows.length;i++){
+                                $("#dg").datagrid("deleteRow",$("#dg").datagrid("getRowIndex",rows[i]));
+                            }
                         }
                     }
                 }
-            },"json")
+            });
+        }
+
+        //下半部分的保存
+        function save() {
+            var row = $("#addSon").datagrid("getRows");
+            if(row.length == 0){
+                return;
+            }
+            $.ajax({
+                type:"post",
+                url:"/admin/saleList/save",
+                data:{
+                    data: JSON.stringify(row)
+                },
+                dataType:"json",
+                success:function (result) {
+                    if (result.success) {
+                        $.messager.alert("系统提示", "保存成功！");
+                        $("#addSon").datagrid("loadData",[]);
+                    } else {
+                        $.messager.alert("系统提示", "保存失败！");
+                        return;
+                    }
+                }
+            });
         }
     </script>
 </head>
 <body class="easyui-layout">
 <div region="north" style="height: 300px">
-    <table id="dg" class="easyui-datagrid" style="" rownumbers="true"
-           singleSelect="true" fit="true" toolbar="#tb">
+    <table id="dg" class="easyui-datagrid" rownumbers="true" split="true"
+           singleSelect="false" fit="true" toolbar="#tb">
         <thead>
-        <th id="saleNumber" field="saleNumber" width="100" align="center">订单编号</th>
-        <th id="kucunzuzhi" field="kucunzuzhi" width="100" align="center">库存组织</th>
-        <th id="hangHao" field="hangHao" width="100" align="center">行号</th>
-        <th id="wuliaoId" field="wuliaoId" width="100" align="center">物料编号</th>
-        <th id="tuzhiName" field="tuzhiName" width="100" align="center">图纸名称</th>
-        <th id="tuzhiId" field="tuzhiId" width="100" align="center">图纸编号</th>
-        <th id="num" field="num" width="100" align="center">数量</th>
-        <th id="xiangmuId" field="xiangmuId" width="100" align="center">项目号</th>
-        <th id="shenqingNumber" field="shenqingNumber" width="100" align="center">申请单号</th>
-        <th id="referDate" field="referDate" width="150" align="center">交货日期</th>
-        <th id="saleDate" field="saleDate" width="150" align="center">接单日期</th>
+            <th field="cb" checkbox="true" align="center"></th>
+            <th id="saleNumber" field="saleNumber" width="100" align="center">订单编号</th>
+            <th id="kucunzuzhi" field="kucunzuzhi" width="100" align="center">库存组织</th>
+            <th id="hangHao" field="hangHao" width="100" align="center">行号</th>
+            <th id="wuliaoId" field="wuliaoId" width="100" align="center">物料编号</th>
+            <th id="tuzhiName" field="tuzhiName" width="100" align="center">图纸名称</th>
+            <th id="tuzhiId" field="tuzhiId" width="100" align="center">图纸编号</th>
+            <th id="num" field="num" width="100" align="center">数量</th>
+            <th id="xiangmuId" field="xiangmuId" width="100" align="center">项目号</th>
+            <th id="shenqingNumber" field="shenqingNumber" width="100" align="center">申请单号</th>
+            <th id="referDate" field="referDate" width="150" align="center">交货日期</th>
+            <th id="saleDate" field="saleDate" width="150" align="center">接单日期</th>
         </thead>
     </table>
 
@@ -227,7 +258,9 @@
 </div>
 <div id="tb2">
     <div>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:daochu('#addSon')" id="daochu"
+        &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:save()" class="easyui-linkbutton"
+           iconCls="icon-ok" plain="true">保存</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:daochu('#addSon')" id="daochu"
                                          class="easyui-linkbutton" iconCls="icon-remove" plain="true">导出</a>
     </div>
 </div>

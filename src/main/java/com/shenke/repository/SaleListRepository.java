@@ -190,8 +190,8 @@ public interface SaleListRepository  extends JpaRepository<SaleList, Integer>, J
      * @param wuliaoId
      * @rern
      */
-    @Query(value = "select * from t_sale_list where sale_number like '%无订单%' and num = ?1 and wuliao_id = ?2 and shenqing_number = ?3 and xiangmu_id = ?4",nativeQuery = true)
-    List<SaleList> notSaleNumber(Integer num, String wuliaoId, String shenqingNumber, String xiangmuId);
+    @Query(value = "select * from t_sale_list where sale_number like '%无订单%' and num = ?1 and wuliao_id = ?2 and shenqing_number = ?3 and xiangmu_id = ?4 and refer_date = ?5 and sale_date = ?6 and kucunzuzhi = ?7 and hang_hao = ?8",nativeQuery = true)
+    List<SaleList> notSaleNumber(Integer num, String wuliaoId, String shenqingNumber, String xiangmuId,Date referDate,Date saleDate,String kucunzuzhi,String hangHao);
 
     /**
      * 查找所有无订单号的订单

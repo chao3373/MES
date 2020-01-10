@@ -283,7 +283,7 @@ public class SaleListServiceImpl implements SaleListService {
         List<SaleList> list = new ArrayList<>();
         List<SaleList> list2 = new ArrayList<>();
         for(SaleList saleList : plgList){
-            List<SaleList> lists = saleListRepository.notSaleNumber(saleList.getNum(),saleList.getWuliaoId(),saleList.getShenqingNumber(),saleList.getXiangmuId());
+            List<SaleList> lists = saleListRepository.notSaleNumber(saleList.getNum(),saleList.getWuliaoId(),saleList.getShenqingNumber(),saleList.getXiangmuId(),saleList.getReferDate(),saleList.getSaleDate(),saleList.getKucunzuzhi(),saleList.getHangHao());
 
             if(lists.size()!=0){
                 for(SaleList saleList1 : lists){

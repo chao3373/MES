@@ -570,4 +570,80 @@ public class SaleListAdminController {
         map.put("success",true);
         return map;
     }
+
+    /**
+     * 有订单替换无订单下单
+     * @param data
+     * @return
+     */
+    @RequestMapping("/tiHuanNoSaleNumber")
+    public Map<String,Object> tiHuanNoSaleNumber(String data){
+        Map<String,Object> map = new HashMap<>();
+        Gson gson = new Gson();
+        List<SaleList> plgList = gson.fromJson(data, new TypeToken<List<SaleList>>() {
+        }.getType());
+
+        SaleList saleList1 = plgList.get(0);
+        SaleList saleList2 = plgList.get(1);
+
+        if(!saleList1.getWuliaoId().equals(saleList2.getWuliaoId())){
+            map.put("error","物料编号不相同，不可替换！");
+            map.put("success",true);
+            return map;
+        }
+        if(!saleList1.getNum().equals(saleList2.getNum())){
+            map.put("error","数量不相同，不可替换！");
+            map.put("success",true);
+            return map;
+        }
+        if(!saleList1.getShenqingNumber().equals(saleList2.getShenqingNumber())){
+            map.put("error","申请单号不相同，不可替换！");
+            map.put("success",true);
+            return map;
+        }
+        if(!saleList1.getXiangmuId().equals(saleList2.getXiangmuId())){
+            map.put("error","项目号不相同，不可替换！");
+            map.put("success",true);
+            return map;
+        }
+        if(!saleList1.getHangHao().equals(saleList2.getHangHao())){
+            map.put("error","行号不相同，不可替换！");
+            map.put("success",true);
+            return map;
+        }
+        if(!saleList1.getReferDate().equals(saleList2.getReferDate())){
+            map.put("error","交货日期不相同，不可替换！");
+            map.put("success",true);
+            return map;
+        }
+        if(!saleList1.getSaleDate().equals(saleList2.getSaleDate())){
+            map.put("error","销售日期不相同，不可替换！");
+            map.put("success",true);
+            return map;
+        }
+        if(!saleList1.getKucunzuzhi().equals(saleList2.getKucunzuzhi())){
+            map.put("error","库存组织不相同，不可替换！");
+            map.put("success",true);
+            return map;
+        }
+        System.out.println("******************************");
+        System.out.println("能到这儿吗");
+        System.out.println("******************************");
+
+        if(saleList1.getId() == null && saleList2.getId() != null){
+            saleList2.setSaleNumber(saleList1.getSaleNumber());
+            saleListService.saveObj(saleList2);
+            map.put("success",true);
+            logService.save(new Log(Log.UPDATE_ACTION,"无订单替换 id："+saleList2.getId()+";订单号："+saleList1.getSaleNumber()));
+        }else if(saleList1.getId() != null && saleList2.getId() == null){
+            saleList1.setSaleNumber(saleList2.getSaleNumber());
+            saleListService.saveObj(saleList1);
+            map.put("success",true);
+            logService.save(new Log(Log.UPDATE_ACTION,"无订单替换 id："+saleList2.getId()+";订单号："+saleList1.getSaleNumber()));
+        }else {
+            map.put("success",true);
+            map.put("error","替换失败！");
+        }
+        return map;
+    }
 }

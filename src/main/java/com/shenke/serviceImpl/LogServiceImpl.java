@@ -6,6 +6,7 @@ import com.shenke.repository.UserRepository;
 import com.shenke.service.LogService;
 import com.shenke.util.StringUtil;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +45,7 @@ public class LogServiceImpl implements LogService {
 	}
 
 	@Override
+	//@Autowired
 	public List<Log> list(Log log, Integer page, Integer pageSize, Direction direction, String... properties) {
 		Pageable pageable = new PageRequest(page - 1, pageSize, direction, properties);
 		Page<Log> pageLog = logRepository.findAll(new Specification<Log>() {
