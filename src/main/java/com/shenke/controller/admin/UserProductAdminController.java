@@ -26,12 +26,8 @@ public class UserProductAdminController {
     private UserProductService userProductService;
 
     @RequestMapping("/list")
-    public Map<String,Object> list(Integer process_id,Integer processGroup,String user_trueName,String btime,String etime,Integer page,Integer rows) {
-
-        System.out.println("+++++++++++++++++++++++++++++");
-        System.out.println(processGroup);
-        System.out.println("+++++++++++++++++++++++++++++");
-        return userProductService.list(process_id,processGroup,user_trueName,btime,etime,page,rows);
+    public Map<String,Object> list(Integer process_id,Integer processGroup,String user_trueName,String wuliaoId,String saleNumber,String xiangmuId,String btime,String etime,Integer page,Integer rows) {
+        return userProductService.list(process_id,processGroup,user_trueName,wuliaoId,saleNumber,xiangmuId,btime,etime,page,rows);
     }
 
     @RequestMapping("/findShengchan")

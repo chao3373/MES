@@ -13,7 +13,7 @@ public interface UserProductService {
 
     public void delectByUserId(Integer id);
 
-    public Map<String,Object> list(Integer process_id,Integer processGroup,String user_trueName,String btime,String etime,Integer page,Integer rows);
+    public Map<String,Object> list(Integer process_id,Integer processGroup,String user_trueName,String wuliaoId,String saleNumber,String xiangmuId,String btime,String etime,Integer page,Integer rows);
 
 
     List<UserProduct> findAll();

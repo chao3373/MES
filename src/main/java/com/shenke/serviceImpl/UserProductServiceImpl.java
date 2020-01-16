@@ -41,7 +41,7 @@ public class UserProductServiceImpl implements UserProductService {
     }
 
     @Override
-    public Map<String,Object> list(Integer process_id,Integer processGroup,String user_trueName,String btime,String etime,Integer page,Integer rows) {
+    public Map<String,Object> list(Integer process_id,Integer processGroup,String user_trueName,String wuliaoId,String saleNumber,String xiangmuId,String btime,String etime,Integer page,Integer rows) {
         String selectSqlStart = "select f.id as id," +
                 "a.sale_number as saleNumber," +
                 "a.xiangmu_id as xiangmuhao," +
@@ -78,6 +78,15 @@ public class UserProductServiceImpl implements UserProductService {
         if(StringUtil.isNotEmpty(user_trueName)){
             sql += " and d.true_name = '" + user_trueName + "'";
         }
+        if(StringUtil.isNotEmpty(wuliaoId)){
+            sql += " and a.wuliao_id = '" + wuliaoId + "'";
+        }
+        if(StringUtil.isNotEmpty(saleNumber)){
+            sql += " and a.sale_number = '" + saleNumber + "'";
+        }
+        if(StringUtil.isNotEmpty(xiangmuId)){
+            sql += " and a.xiangmu_id = '" + xiangmuId + "'";
+        }
         if(StringUtil.isNotEmpty(btime) && StringUtil.isNotEmpty(etime)){
             btime = btime + " 00:00:00";
             etime = etime + " 23:59:59";
@@ -92,19 +101,19 @@ public class UserProductServiceImpl implements UserProductService {
         Integer count = GetResultUtils.getInteger("select count(*) from (" + selectSqlStart + sql +") as h ", entityManager);
 
 
-        //总数量总工时
+        //总数量 总工时 总准备工时 总操作工时
         Integer sumNum = GetResultUtils.getInteger("select sum(num) from (" + selectSqlStart + sql +") as i ", entityManager);
-        Double sumGongShi = GetResultUtils.getDouble("select sum(num*(zbGongShi+czGongShi)) from (" + selectSqlStart + sql +") as j ", entityManager);
+        Double sumZongGongShi = GetResultUtils.getDouble("select sum(zbGongShi+num*czGongShi) from (" + selectSqlStart + sql +") as j ", entityManager);
+        Double sumzbGongShi = GetResultUtils.getDouble("select sum(zbGongShi) from (" + selectSqlStart + sql +") as j ", entityManager);
+        Double sumczGongShi = GetResultUtils.getDouble("select sum(num*czGongShi) from (" + selectSqlStart + sql +") as j ", entityManager);
 
-        System.out.println("+++++++++++++++++++++++");
-        System.out.println("总数："+sumNum);
-        System.out.println("总工时："+sumGongShi);
-        System.out.println("+++++++++++++++++++++++");
         Map<String,Object> map = new HashMap<>();
         map.put("rows",result);
         map.put("total",count);
         map.put("sumNum",sumNum);
-        map.put("sumGongShi",sumGongShi);
+        map.put("sumZongGongShi",sumZongGongShi);
+        map.put("sumzbGongShi",sumzbGongShi);
+        map.put("sumczGongShi",sumczGongShi);
         return map;
     }
 

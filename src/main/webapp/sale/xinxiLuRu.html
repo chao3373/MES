@@ -180,6 +180,8 @@
                         },
                         sortable: true,
                         sorter: function(a, b) {
+                            console.log(a);
+                            console.log(b);
                             return (a > b ? 1 : -1);
                         }
                     }, {
@@ -210,7 +212,7 @@
                             }
                         },
                         sortable: true,
-                        sorter: function(a, b) {
+                        sorter:function(a,b){
                             return (a > b ? 1 : -1);
                         }
                     },{
@@ -276,6 +278,7 @@
                             ]]
                         });
                     }}
+                ,remoteSort: false
             });
         }
 

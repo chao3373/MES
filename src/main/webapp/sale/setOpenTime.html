@@ -142,7 +142,11 @@
                 return;
             }
 
-            if(rows == null){
+            if($("#yuGuGongShi").val() < 0){
+                return;
+            }
+
+            if(rows.length == 0){
                 $.messager.alert("系统提示","请选择要添加工时的信息");
                 return;
             }
@@ -196,6 +200,7 @@
         }
 
         function sousuo() {
+
             $.post("/admin/saleList/selectLikeWuliaoId",{
                 wuliaoId:$("#wuliaoSearch").val(),
                 state:null
@@ -228,11 +233,11 @@
         <fieldset style="border-color: #E7F0FF">
             <legend></legend>
             &nbsp;&nbsp;物料编号:&nbsp;<input type="text" id="wuliaoSearch" name="wuliaoId" autocomplete="off"
-                                     size="15" onkeydown="if(event.keyCode==13) sousuo()"/>
+            size="15" onkeydown="if(event.keyCode==13) sousuo()"/>
             &nbsp;&nbsp;<a href="javascript:sousuo()"
                            class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
             &nbsp;&nbsp;&nbsp;&nbsp;图纸所用展开工时：&nbsp; <input type="text" id="yuGuGongShi" name="yuGuGongShi"
-                                                           autocomplete="off"  size="15" />
+            autocomplete="off"  size="15" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"/>
                 &nbsp;&nbsp;<a href="javascript:auditPass()"
                            class="easyui-linkbutton" iconCls="icon-ok" plain="true">添加并保存大图信息</a>
         </fieldset>

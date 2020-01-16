@@ -159,7 +159,17 @@
                         field: "num",
                         width: "150",
                         align: "center",
-                        title: "数量"
+                        title: "数量",
+                        formatter:function (val, row) {
+                            if(row.count > 1){
+                                var str = '<a href="javascript:chakan()" id="chakan" name="chakan" class="easyui-linkbutton"><span style="color: white;background: red">'+ '总数量：' +val+'</span></a>';
+                                return str;
+                            }else {
+                                return val;
+                            }
+
+                        }
+
                     }, {
                         field: "saleDate",
                         width: "150",

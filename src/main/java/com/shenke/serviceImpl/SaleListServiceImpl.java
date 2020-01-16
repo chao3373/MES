@@ -208,9 +208,9 @@ public class SaleListServiceImpl implements SaleListService {
                 "wuliao_id as wuliaoId," +
                 "tuzhi_name as tuzhiName," +
                 "tuzhi_id as tuzhiId," +
-                "num," +
+                "sum(num) as num," +
                 "sale_date as saleDate," +
-                "refer_date as referDate," +
+                "min(refer_date) as referDate," +
                 "open_state as openState," +
                 "count(*) as count " +
                 " from t_sale_list where cunzai = '分配工时' and" +

@@ -208,13 +208,18 @@
                 queryParams: {
                     "process_id": $("#s_process").combobox("getValue"),
                     "user_trueName": $("#s_trueName").val(),
+                    "wuliaoId": $("#wuliaoId").val(),
+                    "saleNumber": $("#saleNumber").val(),
+                    "xiangmuId": $("#xiangmuId").val(),
                     "btime": $("#s_btime").datetimebox("getValue"),
                     "etime": $("#s_etime").datetimebox("getValue"),
                     "processGroup":$("#processGroup").combobox("getValue")
                 },
                 onLoadSuccess:function (data) {
-                    $("#sumGongShi").text("总工时："+data.sumGongShi);
+                    $("#sumZongGongShi").text("总工时："+data.sumZongGongShi);
                     $("#sumNum").text("总数量："+data.sumNum);
+                    $("#sumzbGongShi").text("准备总工时："+data.sumzbGongShi);
+                    $("#sumczGongShi").text("操作总工时："+data.sumczGongShi);
                 }
             });
 
@@ -269,13 +274,14 @@
                                                            style="width: 100px;" data-options="panelHeight:'auto',
                 valueField:'id',textField:'name',url:'/admin/process/processCombobox'"/>
                     </td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;物料编号： <input type="text" id="wuliaoId" style="width: 130px"/>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;订单编号： <input type="text" id="saleNumber" style="width: 130px"/>
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:search()"
                                                    class="easyui-linkbutton" iconCls="icon-search">查询</a>
-                        &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:refresh()" class="easyui-linkbutton"
-                                                   iconCls="icon-reload">刷新</a>
                     </td>
                     <td>
-                        <span id="sumGongShi" style="color:red;font-size: 20px;font-weight: 500"></span>
+                        <span id="sumZongGongShi" style="color:red;font-size: 20px;font-weight: 500"></span>
+                        <span id="sumzbGongShi" style="color:red;font-size: 20px;font-weight: 500"></span>
                     </td>
 
                 </tr>
@@ -289,12 +295,19 @@
                                demandd="true" size="15"/></td>
 
                     <td>
-                        &nbsp;&nbsp;&nbsp;&nbsp;工序组：<input class="easyui-combobox" id="processGroup"
+                        &nbsp;&nbsp;&nbsp;&nbsp;工&nbsp;&nbsp;序&nbsp;&nbsp;组：<input class="easyui-combobox" id="processGroup"
                                        style="width: 130px;" data-options="panelHeight:'auto',
                                 valueField:'id',textField:'processGroup',url:'/admin/processGroup/down'"/>
                     </td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;项&nbsp;&nbsp;目&nbsp;&nbsp;号： <input type="text" id="xiangmuId" style="width: 130px"/>
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:refresh()" class="easyui-linkbutton"
+                                                   iconCls="icon-reload">刷新</a>
+                    </td>
                     <td>
                         <span id="sumNum" style="color: red; font-size: 20px;font-weight: 500"></span>
+                        <span id="sumczGongShi" style="color: red; font-size: 20px;font-weight: 500"></span>
                     </td>
                 </tr>
             </table>

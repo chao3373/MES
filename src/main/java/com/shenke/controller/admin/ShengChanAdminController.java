@@ -408,6 +408,8 @@ public class ShengChanAdminController {
         Map<String,Object> map = new HashMap<>();
         for(int i = 0;i<Ids.length;i++){
             ShengChan shengChan = shengChanService.findOne(Ids[i]);
+            //获取工序的完成数 如果为0则员工有准备工时
+            Integer wanchengshu = shengChan.getAccomplishNum();
             String biaoqianCode = shengChan.getBiaoqianCode();
             Integer code = shengChan.getCode();
             if(shengChan.getCode() == 1){
@@ -444,7 +446,11 @@ public class ShengChanAdminController {
             userProduct.setXiangmuId(shengChan.getSaleList().getXiangmuId());
             userProduct.setProcess(shengChan.getProcess());
             userProduct.setUser((User) session.getAttribute("currentUser")); //获取当前登录用户对象);
-            userProduct.setZbGongShi(shengChan.getZbGongShi());
+            if(wanchengshu == 0){
+                userProduct.setZbGongShi(shengChan.getZbGongShi());
+            }else {
+                userProduct.setZbGongShi(0.00);
+            }
             userProduct.setCzGongShi(shengChan.getCzGongShi());
 
             userProductService.save(userProduct);
