@@ -1,5 +1,7 @@
 package com.shenke.controller.admin;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.shenke.entity.*;
 import com.shenke.service.*;
 import com.shenke.util.TiaoMaUtil;
@@ -49,115 +51,20 @@ public class ShengChanAdminController {
     @Resource
     private LogService logService;
 
-
-   /* @RequestMapping("/save")
-    public Map<String, Object> save(String wuliaoId, Integer id) {
-        Map<String, Object> map = new HashMap<>();
-        //大图对象
-        BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(wuliaoId);
-        //订单对象
-        SaleList saleList = saleListService.findById(id);
-        //大图所对应的小图集合
-        List<DrawingType> list = drawingTypeService.findByBigDrawingId(bigDrawing.getId());
-
-        System.out.println("***********小图************");
-        System.out.println(list);
-        System.out.println("***********小图************");
-        //大图对应的工序集合
-        List<BigDrawingProcess> list3 = bigDrawingProcessService.findByBigDrawingId(bigDrawing.getId());
-        //生成物料编码
-        String wlCode = "WL" + new Date().getTime();
-        //生成图纸编码
-        String str = "TZ" + new Date().getTime();
-        if(list.size() != 0){
-            List list1 = new ArrayList();
-            for (DrawingType drawingType : list) {
-                list1.add(drawingType.getDrawing().getId());
-            }
-            Integer[] a = new Integer[list1.size()];
-            list1.toArray(a);
-            //小图对应的工序集合
-            List<DrawingProcess> list2 = drawingProcessService.findByArr(a);
-            Integer xid = list2.get(0).getDrawing().getId();
-
-            //生成小图生产任务
-            for (DrawingProcess drawingProcess : list2) {
-                System.out.println("*************************");
-                System.out.println("到这一次");
-                System.out.println("*************************");
-                ShengChan shengChan = new ShengChan();
-                if (drawingProcess.getDrawing().getId() == xid) {
-                    shengChan.setBiaoqianCode(str);
-                } else {
-                    str = "TZ" + new Date().getTime();
-                    shengChan.setBiaoqianCode(str);
-                    xid = drawingProcess.getDrawing().getId();
-                }
-                shengChan.setSaleList(saleList);
-                shengChan.setBigDrawing(bigDrawing);
-                shengChan.setDrawing(drawingProcess.getDrawing());
-                shengChan.setProcess(drawingProcess.getProcess());
-                shengChan.setCode(drawingProcess.getCode());
-                shengChan.setState("未生产");
-                shengChan.setAccomplishNum(0);
-                shengChan.setNum(saleList.getNum());
-                shengChan.setReferDate(saleList.getReferDate());
-                shengChan.setZbGongShi(drawingProcess.getZbGongShi());
-                shengChan.setCzGongShi(drawingProcess.getCzGongShi());
-                shengChan.setIsDatu(1);
-                shengChanService.save(shengChan);
-            }
-            //生成大图生产任务
-            for (BigDrawingProcess bigDrawingProcess: list3) {
-                ShengChan shengChan = new ShengChan();
-                shengChan.setSaleList(saleList);
-                shengChan.setBigDrawing(bigDrawing);
-                shengChan.setProcess(bigDrawingProcess.getProcess());
-                shengChan.setCode(bigDrawingProcess.getCode());
-                shengChan.setBiaoqianCode(wlCode);
-                shengChan.setState("不可生产");
-                shengChan.setAccomplishNum(0);
-                shengChan.setNum(saleList.getNum());
-                shengChan.setReferDate(saleList.getReferDate());
-                shengChan.setZbGongShi(bigDrawingProcess.getZbGongShi());
-                shengChan.setCzGongShi(bigDrawingProcess.getCzGongShi());
-                shengChan.setIsDatu(0);
-                shengChanService.save(shengChan);
-            }
-        }else {
-            //生成大图生产任务
-            for (BigDrawingProcess bigDrawingProcess: list3) {
-                ShengChan shengChan = new ShengChan();
-                shengChan.setSaleList(saleList);
-                shengChan.setBigDrawing(bigDrawing);
-                shengChan.setProcess(bigDrawingProcess.getProcess());
-                shengChan.setCode(bigDrawingProcess.getCode());
-                shengChan.setBiaoqianCode(wlCode);
-                shengChan.setState("未生产");
-                shengChan.setAccomplishNum(0);
-                shengChan.setNum(saleList.getNum());
-                shengChan.setReferDate(saleList.getReferDate());
-                shengChan.setZbGongShi(bigDrawingProcess.getZbGongShi());
-                shengChan.setCzGongShi(bigDrawingProcess.getCzGongShi());
-                shengChan.setIsDatu(0);
-                shengChanService.save(shengChan);
-            }
-        }
-        map.put("success", true);
-        return map;
-    }*/
-
     @RequestMapping("/save")
-    public Map<String, Object> save1(String wuliaoId, Integer id) {
-        Map<String,Object> map = new HashMap<>();
-        SaleList saleList = saleListService.findById(id);
-        BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(wuliaoId);
-        //获取大图所对应的小图序列
-        List<DrawingType> list = drawingTypeService.findByBigDrawingId(bigDrawing.getId());//1  2,1  3
-        //获取 每个小图所对应的工序序列
-        List<List<DrawingProcess>> list1 = new ArrayList<>();
-        for(DrawingType drawingType : list){
-            //判断数量若大于1 则进入循环
+    public Map<String, Object> save1(String data/*String wuliaoId, Integer id*/) {
+        Gson gson = new Gson();
+        List<SaleList> plgList = gson.fromJson(data, new TypeToken<List<SaleList>>() {
+        }.getType());
+
+        for (SaleList saleList : plgList){
+            BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(saleList.getWuliaoId());
+            //获取大图所对应的小图序列
+            List<DrawingType> list = drawingTypeService.findByBigDrawingId(bigDrawing.getId());//1  2,1  3
+            //获取 每个小图所对应的工序序列
+            List<List<DrawingProcess>> list1 = new ArrayList<>();
+            for(DrawingType drawingType : list){
+                //判断数量若大于1 则进入循环
            /* if(drawingType.getNum() != 1){
                 for(int i=0;i<drawingType.getNum();i++){
                     list1.add(drawingProcessService.findByDrawingId(drawingType.getDrawing().getId()));
@@ -165,73 +72,58 @@ public class ShengChanAdminController {
             }else {
                 list1.add(drawingProcessService.findByDrawingId(drawingType.getDrawing().getId()));
             }*/
-            List<DrawingProcess> list2 = drawingProcessService.findByDrawingId(drawingType.getDrawing().getId());
-            list1.add(list2);
-        }
-        //生成小图工序
-        for (List<DrawingProcess> list2 : list1){
-            String tz = "" + new Date().getTime();
-            for(DrawingProcess drawingProcess : list2){
-                ShengChan shengChan = new ShengChan();
-                shengChan.setBiaoqianCode(tz);
-                shengChan.setSaleList(saleList);
-                shengChan.setBigDrawing(bigDrawing);
-                shengChan.setDrawing(drawingProcess.getDrawing());
-                shengChan.setProcess(drawingProcess.getProcess());
-                shengChan.setCode(drawingProcess.getCode());
-                shengChan.setAccomplishNum(0);
-                shengChan.setState("未生产");
-                shengChan.setNum(saleList.getNum() * drawingProcess.getNum());
-                shengChan.setReferDate(saleList.getReferDate());
-                shengChan.setZbGongShi(drawingProcess.getZbGongShi());
-                shengChan.setCzGongShi(drawingProcess.getCzGongShi());
-                shengChan.setIsDatu(1);
-                shengChanService.save(shengChan);
+                List<DrawingProcess> list2 = drawingProcessService.findByDrawingId(drawingType.getDrawing().getId());
+                list1.add(list2);
             }
-        }
-    /*    for (List<DrawingProcess> list2 : list1){
-            String tz = "" + new Date().getTime();
-            for(DrawingProcess drawingProcess : list2){
-                ShengChan shengChan = new ShengChan();
-                shengChan.setBiaoqianCode(tz);
-                shengChan.setSaleList(saleList);
-                shengChan.setBigDrawing(bigDrawing);
-                shengChan.setDrawing(drawingProcess.getDrawing());
-                shengChan.setProcess(drawingProcess.getProcess());
-                shengChan.setCode(drawingProcess.getCode());
-                shengChan.setAccomplishNum(0);
-                shengChan.setState("未生产");
-                shengChan.setNum(saleList.getNum());
-                shengChan.setReferDate(saleList.getReferDate());
-                shengChan.setZbGongShi(drawingProcess.getZbGongShi());
-                shengChan.setCzGongShi(drawingProcess.getCzGongShi());
-                shengChan.setIsDatu(1);
-                shengChanService.save(shengChan);
+            //生成小图工序
+            for (List<DrawingProcess> list2 : list1){
+                String tz = "" + new Date().getTime();
+                for(DrawingProcess drawingProcess : list2){
+                    ShengChan shengChan = new ShengChan();
+                    shengChan.setBiaoqianCode(tz);
+                    shengChan.setSaleList(saleList);
+                    shengChan.setBigDrawing(bigDrawing);
+                    shengChan.setDrawing(drawingProcess.getDrawing());
+                    shengChan.setProcess(drawingProcess.getProcess());
+                    shengChan.setCode(drawingProcess.getCode());
+                    shengChan.setAccomplishNum(0);
+                    shengChan.setState("未生产");
+                    shengChan.setNum(saleList.getNum() * drawingProcess.getNum());
+                    shengChan.setReferDate(saleList.getReferDate());
+                    shengChan.setZbGongShi(drawingProcess.getZbGongShi());
+                    shengChan.setCzGongShi(drawingProcess.getCzGongShi());
+                    shengChan.setIsDatu(1);
+                    shengChanService.save(shengChan);
+                }
             }
-        }*/
-        //生成大图工序
-        List<BigDrawingProcess> list2 = bigDrawingProcessService.findByBigDrawingId(bigDrawing.getId());
-        //若有大图工序则添加
-        if(list2.size() !=0){
-            String wl = "" + new Date().getTime();
+            //生成大图工序
+            List<BigDrawingProcess> list2 = bigDrawingProcessService.findByBigDrawingId(bigDrawing.getId());
+            //若有大图工序则添加
+            if(list2.size() !=0){
+                String wl = "" + new Date().getTime();
 //            String wl = "WL" + new Date().getTime();
-            for (BigDrawingProcess bigDrawingProcess : list2){
-                ShengChan shengChan  = new ShengChan();
-                shengChan.setSaleList(saleList);
-                shengChan.setBigDrawing(bigDrawing);
-                shengChan.setProcess(bigDrawingProcess.getProcess());
-                shengChan.setCode(bigDrawingProcess.getCode());
-                shengChan.setBiaoqianCode(wl);
-                shengChan.setState("未生产");
-                shengChan.setAccomplishNum(0);
-                shengChan.setNum(saleList.getNum());
-                shengChan.setReferDate(saleList.getReferDate());
-                shengChan.setZbGongShi(bigDrawingProcess.getZbGongShi());
-                shengChan.setCzGongShi(bigDrawingProcess.getCzGongShi());
-                shengChan.setIsDatu(0);
-                shengChanService.save(shengChan);
+                for (BigDrawingProcess bigDrawingProcess : list2){
+                    ShengChan shengChan  = new ShengChan();
+                    shengChan.setSaleList(saleList);
+                    shengChan.setBigDrawing(bigDrawing);
+                    shengChan.setProcess(bigDrawingProcess.getProcess());
+                    shengChan.setCode(bigDrawingProcess.getCode());
+                    shengChan.setBiaoqianCode(wl);
+                    shengChan.setState("未生产");
+                    shengChan.setAccomplishNum(0);
+                    shengChan.setNum(saleList.getNum());
+                    shengChan.setReferDate(saleList.getReferDate());
+                    shengChan.setZbGongShi(bigDrawingProcess.getZbGongShi());
+                    shengChan.setCzGongShi(bigDrawingProcess.getCzGongShi());
+                    shengChan.setIsDatu(0);
+                    shengChanService.save(shengChan);
+                }
             }
         }
+
+
+
+        Map<String,Object> map = new HashMap<>();
         map.put("success",true);
         return map;
     }

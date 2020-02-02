@@ -239,4 +239,13 @@ public interface SaleListRepository  extends JpaRepository<SaleList, Integer>, J
      */
     @Query(value = "select * from t_sale_list where wuliao_id = ?1 and cunzai = '分配工时' and  state = '下单'",nativeQuery = true)
     List<SaleList> tuzhiOpenChakan(String wuliaoId);
+
+    /**
+     * ids批量修改状态
+     * @param ids
+     * @param state
+     */
+    @Modifying
+    @Query(value = "update t_sale_list set state = ?2 where id in ?1",nativeQuery = true)
+    void setStateByIds(Integer[] ids, String state);
 }

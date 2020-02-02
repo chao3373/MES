@@ -186,4 +186,11 @@ public interface SaleListService {
      * @return
      */
     List<SaleList> tuzhiOpenChakan(String wuliaoId);
+
+    /**
+     * ids批量修改状态
+     * @param ids
+     * @param state
+     */
+    void setStateByIds(Integer[] ids, String state);
 }

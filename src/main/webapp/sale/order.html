@@ -20,6 +20,24 @@
 
         });
 
+        function aa() {
+            var clicktag = 0;
+            $("#hhh").click(function() {
+                if (clicktag == 0) {
+                    clicktag = 1;
+                    setTimeout(function() {
+                        clicktag = 0;
+                    }, 1000);
+                } else {
+                    throw SyntaxError();
+                }
+            });
+
+        }
+
+        function hhh() {
+            console.log(1111);
+        }
 
         function deleteSaleListGoods() {
             var selectedRows = $("#dg").datagrid("getSelections");
@@ -226,6 +244,8 @@
                 iconCls="icon-remove" plain="true">删除</a>
             <a href="javascript:saveSaleGoods()" class="easyui-linkbutton"
                 iconCls="icon-ok" plain="true">保存</a>
+            <a href="javascript:hhh()" id="hhh" class="easyui-linkbutton"
+                iconCls="icon-ok" plain="true">hhh</a>
         </div>
     </div>
 </div>

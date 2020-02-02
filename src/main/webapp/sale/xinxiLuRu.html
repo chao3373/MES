@@ -117,6 +117,10 @@
                 url:'/admin/saleList/xiadanSuccess',
                 columns: [[
                     {
+                        field: 'cb',
+                        checkbox: "true",
+                        align: "center"
+                    },{
                         field: "saleNumber",
                         width: "150",
                         align: "center",
@@ -220,7 +224,7 @@
                         title: '所含工序',
                         width: 200,
                         align: 'center'
-                    },{
+                    }/*,{
                         field:'choose',
                         title:'选择工序',
                         width:100,
@@ -228,7 +232,7 @@
                         formatter:function (val,row) {
                             return "<a href=\"javascript:openProcessChooseDialog('"+row.gongxus+"',"+row.drawingId+")\"><img style='margin-top:4px' src='/static/images/edit.gif'/></a>";
                         }
-                    }
+                    }*/
                 ]],
                 onClickRow:function (index,row) {
                     if(row!=null){
@@ -272,7 +276,7 @@
                                     width: 100,
                                     align: 'center',
                                     formatter: function (val, row) {
-                                        return "<a href=\"javascript:openProcessChooseDialog('" + row.gongxus + "'," + row.drawing.id + ")\"><img style='margin-top:4px' src='/static/images/edit.gif'/></a>";
+                                        return "<a href=\"javascript:openProcessChooseDialog(" + row.drawing.id + ")\"><img style='margin-top:4px' src='/static/images/edit.gif'/></a>";
                                     }
                                 }
                             ]]
@@ -307,10 +311,7 @@
                         field:'choose',
                         title:'选择工序',
                         width:100,
-                        align:'center',
-                        formatter:function (val,row) {
-                            return "<a href=\"javascript:openProcessChooseDialog('"+row.gongxus+"','')\"><img style='margin-top:4px' src='/static/images/edit.gif'/></a>";
-                        }
+                        align:'center'
                     }
                 ]]
             });
@@ -379,27 +380,15 @@
          * @param roles
          * @param userId
          */
-        function openProcessChooseDialog(gongxus,id){
-            var processArr=gongxus.split(",");
+        function openProcessChooseDialog(id){
             $("#dlg2").dialog("open").dialog("setTitle","选择工序");
-            console.log(id);
-            console.log(id ==null);
-
             $("#dg2").datagrid({
-                url:'/admin/process/list',
-                /*onLoadSuccess:function(data){
-                    var allRows=$("#dg2").datagrid("getRows");
-                    for(var i=0;i<allRows.length;i++){
-                        var name=allRows[i].name;
-                        if($.inArray(name,processArr)>=0){
-                            $("#dg2").datagrid("checkRow",i);
-                        }
-                    }
-                }*/
+                url:'/admin/process/list'
             });
             if(id == null){
+                var row = $("#dg").datagrid("getSelected");
                 $.post("/admin/bigDrawingProcess/findByBigDrawingId",{
-                    wuliaoId:$("#dg").datagrid("getSelected").wuliaoId
+                    wuliaoId:row.wuliaoId
                 },function (result) {
                     if(result.success){
                         var data = result.rows;
@@ -502,7 +491,7 @@
 
         //下发任务
         function xiafa() {
-            var row = $("#dg").datagrid("getSelected");
+            var row = $("#dg").datagrid("getSelections");
             var rows = $("#addSon").datagrid("getRows");
             if(row == null){
                 $.messager.alert("系统提示","请选择一条信息！");
@@ -527,7 +516,7 @@
                 $.messager.alert("系统提示","<span style='color: #CC2222'>"+"系统检测到您有未添加工序的图纸，请及时添加！"+"</span>");
                 return;
             }
-            $.post("/admin/shengChan/save",{
+            /*$.post("/admin/shengChan/save",{
                 wuliaoId:row.wuliaoId,
                 id:row.id
             },function (result) {
@@ -543,14 +532,55 @@
                         }
                     },"json");
                 }
-            },"json");
+            },"json");*/
 
-            //添加老图物料明细
-            $.post("/admin/wuliao/saveOld",{
+            var arr = [];
+            for (var i = 0; i < row.length; i++) {
+                arr.push(row[i].id);
+            }
+            var ids = arr.join(",");
+
+            $.ajax({
+                type:"post",
+                url:"/admin/shengChan/save",
+                data:{
+                    data: JSON.stringify(row)
+                },
+                dataType:"json",
+                success:function (result) {
+                    if(result.success){
+                        //修改状态 老图纸添加物料信息
+                        $.post("/admin/saleList/setStateByIds",{
+                            ids:ids,
+                            state:"任务下发"
+                        },function (result) {
+                            if(result.success){
+                                $.messager.alert("系统提示","下发成功");
+                                $("#dg").datagrid("reload");
+                                $("#addSon").datagrid("loadData",[]);
+                            }
+                        },"json");
+                    }
+                }
+            });
+
+            $.ajax({
+                type:"post",
+                url:"/admin/yuanLiaoRequire/saveOld",
+                data:{
+                    data: JSON.stringify(row)
+                },
+                dataType:"json",
+                success:function (result) {
+                }
+            });
+
+            /*//添加老图物料明细
+            $.post("/admin/yuanLiaoRequire/saveOld",{
                 wuliaoId:wuliaoId,
                 id:id
             },function (result) {
-            },"json")
+            },"json")*/
         }
 
         //添加工序队列
@@ -571,7 +601,7 @@
         //删除队列中的工序
         function fanhui() {
             var row = $("#dg3").datagrid("getSelections");
-            if(row == null){
+            if(row.length == 0){
                 $.messager.alert("系统提示","请选择工序！")
                 return;
             }
@@ -657,12 +687,22 @@
 
         }
 
+        //选择工序
+        function datuXuanze() {
+            var row = $("#dg").datagrid("getSelections");
+            if(row.length != 1){
+                $.messager.alert("系统提示","请选择一条信息！");
+                return;
+            }
+            openProcessChooseDialog(null);
+        }
+
     </script>
 </head>    <!--上面的dg  下面的addSon-->
 <body class="easyui-layout" style="margin: 1px">
 <div region="north" split="true" style="height: 450px">
     <table id="dg" class="easyui-datagrid"
-           fitColumns="false" rownumbers="true" singleSelect="true" fit="true"
+           fitColumns="false" rownumbers="true" singleSelect="false" fit="true"
            toolbar="#tb1" split="true">
     </table>
 
@@ -678,6 +718,8 @@
                                  class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
             &nbsp;&nbsp;<a href="javascript:xiafa()"
                                              class="easyui-linkbutton" iconCls="icon-remove" plain="true">下发</a>
+            &nbsp;&nbsp;<a href="javascript:datuXuanze()"
+                                             class="easyui-linkbutton" iconCls="icon-add" plain="true">选择工序</a>
         </fieldset>
     </div>
 </div>

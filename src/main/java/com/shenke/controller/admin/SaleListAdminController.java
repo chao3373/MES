@@ -215,6 +215,19 @@ public class SaleListAdminController {
     }
 
     /**
+     * ids批量修改状态
+     * @param ids
+     * @param state
+     */
+    @RequestMapping("/setStateByIds")
+    public Map<String,Object> setStateByIds(Integer []ids,String state){
+        Map<String,Object> map = new HashMap<>();
+        saleListService.setStateByIds(ids,state);
+        map.put("success",true);
+        return map;
+    }
+
+    /**
      * 按照状态查询
      * @param state
      * @return
@@ -308,16 +321,6 @@ public class SaleListAdminController {
     @RequestMapping("/dingDanZhuiZong")
     public Map<String,Object> dingDanZhuiZong(SaleList saleList,String saleDated,String referDated,Integer page, Integer rows){
         return saleListService.dingDanZhuiZong(saleList,saleDated,referDated,page,rows);
-    }
-
-    @RequestMapping("/setStateByIds")
-    public Map<String,Object> setStateByIds(String Ids,String state){
-        Map<String,Object> map = new HashMap<>();
-        for (int i = 0;i<Ids.split(",").length;i++){
-            saleListService.setState(Integer.parseInt(Ids.split(",")[i]),state);
-        }
-        map.put("success",true);
-        return map;
     }
 
     /**

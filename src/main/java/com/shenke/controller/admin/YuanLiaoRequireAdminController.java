@@ -1,6 +1,8 @@
 package com.shenke.controller.admin;
 
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.shenke.entity.*;
 import com.shenke.service.BigDrawingService;
 import com.shenke.service.SaleListService;
@@ -79,32 +81,32 @@ public class YuanLiaoRequireAdminController {
 
     /**
      * 保存老图的物料信息
-     * @param id
-     * @param wuliaoId
      * @param session
      * @return
      */
     @RequestMapping("/saveOld")
-    public Map<String,Object> saveOld(Integer id,String wuliaoId,HttpSession session){
-        Map<String,Object> map = new HashMap<>();
-        BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(wuliaoId);
-        SaleList saleList = saleListService.findById(id);
-        List<YuanLiaoRequire> list1 = yuanLiaoRequireService.findBySaleListId(saleList.getId());
-        if(list1.size() == 0){
-            List<Wuliao> list = wuliaoService.findByBigDrawingId(bigDrawing.getId());
-            for (Wuliao wuliao : list){
-                YuanLiaoRequire yuanLiaoRequire = new YuanLiaoRequire();
-                yuanLiaoRequire.setSumNum(saleList.getNum() * wuliao.getNum());
-                yuanLiaoRequire.setTao(saleList.getNum());
-                yuanLiaoRequire.setState("未备货");
-                yuanLiaoRequire.setUser((User)session.getAttribute("currentUser"));
-                yuanLiaoRequire.setWuliao(wuliao);
-                yuanLiaoRequire.setSaleList(saleList);
-                yuanLiaoRequire.setShenQingDate(new Date());
-                yuanLiaoRequireService.save(yuanLiaoRequire);
+    public void saveOld(String data,HttpSession session){
+        Gson gson = new Gson();
+        List<SaleList> plgList = gson.fromJson(data, new TypeToken<List<SaleList>>() {
+        }.getType());
+        for (SaleList saleList : plgList){
+            BigDrawing bigDrawing = bigDrawingService.findByWuLiaoId(saleList.getWuliaoId());
+            List<YuanLiaoRequire> list1 = yuanLiaoRequireService.findBySaleListId(saleList.getId());
+            if(list1.size() == 0){
+                List<Wuliao> list = wuliaoService.findByBigDrawingId(bigDrawing.getId());
+                for (Wuliao wuliao : list){
+                    YuanLiaoRequire yuanLiaoRequire = new YuanLiaoRequire();
+                    yuanLiaoRequire.setSumNum(saleList.getNum() * wuliao.getNum());
+                    yuanLiaoRequire.setTao(saleList.getNum());
+                    yuanLiaoRequire.setState("未备货");
+                    yuanLiaoRequire.setUser((User)session.getAttribute("currentUser"));
+                    yuanLiaoRequire.setWuliao(wuliao);
+                    yuanLiaoRequire.setSaleList(saleList);
+                    yuanLiaoRequire.setShenQingDate(new Date());
+                    yuanLiaoRequireService.save(yuanLiaoRequire);
+                }
             }
         }
-        return map;
     }
 
     @RequestMapping("/findByIds")

@@ -478,5 +478,10 @@ public class SaleListServiceImpl implements SaleListService {
         return saleListRepository.tuzhiOpenChakan(wuliaoId);
     }
 
+    @Override
+    public void setStateByIds(Integer[] ids, String state) {
+        saleListRepository.setStateByIds(ids,state);
+    }
+
 
 }
