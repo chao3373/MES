@@ -93,6 +93,7 @@ public class SaleListAdminController {
 
            String bianma = code.toString();
 
+           saleList.setXiadanDate(new Date());
            saleList.setOutCode(bianma);
            saleList.setState("下单");
            if(bigDrawingService.findByWuLiaoId(saleList.getWuliaoId())!=null){

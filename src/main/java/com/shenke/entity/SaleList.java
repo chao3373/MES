@@ -35,6 +35,8 @@ public class SaleList {
     @Temporal(TemporalType.TIMESTAMP)
     private Date referDate;//需要提交的日期
 
+    private java.util.Date xiadanDate; // 下单日期
+
     @Column(length = 20)
     private String xiangmuId;//项目编号
 
@@ -72,6 +74,14 @@ public class SaleList {
     private String openState; // 图纸展开状态（图纸展开界面使用 用来查看谁在展开图纸）
 
     private String outCode; //出库编码 在下订单的时候生成出库编码
+
+    public Date getXiadanDate() {
+        return xiadanDate;
+    }
+
+    public void setXiadanDate(Date xiadanDate) {
+        this.xiadanDate = xiadanDate;
+    }
 
     public String getOutCode() {
         return outCode;
@@ -253,6 +263,7 @@ public class SaleList {
                 ", num=" + num +
                 ", saleDate=" + saleDate +
                 ", referDate=" + referDate +
+                ", xiadanDate=" + xiadanDate +
                 ", xiangmuId='" + xiangmuId + '\'' +
                 ", shenqingNumber='" + shenqingNumber + '\'' +
                 ", kucunzuzhi='" + kucunzuzhi + '\'' +
